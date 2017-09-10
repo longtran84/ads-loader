@@ -1,0 +1,27 @@
+GET     /                           controllers.HomeController.index
+
+->     /v1/posts                    posts.Routes
+
+GET / controllers.Assets.at(path="/public", file="index.html")
+
+#GET /api-docs controllers.ApiHelpController.getResources
+GET /swagger.json           controllers.ApiHelpController.getResources
+GET   /docs/                        controllers.Assets.at(path="/public/swagger-ui",file="index.html")
+GET   /docs/*file                   controllers.Assets.at(path="/public/swagger-ui",file)
+GET   /docs/                   controllers.TodoController.redirectDocs
+
+GET /todos controllers.TodoController.getAllTodos()
+
+#POST /login controllers.SecurityController.login() 
+#POST /logout controllers.SecurityController.logout()
+
+#GET /api-docs/api/todos controllers.ApiHelpController.getResource(path = "/api/todos") 
+ 
+#POST /todos controllers.TodoController.createTodo()
+
+# Map static resources from the /public folder to the /assets URL path 
+#GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+POST /user controllers.UserInfoController.updateFavouriteCategories(favouriteList: String, userId: String)
+
+
