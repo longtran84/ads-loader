@@ -1,27 +1,26 @@
-GET     /                           controllers.HomeController.index
+#GET     /                           controllers.HomeController.index
 
-->     /v1/posts                    posts.Routes
-
+#->     /v1/posts                    posts.Routes
+#Swagger's 
 GET / controllers.Assets.at(path="/public", file="index.html")
+GET 	/swagger.json           	controllers.ApiHelpController.getResources
+GET   	/docs/                        controllers.Assets.at(path="/public/swagger-ui",file="index.html")
+GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger-ui",file)
 
-#GET /api-docs controllers.ApiHelpController.getResources
-GET /swagger.json           controllers.ApiHelpController.getResources
-GET   /docs/                        controllers.Assets.at(path="/public/swagger-ui",file="index.html")
-GET   /docs/*file                   controllers.Assets.at(path="/public/swagger-ui",file)
-GET   /docs/                   controllers.TodoController.redirectDocs
 
-GET /todos controllers.TodoController.getAllTodos()
+POST /user/ads/fav com.fintech.adl.controller.UserInfoController.updateFavouriteCategories(favouriteList: String, userId: String)
+POST /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
+POST /user/:userId com.fintech.adl.controller.UserInfoController.updateUserInfo(userId: String, email: String, gender: String, dob: Long, location: String)
+POST /user/reward com.fintech.adl.controller.UserInfoController.updateReward(userId: String, addedPoint: Long)
 
-#POST /login controllers.SecurityController.login() 
-#POST /logout controllers.SecurityController.logout()
+GET /user/ads/fav com.fintech.adl.controller.UserInfoController.getFavouriteCategories(userId: String)
+GET /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.getFavouriteCategoriesByDevice(deviceToken: String)
+GET /user/:userId com.fintech.adl.controller.UserInfoController.getUserInfo(userId: String)
+GET /user/reward com.fintech.adl.controller.UserInfoController.getRewardInfo(userId: String)
 
-#GET /api-docs/api/todos controllers.ApiHelpController.getResource(path = "/api/todos") 
- 
-#POST /todos controllers.TodoController.createTodo()
-
-# Map static resources from the /public folder to the /assets URL path 
-#GET     /assets/*file               controllers.Assets.at(path="/public", file)
-
-POST /user com.fintech.adl.controller.UserInfoController.updateFavouriteCategories(favouriteList: String, userId: String)
-
+GET /user/ads/byvideo/:userId com.fintech.adl.controller.AdvertismentController.getAdsByVideo(userId: String)
+GET /user/ads/byimage/:userId com.fintech.adl.controller.AdvertismentController.getAdsByImage(userId: String)
+POST /user/counter/view/:userId com.fintech.adl.controller.AdvertismentController.saveViewCounter(userId: String)
+POST /user/counter/click/image/:userId com.fintech.adl.controller.AdvertismentController.saveClickCounterForImage(userId: String)
+POST /user/counter/click/video/:userId com.fintech.adl.controller.AdvertismentController.saveClickCounterForVideo(userId: String)
 

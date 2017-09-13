@@ -1,15 +1,19 @@
 package com.fintech.adl.model;
 
 import javax.persistence.*;
+
+import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "mobileuser")
+@Table(name = "mobile_user")
 public class User {
     private Long id;
-    private String username;
-    private String password;
-    private String passwordConfirm;
+    private String email;
+    private String location;
+    private Long earning;
+    private String status;
+    private Date createdDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,29 +25,46 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-    @Transient
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
+	public Long getEarning() {
+		return earning;
+	}
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
+	public void setEarning(Long earning) {
+		this.earning = earning;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+
 
 }

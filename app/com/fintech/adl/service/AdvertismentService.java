@@ -5,10 +5,10 @@ import javax.inject.Inject;
 import com.fintech.adl.repo.UserRepository;
 
 
-public class UserInfoService {
+public class AdvertismentService {
 	UserRepository userRepository;
 	@Inject
-	public UserInfoService(UserRepository userRepository){
+	public AdvertismentService(UserRepository userRepository){
 		this.userRepository = userRepository;
 	}
 	public void updateFavouriteCategories(){
