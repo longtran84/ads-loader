@@ -45,3 +45,9 @@ libraryDependencies ++= Seq(
   "org.webjars" % "swagger-ui" % "3.1.7"
 )
 
+libraryDependencies ++= Seq(
+  javaJpa,
+  "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final" // replace by your jpa implementation
+)
+
+PlayKeys.externalizeResources := false
