@@ -27,6 +27,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava, GatlingPlugin).co
 libraryDependencies += guice
 libraryDependencies += javaJpa
 libraryDependencies += "com.h2database" % "h2" % "1.4.194"
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.43"
 
 libraryDependencies += "org.hibernate" % "hibernate-core" % "5.2.9.Final"
 libraryDependencies += "io.dropwizard.metrics" % "metrics-core" % "3.2.1"

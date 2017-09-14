@@ -6,9 +6,10 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "mobile_user")
+@Table(name = "user_mobile")
 public class User {
     private Long id;
+    private String deviceToken;
     private String email;
     private String location;
     private Long earning;
@@ -31,6 +32,14 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 	}
 
 	public String getLocation() {
@@ -64,7 +73,5 @@ public class User {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
-
-
 
 }
