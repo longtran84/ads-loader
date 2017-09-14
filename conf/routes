@@ -18,9 +18,8 @@ GET /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.getFavo
 GET /user/:userId com.fintech.adl.controller.UserInfoController.getUserInfo(userId: String)
 GET /user/reward com.fintech.adl.controller.UserInfoController.getRewardInfo(userId: String)
 
-GET /user/ads/byvideo/:userId com.fintech.adl.controller.AdvertismentController.getAdsByVideo(userId: String)
-GET /user/ads/byimage/:userId com.fintech.adl.controller.AdvertismentController.getAdsByImage(userId: String)
-POST /user/counter/view/:userId com.fintech.adl.controller.AdvertismentController.saveViewCounter(userId: String)
-POST /user/counter/click/image/:userId com.fintech.adl.controller.AdvertismentController.saveClickCounterForImage(userId: String)
-POST /user/counter/click/video/:userId com.fintech.adl.controller.AdvertismentController.saveClickCounterForVideo(userId: String)
+POST /ad/placement                           com.fintech.adl.controller.AdvertismentController.getAdPlacement()
+GET /ad/impression/:adId                     com.fintech.adl.controller.AdvertismentController.saveImpression(adId: Long)
+GET /ad/click                                com.fintech.adl.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)
+POST /ad/view                                com.fintech.adl.controller.AdvertismentController.saveView(adId: Long, deviceToken: String)
 

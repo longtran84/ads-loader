@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import com.fintech.adl.model.User;
 
 import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
 
 public class JPAUserRepository implements UserRepository {
 	
@@ -25,4 +24,10 @@ public class JPAUserRepository implements UserRepository {
 		return persons;
 	}
 
+	@Override
+	public User findByDeviceToken(String deviceToken) {
+		User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.deviceToken = :deviceToken", User.class)
+				               .setParameter("deviceToken", deviceToken).getSingleResult();
+		return user;
+	}
 }
