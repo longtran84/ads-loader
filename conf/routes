@@ -8,6 +8,7 @@ GET   	/docs/                        controllers.Assets.at(path="/public/swagger
 GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger-ui",file)
 
 
+#User
 POST /user/ads/fav com.fintech.adl.controller.UserInfoController.updateFavouriteCategories(favouriteList: String, userId: String)
 POST /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
 POST /user/:userId com.fintech.adl.controller.UserInfoController.updateUserInfo(userId: String, email: String, gender: String, dob: Long, location: String)
@@ -18,6 +19,12 @@ GET /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.getFavo
 GET /user/:userId com.fintech.adl.controller.UserInfoController.getUserInfo(userId: String)
 GET /user/reward com.fintech.adl.controller.UserInfoController.getRewardInfo(userId: String)
 
+#Content
+POST /news/userInterest/:deviceToken         com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String)
+GET /content/impression                      com.fintechviet.content.controller.ContentController.saveImpression()
+GET /content/click                           com.fintechviet.content.controller.ContentController.saveClick()
+
+#Advertisement
 POST /ad/placement                           com.fintech.adl.controller.AdvertismentController.getAdPlacement()
 GET /ad/impression/:adId                     com.fintech.adl.controller.AdvertismentController.saveImpression(adId: Long)
 GET /ad/click                                com.fintech.adl.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)

@@ -1,18 +1,15 @@
-package com.fintech.adl.model;
-
+package com.fintechviet.content.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by tungn on 9/6/2017.
+ * Created by tungn on 9/12/2017.
  */
 @Entity
-@Table(name = "ad_clicks")
-public class AdClicks {
+@Table(name = "content_impressions")
+public class ContentImpressions {
     private long id;
-    private User user;
-    private Ad ad;
     private Timestamp date;
 
     @Id
@@ -23,26 +20,6 @@ public class AdClicks {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "uid")
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "adId")
-    public Ad getAd() {
-        return ad;
-    }
-
-    public void setAd(Ad ad) {
-        this.ad = ad;
     }
 
     @Basic
@@ -60,10 +37,10 @@ public class AdClicks {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AdClicks adClicks = (AdClicks) o;
+        ContentImpressions that = (ContentImpressions) o;
 
-        if (id != adClicks.id) return false;
-        if (date != null ? !date.equals(adClicks.date) : adClicks.date != null) return false;
+        if (id != that.id) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
 
         return true;
     }
