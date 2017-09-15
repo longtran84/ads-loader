@@ -9,7 +9,6 @@ import com.fintech.adl.repo.UserRepository;
 
 public class AdvertismentService {
 	AdvertismentRepository advertismentRepository;
-	UserRepository userRepository;
 
 	@Inject
 	public AdvertismentService(AdvertismentRepository advertismentRepository){

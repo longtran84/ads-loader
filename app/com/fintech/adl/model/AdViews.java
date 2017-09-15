@@ -25,7 +25,7 @@ public class AdViews {
     }
 
     @Basic
-    @Column(name = "date")
+    @Column(name = "date", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp getDate() {
         return date;
     }

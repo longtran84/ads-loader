@@ -1,5 +1,7 @@
 package com.fintech.adl.model;
 
+import com.fintechviet.content.model.NewsCategory;
+
 import javax.persistence.*;
 
 import java.util.Date;
@@ -15,6 +17,7 @@ public class User {
     private Long earning;
     private String status;
     private Date createdDate;
+    private Set<NewsCategory> newsCategories;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -72,6 +75,16 @@ public class User {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	@ManyToMany
+	@JoinTable(name = "user_mobile_interest", joinColumns = @JoinColumn(name = "uid"), inverseJoinColumns = @JoinColumn(name = "newsCategoryId"))
+	public Set<NewsCategory> getNewsCategories() {
+		return newsCategories;
+	}
+
+	public void setNewsCategories(Set<NewsCategory> newsCategories) {
+		this.newsCategories = newsCategories;
 	}
 
 }

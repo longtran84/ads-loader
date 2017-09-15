@@ -45,7 +45,7 @@ public class AdImpressions {
     }
 
     @Basic
-    @Column(name = "date")
+    @Column(name = "date", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp getDate() {
         return date;
     }
