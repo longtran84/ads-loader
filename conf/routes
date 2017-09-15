@@ -21,8 +21,8 @@ GET /user/reward com.fintech.adl.controller.UserInfoController.getRewardInfo(use
 
 #Content
 POST /news/userInterest/:deviceToken         com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String)
-POST /content/impression                     com.fintechviet.content.controller.ContentController.saveImpression()
-POST /content/click                          com.fintechviet.content.controller.ContentController.saveClick()
+GET /content/impression                      com.fintechviet.content.controller.ContentController.saveImpression()
+GET /content/click                           com.fintechviet.content.controller.ContentController.saveClick()
 
 #Advertisement
 POST /ad/placement                           com.fintech.adl.controller.AdvertismentController.getAdPlacement()

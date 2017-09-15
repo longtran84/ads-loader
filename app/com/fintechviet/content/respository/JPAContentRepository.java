@@ -54,8 +54,15 @@ public class JPAContentRepository implements ContentRepository {
         return "ok";
     }
 
-    public void saveClick() {
-        ContentClicks click = new ContentClicks();
-        jpaApi.em().persist(click);
+    @Override
+    public CompletionStage<String> saveClick() {
+        return supplyAsync(() -> wrap(em -> saveClick(em)), ec);
     }
+
+    public String saveClick(EntityManager em) {
+        ContentClicks click = new ContentClicks();
+        em.persist(click);
+        return "ok";
+    }
+
 }

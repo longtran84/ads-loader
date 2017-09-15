@@ -5,6 +5,7 @@ import com.fintechviet.content.dto.NewsResponse;
 import com.fintechviet.content.service.ContentService;
 import io.swagger.annotations.Api;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -36,13 +37,13 @@ public class ContentController extends Controller {
 
 	public CompletionStage<Result> saveImpression() {
         return contentService.saveImpression().thenApplyAsync(response -> {
-            return ok("Save impression ok");
+            return created(Json.toJson(response));
         }, ec.current());
 	}
 
-	@Transactional
-	public Result saveClick() {
-		contentService.saveClick();
-		return null;
-	}
+    public CompletionStage<Result> saveClick() {
+        return contentService.saveClick().thenApplyAsync(response -> {
+            return created(Json.toJson(response));
+        }, ec.current());
+    }
 }

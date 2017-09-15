@@ -12,12 +12,10 @@ import java.util.concurrent.CompletionStage;
 
 public class ContentService {
 	private final ContentRepository contentRepository;
-	private final HttpExecutionContext ec;
 
 	@Inject
-	public ContentService(ContentRepository contentRepository, HttpExecutionContext ec){
+	public ContentService(ContentRepository contentRepository){
 		this.contentRepository = contentRepository;
-		this.ec = ec;
 	}
 
 	public List<News> getNewsByUserInterest(String deviceToken) {
@@ -36,13 +34,11 @@ public class ContentService {
 	}
 
 	public CompletionStage<String> saveImpression() {
-		return contentRepository.saveImpression().thenApplyAsync(returnData->{
-			return "ok";
-		}, ec.current());
+		return contentRepository.saveImpression();
 	}
 
-	public void saveClick() {
-		contentRepository.saveClick();
+	public CompletionStage<String> saveClick() {
+		return contentRepository.saveClick();
 	}
 
 }

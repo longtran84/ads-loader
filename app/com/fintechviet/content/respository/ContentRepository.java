@@ -12,5 +12,5 @@ public interface ContentRepository {
     List<News> getNewsByUserInterest(String deviceToken);
     List<News> getNewsByAllCategories();
     CompletionStage<String> saveImpression();
-    void saveClick();
+    CompletionStage<String> saveClick();
 }
