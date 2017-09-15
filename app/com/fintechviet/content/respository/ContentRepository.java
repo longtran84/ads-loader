@@ -9,7 +9,7 @@ import java.util.concurrent.CompletionStage;
 
 @ImplementedBy(JPAContentRepository.class)
 public interface ContentRepository {
-    List<News> getNewsByUserInterest(String deviceToken);
+	CompletionStage<List<News>> getNewsByUserInterest(String deviceToken);
     List<News> getNewsByAllCategories();
     CompletionStage<String> saveImpression();
     CompletionStage<String> saveClick();

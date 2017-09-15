@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 
-@Api
+@Api(value = "Content")
 public class ContentController extends Controller {
 	private static String DOMAIN = "http://10.0.2.2:9000";
 	private HttpExecutionContext ec;
@@ -28,11 +28,11 @@ public class ContentController extends Controller {
 	}
 
 	@Transactional
-    public Result getNewsByCategories(String deviceToken) {
+    public CompletionStage<Result> getNewsByCategories(String deviceToken) {
 		JsonNode json = request().body().asJson();
-		NewsResponse newsResponse = new NewsResponse();
-		newsResponse.setNewsList(contentService.getNewsByUserInterest(deviceToken));
-        return ok("");
+		return contentService.getNewsByUserInterest(deviceToken).thenApplyAsync(response -> {
+            return created(Json.toJson(response));
+        }, ec.current());
     }
 
 	public CompletionStage<Result> saveImpression() {

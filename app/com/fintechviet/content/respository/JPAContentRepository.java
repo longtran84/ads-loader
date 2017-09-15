@@ -9,6 +9,8 @@ import play.db.jpa.Transactional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -19,6 +21,7 @@ public class JPAContentRepository implements ContentRepository {
 
     private final JPAApi jpaApi;
     private final ContentExecutionContext ec;
+    static final int limitResult = 3;
 
     @Inject
     public JPAContentRepository(JPAApi jpaApi, ContentExecutionContext ec) {
@@ -31,10 +34,16 @@ public class JPAContentRepository implements ContentRepository {
     }
 
 	@Override
-    public List<News> getNewsByUserInterest(String deviceToken) {
-        List<News> newsList = jpaApi.em()
-                              .createQuery("SELECT n FROM News n WHERE n.newCategory.id IN (SELECT nc.id FROM NewsCategory nc)", News.class).getResultList();
-		return newsList;
+    public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getNewsByUserInterest(em, deviceToken)), ec);
+	}
+	
+	public List<News> getNewsByUserInterest(EntityManager em, String deviceToken){
+        String queryStr = "SELECT n from News n WHERE n.newsCategory.id IN (SELECT i.newsCategoryId FROM MobileUserInterest i "
+        		+ " WHERE i.mobileUserId = (SELECT u.id from User u where u.deviceToken = '" + deviceToken + "')) order by n.createdDate";
+        TypedQuery<News> query = em.createQuery(queryStr, News.class);
+        query.setMaxResults(limitResult);
+        return query.getResultList();
 	}
 
     @Override

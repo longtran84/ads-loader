@@ -8,6 +8,9 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 
 public class ContentService {
@@ -18,10 +21,18 @@ public class ContentService {
 		this.contentRepository = contentRepository;
 	}
 
-	public List<News> getNewsByUserInterest(String deviceToken) {
+	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken) {
 		List<News> newsDTO = new ArrayList<News>();
-		List<com.fintechviet.content.model.News> newsList = contentRepository.getNewsByUserInterest(deviceToken);
-		for(com.fintechviet.content.model.News news : newsList) {
+		CompletionStage<List<com.fintechviet.content.model.News>> newsList = contentRepository.getNewsByUserInterest(deviceToken);
+		List<com.fintechviet.content.model.News> newListModel = new ArrayList<>();
+		try {
+			newListModel = newsList.toCompletableFuture().get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		for(com.fintechviet.content.model.News news : newListModel) {
 			News neDTO =  new News();
 			neDTO.setTitle(news.getTitle());
 			neDTO.setShortDescription(news.getShortDescription());
@@ -30,7 +41,7 @@ public class ContentService {
 			neDTO.setNewsCategoryCode(news.getNewsCategory().getCode());
 			newsDTO.add(neDTO);
 		}
-		return newsDTO;
+		return supplyAsync(() -> newsDTO);
 	}
 
 	public CompletionStage<String> saveImpression() {
