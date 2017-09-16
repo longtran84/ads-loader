@@ -13,6 +13,7 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
 
 
 @Api(value = "Content")
@@ -28,9 +29,9 @@ public class ContentController extends Controller {
 	}
 
 	@Transactional
-    public CompletionStage<Result> getNewsByCategories(String deviceToken) {
+    public CompletionStage<Result> getNewsByCategories(String deviceToken, String cateIds, String lastNewsIds) throws InterruptedException, ExecutionException {
 		JsonNode json = request().body().asJson();
-		return contentService.getNewsByUserInterest(deviceToken).thenApplyAsync(response -> {
+		return contentService.getNewsByUserInterest(deviceToken, cateIds, lastNewsIds).thenApplyAsync(response -> {
             return created(Json.toJson(response));
         }, ec.current());
     }
