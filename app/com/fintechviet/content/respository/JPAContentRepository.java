@@ -57,12 +57,6 @@ public class JPAContentRepository implements ContentRepository {
 	
 	@Override
     public List<News> getNewsByUserInterestByTrunk2(String deviceToken, Long cateId,Long lastNewsId, int offset) {
-//		try {
-//			Thread.sleep(3000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
         try {
 			String queryStr = "SELECT n from News n WHERE n.newsCategory.id = " + cateId + " AND n.id < " + lastNewsId + " ORDER BY n.createdDate desc";
 			List<News> newsList = new ArrayList<>();

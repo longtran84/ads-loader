@@ -4,21 +4,30 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Embeddable
-public class MobileUserInterest {
-
-    
+@Entity
+@Table(name = "mobile_user_interest")
+public class MobileUserInterestItems {
+	
+	@Id
+	@Column (name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	@Column(name = "uid")
     private Long mobileUserId;
 	@Column(name = "newsCategoryId")
     private Long newsCategoryId;
+	
+    public MobileUserInterestItems() {
+	}
     
-    public MobileUserInterest(Long uid, Long newsCategoryId) {
+    public MobileUserInterestItems(Long uid, Long newsCategoryId) {
     	this.mobileUserId = uid;
     	this.newsCategoryId = newsCategoryId;
 	}
@@ -42,6 +51,15 @@ public class MobileUserInterest {
 	}
 
 
-    
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	
     
 }
