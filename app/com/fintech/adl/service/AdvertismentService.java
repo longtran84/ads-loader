@@ -4,30 +4,31 @@ import javax.inject.Inject;
 
 import com.fintech.adl.model.Ad;
 import com.fintech.adl.repo.AdvertismentRepository;
-import com.fintech.adl.repo.UserRepository;
+
+import java.util.concurrent.CompletionStage;
 
 
 public class AdvertismentService {
-	AdvertismentRepository advertismentRepository;
+	private final AdvertismentRepository advertismentRepository;
 
 	@Inject
 	public AdvertismentService(AdvertismentRepository advertismentRepository){
 		this.advertismentRepository = advertismentRepository;
 	}
 
-	public Ad findAdByTemplate(String template) {
+	public CompletionStage<Ad> findAdByTemplate(String template) {
 		return advertismentRepository.findAdByTemplate(template);
 	}
 
-	public void saveImpression(long adId) {
-		advertismentRepository.saveImpression(adId);
+	public CompletionStage<String> saveImpression(long adId) {
+		return advertismentRepository.saveImpression(adId);
 	}
 
-	public void saveClick(long adId, String deviceToken) {
-		advertismentRepository.saveClick(adId, deviceToken);
+	public CompletionStage<String> saveClick(long adId, String deviceToken) {
+		return advertismentRepository.saveClick(adId, deviceToken);
 	}
 
-	public void saveView(long adId, String deviceToken) {
-		advertismentRepository.saveView(adId, deviceToken);
+	public CompletionStage<String> saveView(long adId, String deviceToken) {
+		return advertismentRepository.saveView(adId, deviceToken);
 	}
 }

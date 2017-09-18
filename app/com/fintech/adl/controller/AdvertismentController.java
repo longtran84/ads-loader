@@ -6,18 +6,15 @@ import com.fintech.adl.dto.Decision;
 import com.fintech.adl.dto.DecisionResponse;
 import com.fintech.adl.dto.Request;
 import com.fintech.adl.model.Ad;
-import play.api.Play;
-import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
 import com.fintech.adl.service.AdvertismentService;
-import com.fintech.adl.service.UserInfoService;
 
 import io.swagger.annotations.*;
 
@@ -25,20 +22,21 @@ import io.swagger.annotations.*;
 @Api
 public class AdvertismentController extends Controller {
 	private static String DOMAIN = "http://10.0.2.2:9000";
-	AdvertismentService adsService;
+	private final AdvertismentService adsService;
+	private final HttpExecutionContext ec;
 
 	@Inject()
-	public AdvertismentController  (AdvertismentService adsService){
+	public AdvertismentController  (AdvertismentService adsService, HttpExecutionContext ec){
 		this.adsService = adsService;
+		this.ec = ec;
 	}
 
-	@Transactional
-    public Result getAdPlacement() {
+    public CompletionStage<Result> getAdPlacement() {
 		JsonNode json = request().body().asJson();
 		Request request = Json.fromJson(json, Request.class);
-		Ad ad = adsService.findAdByTemplate(request.getPlacement().getTemplate());
-		DecisionResponse response = buildAdResponse(ad, request);
-        return ok("get ads by template");
+		return adsService.findAdByTemplate(request.getPlacement().getTemplate()).thenApplyAsync(ad -> {
+			return created(Json.toJson(buildAdResponse(ad, request)));
+		}, ec.current());
     }
 
 	private DecisionResponse buildAdResponse(Ad ad, Request request) {
@@ -65,22 +63,22 @@ public class AdvertismentController extends Controller {
 
 		return null;
 	}
-	
-	@Transactional
-    public Result saveImpression(long adId) {
-		adsService.saveImpression(adId);
-		return null;
+
+    public CompletionStage<Result> saveImpression(long adId) {
+		return adsService.saveImpression(adId).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
     }	
-	
-	@Transactional
-    public Result saveClick(long adId, String deviceToken) {
-		adsService.saveClick(adId, deviceToken);
-		return null;
+
+    public CompletionStage<Result> saveClick(long adId, String deviceToken) {
+		return adsService.saveClick(adId, deviceToken).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
     }
-	
-	@Transactional
-    public Result saveView(long adId, String deviceToken) {
-		adsService.saveView(adId, deviceToken);
-		return null;
+
+    public CompletionStage<Result> saveView(long adId, String deviceToken) {
+		return adsService.saveView(adId, deviceToken).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
     }	
 }

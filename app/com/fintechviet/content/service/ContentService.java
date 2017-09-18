@@ -2,7 +2,6 @@ package com.fintechviet.content.service;
 
 import com.fintechviet.content.dto.News;
 import com.fintechviet.content.respository.ContentRepository;
-import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

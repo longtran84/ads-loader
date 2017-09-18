@@ -7,10 +7,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "ad")
-@NamedQueries({
-        @NamedQuery(name = "Advertisment.findAdByTemplate", query = "SELECT ad FROM Ad ad WHERE ad.flight.startDate <= CURRENT_DATE AND (ad.flight.endDate >= CURRENT_DATE OR ad.flight.endDate IS NULL) " +
-                "AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'")
-})
 public class Ad {
     private long id;
     private String name;

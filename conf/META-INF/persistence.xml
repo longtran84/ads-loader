@@ -8,6 +8,7 @@
     <non-jta-data-source>DefaultDS</non-jta-data-source>
     <properties>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+      <property name="hibernate.id.new_generator_mappings" value="false"/>
     </properties>
   </persistence-unit>
 
