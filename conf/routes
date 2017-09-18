@@ -12,11 +12,12 @@ GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger
 POST /user/updateUserInterest/:favouriteList/:deviceToken                com.fintechviet.user.controller.UserController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
 POST /user/updateUserInfo/:deviceToken/:email/:gender/:dob/:location     com.fintechviet.user.controller.UserController.updateUserInfo(deviceToken: String, email: String, gender: String, dob: Integer, location: String)
 POST /user/updateUserReward/:deviceToken/:event/:addedPoint              com.fintechviet.user.controller.UserController.updateReward(deviceToken: String, event: String, addedPoint: Long)
+POST /user/:deviceToken                                                  com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
+POST /user/reward/:deviceToken                                           com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
 
 GET /user/ads/fav com.fintechviet.user.controller.UserController.getFavouriteCategories(userId: String)
 GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFavouriteCategoriesByDevice(deviceToken: String)
-POST /user/:deviceToken                                                  com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
-GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
+
 
 #Content
 GET /content/news/userInterest/:deviceToken         com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, cateIds: String, lastNewsIds: String)

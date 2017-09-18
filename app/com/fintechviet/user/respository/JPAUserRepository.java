@@ -53,16 +53,16 @@ public class JPAUserRepository implements UserRepository {
 		return user;
 	}
 
-	/*@Override
-	public CompletionStage<User> getRewardInfo(String deviceToken) {
-		return supplyAsync(() -> wrap(em -> findByDeviceToken(em, deviceToken)), ec);
+	@Override
+	public CompletionStage<List<Object[]>> getRewardInfo(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getRewardInfo(em, deviceToken)), ec);
 	}
 
-	private List<Object[]> getRewardInfos(EntityManager em, String deviceToken) {
+	private List<Object[]> getRewardInfo(EntityManager em, String deviceToken) {
 		List<Object[]> rewardInfo= em.createQuery("SELECT ed.event, SUM(ed.amount) FROM EarningDetails ed WHERE ed.user.deviceToken = :deviceToken")
 				.setParameter("deviceToken", deviceToken).getResultList();
 		return rewardInfo;
-	}*/
+	}
 
 	@Override
 	public CompletionStage<String> updateUserInfo(String deviceToken, String email, String gender, int dob, String location) {
