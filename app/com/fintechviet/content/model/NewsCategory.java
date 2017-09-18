@@ -1,6 +1,6 @@
 package com.fintechviet.content.model;
 
-import com.fintech.adl.model.User;
+import com.fintechviet.user.model.User;
 
 import javax.persistence.*;
 import java.util.Set;
