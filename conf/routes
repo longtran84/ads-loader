@@ -9,24 +9,24 @@ GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger
 
 
 #User
-POST /user/ads/fav com.fintech.adl.controller.UserInfoController.updateFavouriteCategories(favouriteList: String, userId: String)
-POST /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
-POST /user/:userId com.fintech.adl.controller.UserInfoController.updateUserInfo(userId: String, email: String, gender: String, dob: Long, location: String)
-POST /user/reward com.fintech.adl.controller.UserInfoController.updateReward(userId: String, addedPoint: Long)
+POST /user/updateUserInterest/:favouriteList/:deviceToken                com.fintechviet.user.controller.UserController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
+POST /user/updateUserInfo/:deviceToken/:email/:gender/:dob/:location     com.fintechviet.user.controller.UserController.updateUserInfo(deviceToken: String, email: String, gender: String, dob: Integer, location: String)
+POST /user/updateUserReward/:deviceToken/:event/:addedPoint              com.fintechviet.user.controller.UserController.updateReward(deviceToken: String, event: String, addedPoint: Long)
+POST /user/:deviceToken                                                  com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
+POST /user/reward/:deviceToken                                           com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
 
-GET /user/ads/fav com.fintech.adl.controller.UserInfoController.getFavouriteCategories(userId: String)
-GET /user/ads/fav/bydevice com.fintech.adl.controller.UserInfoController.getFavouriteCategoriesByDevice(deviceToken: String)
-GET /user/:userId com.fintech.adl.controller.UserInfoController.getUserInfo(userId: String)
-GET /user/reward com.fintech.adl.controller.UserInfoController.getRewardInfo(userId: String)
+GET /user/ads/fav com.fintechviet.user.controller.UserController.getFavouriteCategories(userId: String)
+GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFavouriteCategoriesByDevice(deviceToken: String)
+
 
 #Content
 GET /content/news/userInterest/:deviceToken         com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, cateIds: String, lastNewsIds: String)
-GET /content/impression                      com.fintechviet.content.controller.ContentController.saveImpression()
-GET /content/click                           com.fintechviet.content.controller.ContentController.saveClick()
+GET /content/impression                             com.fintechviet.content.controller.ContentController.saveImpression()
+GET /content/click                                  com.fintechviet.content.controller.ContentController.saveClick()
 
 #Advertisement
-POST /ad/placement                           com.fintech.adl.controller.AdvertismentController.getAdPlacement()
-GET /ad/impression/:adId                     com.fintech.adl.controller.AdvertismentController.saveImpression(adId: Long)
-GET /ad/click                                com.fintech.adl.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)
-POST /ad/view                                com.fintech.adl.controller.AdvertismentController.saveView(adId: Long, deviceToken: String)
+POST /ad/placement                           com.fintechviet.ad.controller.AdvertismentController.getAdPlacement()
+GET /ad/impression/:adId                     com.fintechviet.ad.controller.AdvertismentController.saveImpression(adId: Long)
+GET /ad/click                                com.fintechviet.ad.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)
+GET /ad/view                                 com.fintechviet.ad.controller.AdvertismentController.saveView(adId: Long, deviceToken: String)
 

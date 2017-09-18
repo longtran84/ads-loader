@@ -1,6 +1,5 @@
 package com.fintechviet.content.respository;
 
-import com.fintech.adl.repo.JPAAdvertismentRepository;
 import com.fintechviet.content.model.News;
 import com.google.inject.ImplementedBy;
 
