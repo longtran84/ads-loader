@@ -33,10 +33,10 @@ public class ContentService {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken, String mappedCateIds, String lastNewsIds) throws InterruptedException, ExecutionException {
+	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken, String mappedCateIds, String mappedlastNewsIds) throws InterruptedException, ExecutionException {
 		List<Long> categoryList = contentRepository.getNumberOfUserInterest(deviceToken);
 		int trunkSize = Math.round(limitResult/categoryList.size()); 
-		String[] newsIdsArray = lastNewsIds.split(",");
+		String[] newsIdsArray = mappedlastNewsIds.split(",");
 		String[] cateIdsArray = mappedCateIds.split(",");
 		List<News> newList = new ArrayList<>();
 		List<CompletableFuture<List<com.fintechviet.content.model.News>>> pendingTask = new ArrayList<>();
@@ -44,7 +44,8 @@ public class ContentService {
 			Long cateId = categoryList.get(i);
 			int idx = Arrays.asList(cateIdsArray).indexOf(cateId.toString());
 			Long lastNewsId = (idx >= 0)? Long.valueOf(newsIdsArray[idx])  : null;
-			CompletableFuture<List<com.fintechviet.content.model.News>> newsTrunkFuture = supplyAsync(() -> contentRepository.getNewsByUserInterestByTrunk2(deviceToken, cateId, lastNewsId, trunkSize));
+			CompletableFuture<List<com.fintechviet.content.model.News>> newsTrunkFuture = 
+					supplyAsync(() -> contentRepository.getNewsByUserInterest(deviceToken, cateId, lastNewsId, trunkSize));
 			pendingTask.add(newsTrunkFuture);
 		}
 		for(CompletableFuture<List<com.fintechviet.content.model.News>> futureTask: pendingTask){
@@ -70,6 +71,7 @@ public class ContentService {
 			neDTO.setImageLink(news.getImageLink());
 			neDTO.setLink(news.getLink());
 			neDTO.setNewsCategoryCode(news.getNewsCategory().getCode());
+			neDTO.setCreatedDate(news.getCreatedDate());
 			newsDtoList.add(neDTO);
 		}
 		return newsDtoList;

@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "mobile_user_interest")
+@Table(name = "user_mobile_interest")
 public class MobileUserInterestItems {
 	
 	@Id
