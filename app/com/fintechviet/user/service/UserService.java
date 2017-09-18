@@ -3,10 +3,12 @@ package com.fintechviet.user.service;
 import javax.inject.Inject;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
+import com.fintechviet.user.dto.Reward;
 import com.fintechviet.user.model.User;
 import com.fintechviet.user.respository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +38,25 @@ public class UserService {
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
 		return userRepository.getUserInfo(deviceToken).thenApplyAsync(user -> {
 			return new com.fintechviet.user.dto.User(user.getEmail(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning());
+		}, ec.current());
+	}
+
+	private List<Reward> buildRewardInfo(List<Object[]> rewardObjs) {
+		List<Reward> rewards = new ArrayList<Reward>();
+		for (Object row[] : rewardObjs) {
+			String event = (String)row[0];
+			long amount = (long)row[1];
+			Reward reward = new Reward();
+			reward.setEvent(event);
+			reward.setAmount(amount);
+			rewards.add(reward);
+		}
+		return rewards;
+	}
+
+	public CompletionStage<List<Reward>> getRewardInfo(String deviceToken){
+		return userRepository.getRewardInfo(deviceToken).thenApplyAsync(rewards -> {
+			return buildRewardInfo(rewards);
 		}, ec.current());
 	}
 

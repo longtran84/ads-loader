@@ -109,11 +109,13 @@ public class UserController extends Controller {
 	
 	/**
 	 * 
-	 * @param userId
+	 * @param deviceToken
 	 * @return
 	 */
 	@Transactional
-    public Result getRewardInfo(String userId) {
-        return ok("get reward info");
+    public CompletionStage<Result> getRewardInfo(String deviceToken) {
+		return userService.getRewardInfo(deviceToken).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
     }	
 }

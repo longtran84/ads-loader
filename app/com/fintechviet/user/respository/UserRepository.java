@@ -14,4 +14,5 @@ public interface UserRepository{
     CompletionStage<User> getUserInfo(String deviceToken);
     Long getUserIdByDeviceToken(String deviceToken);
     List<MobileUserInterestItems> updateUserInterest(String deviceToken, List<MobileUserInterestItems> interests );
+    CompletionStage<List<Object[]>> getRewardInfo(String deviceToken);
 }
