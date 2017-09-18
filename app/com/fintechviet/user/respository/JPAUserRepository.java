@@ -6,7 +6,9 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
+import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.UserExecutionContext;
 import com.fintechviet.user.model.User;
 
@@ -51,7 +53,7 @@ public class JPAUserRepository implements UserRepository {
 		return user;
 	}
 
-	@Override
+	/*@Override
 	public CompletionStage<User> getRewardInfo(String deviceToken) {
 		return supplyAsync(() -> wrap(em -> findByDeviceToken(em, deviceToken)), ec);
 	}
@@ -60,7 +62,7 @@ public class JPAUserRepository implements UserRepository {
 		List<Object[]> rewardInfo= em.createQuery("SELECT ed.event, SUM(ed.amount) FROM EarningDetails ed WHERE ed.user.deviceToken = :deviceToken")
 				.setParameter("deviceToken", deviceToken).getResultList();
 		return rewardInfo;
-	}
+	}*/
 
 	@Override
 	public CompletionStage<String> updateUserInfo(String deviceToken, String email, String gender, int dob, String location) {
@@ -89,17 +91,6 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	@Override
-	public CompletionStage<String> updateUserInterest(String deviceToken, List<String> interests) {
-		return supplyAsync(() -> wrap(em -> updateUserInterest(em, deviceToken, interests)), ec);
-	}
-
-	private String updateUserInterest(EntityManager em, String deviceToken, List<String> interests) {
-		User user = new User();
-		em.merge(user);
-		return "ok";
-	}
-
-	@Override
 	public CompletionStage<String> updateReward(String deviceToken, String event, long point) {
 		return supplyAsync(() -> wrap(em -> updateReward(em, deviceToken, event, point)), ec);
 	}
@@ -111,5 +102,32 @@ public class JPAUserRepository implements UserRepository {
 		int updateEarningDetailCount = em.createQuery("UPDATE EarningDetails SET amount = amount + :point WHERE event = :event")
 				.setParameter("point", point).setParameter("event", event).executeUpdate();
 		return "ok";
+	}
+
+	@Override
+	public Long getUserIdByDeviceToken(String deviceToken) {
+    	return wrap(em -> {
+			String queryStr = "SELECT id FROM User where deviceToken = '" + deviceToken + "'";
+			Query query = em.createQuery(queryStr);
+			return  (Long)query.getSingleResult();
+
+		});
+	}
+
+	@Override
+	public List<MobileUserInterestItems> updateUserInterest(String deviceToken, List<MobileUserInterestItems> interests) {
+		try {
+			return wrap(em -> updateUserInterest(em, interests));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return interests;
+	}
+	private List<MobileUserInterestItems> updateUserInterest(EntityManager em, List<MobileUserInterestItems> interests){
+		for(MobileUserInterestItems interest: interests){
+			em.merge(interest);
+		}
+		return interests;
 	}
 }

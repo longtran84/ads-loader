@@ -3,6 +3,7 @@ package com.fintechviet.user.model;
 import com.fintechviet.content.model.NewsCategory;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -19,6 +20,7 @@ public class User {
 	private String location;
 	private long earning;
 	private String status = "ACTIVE";
+	private Date createdDate;
 	private Set<NewsCategory> newsCategories;
 
 	@Id
@@ -101,6 +103,16 @@ public class User {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Basic
+	@Column(name = "createdDate", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	@ManyToMany

@@ -1,12 +1,9 @@
-package com.fintech.adl.repo;
+package com.fintechviet.ad.repo;
 
-import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-import com.fintech.adl.model.Ad;
+import com.fintechviet.ad.model.Ad;
 import com.google.inject.ImplementedBy;
-
-import javax.persistence.NamedQuery;
 
 @ImplementedBy(JPAAdvertismentRepository.class)
 public interface AdvertismentRepository{

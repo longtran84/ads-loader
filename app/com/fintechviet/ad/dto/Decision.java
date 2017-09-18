@@ -1,4 +1,4 @@
-package com.fintech.adl.dto;
+package com.fintechviet.ad.dto;
 
 /**
  * Created by tungn on 9/7/2017.

@@ -1,4 +1,4 @@
-package com.fintech.adl.dto;
+package com.fintechviet.ad.dto;
 
 
 /**

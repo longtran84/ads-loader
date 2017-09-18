@@ -1,11 +1,11 @@
-package com.fintech.adl.controller;
+package com.fintechviet.ad.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fintech.adl.dto.Content;
-import com.fintech.adl.dto.Decision;
-import com.fintech.adl.dto.DecisionResponse;
-import com.fintech.adl.dto.Request;
-import com.fintech.adl.model.Ad;
+import com.fintechviet.ad.dto.Content;
+import com.fintechviet.ad.dto.Decision;
+import com.fintechviet.ad.dto.DecisionResponse;
+import com.fintechviet.ad.dto.Request;
+import com.fintechviet.ad.model.Ad;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
-import com.fintech.adl.service.AdvertismentService;
+import com.fintechviet.ad.service.AdvertismentService;
 
 import io.swagger.annotations.*;
 

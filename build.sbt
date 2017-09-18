@@ -43,7 +43,8 @@ testOptions in Test := Seq(Tests.Argument(TestFrameworks.JUnit, "-a", "-v"))
 libraryDependencies ++= Seq(
   "io.swagger" %% "swagger-play2" % "1.6.0",
   "org.webjars" %% "webjars-play" % "2.6.2",
-  "org.webjars" % "swagger-ui" % "3.1.7"
+  "io.springfox" % "springfox-swagger-ui" % "2.7.0"
+  //"org.webjars" % "swagger-ui" % "3.2.0"
 )
 
 libraryDependencies ++= Seq(

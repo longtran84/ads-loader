@@ -1,9 +1,9 @@
-package com.fintech.adl.service;
+package com.fintechviet.ad.service;
 
 import javax.inject.Inject;
 
-import com.fintech.adl.model.Ad;
-import com.fintech.adl.repo.AdvertismentRepository;
+import com.fintechviet.ad.model.Ad;
+import com.fintechviet.ad.repo.AdvertismentRepository;
 
 import java.util.concurrent.CompletionStage;
 

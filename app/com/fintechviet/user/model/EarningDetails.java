@@ -1,7 +1,5 @@
 package com.fintechviet.user.model;
 
-import com.fintech.adl.model.Advertiser;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 

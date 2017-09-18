@@ -1,4 +1,4 @@
-package com.fintech.adl.model;
+package com.fintechviet.ad.model;
 
 import javax.persistence.*;
 

@@ -1,4 +1,4 @@
-package com.fintech.adl.repo;
+package com.fintechviet.ad.repo;
 
 import java.util.List;
 import java.util.Random;
@@ -8,9 +8,13 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import com.fintech.adl.AdExecutionContext;
-import com.fintech.adl.model.*;
+import com.fintechviet.ad.AdExecutionContext;
+import com.fintechviet.ad.model.*;
 
+import com.fintechviet.ad.model.Ad;
+import com.fintechviet.ad.model.AdClicks;
+import com.fintechviet.ad.model.AdImpressions;
+import com.fintechviet.ad.model.AdViews;
 import com.fintechviet.user.model.User;
 import play.db.jpa.JPAApi;
 

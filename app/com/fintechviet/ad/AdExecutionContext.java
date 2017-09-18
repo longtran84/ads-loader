@@ -1,4 +1,4 @@
-package com.fintech.adl;
+package com.fintechviet.ad;
 
 import akka.actor.ActorSystem;
 import play.libs.concurrent.CustomExecutionContext;

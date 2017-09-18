@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fintechviet.user.dto.UserInterest;
 import com.fintechviet.user.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
@@ -26,16 +27,16 @@ public class UserController extends Controller {
 	}
 	
 	/**
-	 *
+	 * @param favouriteList
+	 * @param deviceToken
 	 * @return
 	 */
-    public CompletionStage<Result> updateUserInterest() {
-		JsonNode json = request().body().asJson();
-		UserInterest request = Json.fromJson(json, UserInterest.class);
-		return userService.updateUserInterest(request.getDeviceToken(), request.getInterests()).thenApplyAsync(response -> {
+	@ApiOperation(value="Update User Interests by device token")
+	public CompletionStage<Result> updateFavouriteCategoriesByDevice(String favouriteList, String deviceToken) {
+		return userService.updateUserInterest(deviceToken, favouriteList).thenApplyAsync(response -> {
 			return created(Json.toJson(response));
 		}, ec.current());
-    }
+	}
 	
 	/**
 	 * 
