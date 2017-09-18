@@ -16,6 +16,9 @@ public class User {
     private String location;
     private Long earning;
     private String status;
+    
+    @Column(name = "createdDate")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     private Set<NewsCategory> newsCategories;
 

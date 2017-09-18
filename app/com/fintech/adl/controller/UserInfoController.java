@@ -1,10 +1,13 @@
 package com.fintech.adl.controller;
 
 import play.db.jpa.Transactional;
+import play.libs.Json;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 
@@ -13,9 +16,10 @@ import com.fintech.adl.service.UserInfoService;
 import io.swagger.annotations.*;
 
 
-@Api
+@Api(value="User information Apis")
 public class UserInfoController extends Controller {
 	UserInfoService userService;
+	private HttpExecutionContext ec;
 /*	@ApiImplicitParams({
 		@ApiImplicitParam(
 					name = "favouriteList",
@@ -35,8 +39,9 @@ public class UserInfoController extends Controller {
 		
 	)*/
 	@Inject()
-	public UserInfoController  (UserInfoService userInfoService){
+	public UserInfoController  (UserInfoService userInfoService, HttpExecutionContext ec){
 		this.userService = userInfoService;
+		this.ec = ec;
 	}
 	
 	/**
@@ -48,7 +53,6 @@ public class UserInfoController extends Controller {
 	@Transactional
     public Result updateFavouriteCategories(String favouriteList,
     		String userId) {
-    	userService.updateFavouriteCategories();
         return ok(userId + favouriteList);
     }
 	
@@ -59,9 +63,11 @@ public class UserInfoController extends Controller {
 	 * @return
 	 */
 	@Transactional
-    public Result updateFavouriteCategoriesByDevice(String favouriteList,
-    		String deviceToken) {
-        return ok(deviceToken + favouriteList);
+	@ApiOperation(value="Update User Interests by device token")
+    public CompletionStage<Result> updateFavouriteCategoriesByDevice(String favouriteList, String deviceToken) {
+		return userService.updateUserInterest(deviceToken, favouriteList).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
     }
 	
 	/**

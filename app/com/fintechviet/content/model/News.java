@@ -1,5 +1,7 @@
 package com.fintechviet.content.model;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 /**
@@ -16,6 +18,7 @@ public class News {
     private NewsCategory newsCategory;
     private Integer noOfLike;
     private String status = "ACTIVE";
+    private Date createdDate;
 
     @Id
     @Column(name = "id")
@@ -97,8 +100,19 @@ public class News {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    
+    @Column(name = "createdDate")
+    @Temporal(TemporalType.TIMESTAMP) 
+    public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    @Override
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

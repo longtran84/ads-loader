@@ -1,5 +1,12 @@
 package com.fintechviet.content.dto;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 /**
  * Created by tungn on 9/14/2017.
  */
@@ -9,6 +16,7 @@ public class News {
     private String imageLink;
     private String link;
     private String newsCategoryCode;
+    private Date createdDate;
 
     public String getTitle() {
         return title;
@@ -49,4 +57,15 @@ public class News {
     public void setNewsCategoryCode(String newsCategoryCode) {
         this.newsCategoryCode = newsCategoryCode;
     }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+    
+    
+    
+    
 }
