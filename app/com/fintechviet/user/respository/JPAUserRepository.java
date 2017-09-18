@@ -8,13 +8,18 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.UserExecutionContext;
 import com.fintechviet.user.model.User;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import play.db.jpa.JPAApi;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+
+import java.util.ArrayList;
 
 public class JPAUserRepository implements UserRepository {
 	
@@ -124,10 +129,18 @@ public class JPAUserRepository implements UserRepository {
 		}
 		return interests;
 	}
-	private List<MobileUserInterestItems> updateUserInterest(EntityManager em, List<MobileUserInterestItems> interests){
+	private List<MobileUserInterestItems> updateUserInterest(EntityManager em, List<MobileUserInterestItems> interests) {
+		List<MobileUserInterestItems> returnList = new ArrayList<MobileUserInterestItems>();
 		for(MobileUserInterestItems interest: interests){
-			em.merge(interest);
+			try {
+				returnList.add(em.merge(interest));
+			} catch (Exception e) {
+				if(e.getCause() instanceof ConstraintViolationException){
+					interest.setErrorMessage("Already existed");
+					returnList.add(interest);		
+				}
+			}
 		}
-		return interests;
+		return returnList;
 	}
 }

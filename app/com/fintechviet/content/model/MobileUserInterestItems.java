@@ -10,6 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name = "user_mobile_interest")
@@ -23,6 +26,10 @@ public class MobileUserInterestItems {
     private Long mobileUserId;
 	@Column(name = "newsCategoryId")
     private Long newsCategoryId;
+	@JsonInclude()
+	@Transient
+	private String errorMessage;
+	
 	
     public MobileUserInterestItems() {
 	}
@@ -59,6 +66,15 @@ public class MobileUserInterestItems {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	
 	
 	
     
