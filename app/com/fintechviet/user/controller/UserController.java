@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 
-@Api
+@Api(value="User")
 public class UserController extends Controller {
 	private final UserService userService;
 	private final HttpExecutionContext ec;
