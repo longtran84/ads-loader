@@ -11,6 +11,7 @@ import javax.persistence.TemporalType;
  * Created by tungn on 9/14/2017.
  */
 public class News {
+    private long id;
     private String title;
     private String shortDescription;
     private String imageLink;
@@ -57,15 +58,20 @@ public class News {
     public void setNewsCategoryCode(String newsCategoryCode) {
         this.newsCategoryCode = newsCategoryCode;
     }
-	public Date getCreatedDate() {
-		return createdDate;
-	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-    
-    
-    
-    
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
