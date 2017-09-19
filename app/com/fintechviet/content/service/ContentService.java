@@ -28,7 +28,7 @@ public class ContentService {
 	 * 
 	 * @param deviceToken
 	 * @param mappedCateIds cates Id list mapped with startNewsIds
-	 * @param startNewsIds
+	 * @param mappedlastNewsIds
 	 * @return
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
@@ -66,6 +66,7 @@ public class ContentService {
 		List<News> newsDtoList = new ArrayList<>();
 		for(com.fintechviet.content.model.News news : newsModelList) {
 			News neDTO =  new News();
+			neDTO.setId(news.getId());
 			neDTO.setTitle(news.getTitle());
 			neDTO.setShortDescription(news.getShortDescription());
 			neDTO.setImageLink(news.getImageLink());

@@ -1,6 +1,6 @@
 package com.fintechviet.content.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fintechviet.content.dto.News;
 import com.fintechviet.content.dto.NewsResponse;
 import com.fintechviet.content.service.ContentService;
 import io.swagger.annotations.Api;
@@ -12,6 +12,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
@@ -31,9 +32,15 @@ public class ContentController extends Controller {
 	@ApiOperation(value = "Get news base on interests")
 	public CompletionStage<Result> getNewsByCategories(String deviceToken, String cateIds, String lastNewsIds)
 			throws InterruptedException, ExecutionException {
-		return contentService.getNewsByUserInterest(deviceToken, cateIds, lastNewsIds).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+		return contentService.getNewsByUserInterest(deviceToken, cateIds, lastNewsIds).thenApplyAsync(newsList -> {
+			return created(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
+	}
+
+	private NewsResponse buildNewsResponse(List<News> newsList) {
+		NewsResponse response = new NewsResponse();
+		response.setNewsList(newsList);
+		return response;
 	}
 
 	public CompletionStage<Result> saveImpression() {
