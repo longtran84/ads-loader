@@ -4,11 +4,9 @@ import javax.inject.Inject;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.dto.Reward;
-import com.fintechviet.user.model.User;
 import com.fintechviet.user.respository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +35,7 @@ public class UserService {
 
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
 		return userRepository.getUserInfo(deviceToken).thenApplyAsync(user -> {
-			return new com.fintechviet.user.dto.User(user.getEmail(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning());
+			return new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode());
 		}, ec.current());
 	}
 
@@ -69,6 +67,10 @@ public class UserService {
 			interestsList.add(interest);
 		}
 		return supplyAsync(() -> userRepository.updateUserInterest(deviceToken, interestsList)) ;
+	}
+
+	public CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode){
+		return userRepository.updateInviteCode(deviceToken, inviteCode);
 	}
 
 }
