@@ -54,4 +54,13 @@ public class ContentController extends Controller {
 			return created(Json.toJson(response));
 		}, ec.current());
 	}
+	
+	@Transactional
+	@ApiOperation(value = "Get categories list")
+	public CompletionStage<Result> getCategoriesList()
+			throws InterruptedException, ExecutionException {
+		return contentService.getCategoriesList().thenApplyAsync(list -> {
+			return created(Json.toJson(buildNewsResponse(list)));
+		}, ec.current());
+	}
 }

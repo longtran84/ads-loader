@@ -1,6 +1,7 @@
 package com.fintechviet.content.service;
 
 import com.fintechviet.content.dto.News;
+import com.fintechviet.content.dto.NewsCategory;
 import com.fintechviet.content.respository.ContentRepository;
 
 import javax.inject.Inject;
@@ -76,6 +77,26 @@ public class ContentService {
 			newsDtoList.add(neDTO);
 		}
 		return newsDtoList;
+	}
+	
+	public List<NewsCategory> getCategoriesList(){
+		CompletableFuture<List<com.fintechviet.content.model.NewsCategory>> cateListFuture =  
+				supplyAsync(() -> contentRepository.getAllCategories());
+		List<NewsCategory> cateList = cateListFuture.get();
+		return cateList != null ?  convertCategoriesToDto(cateList) : null
+		
+	}
+	
+	private List<NewsCategory> convertCategoriesToDto(List<com.fintechviet.content.model.NewsCategory> categoriesList){
+		List<News> categoryDtoList = new ArrayList<>();
+		for(com.fintechviet.content.model.NewsCategory cate : categoriesList) {
+			NewsCategory cateDto =  new NewsCategory();
+			cateDto.setCode(cate.getCode());
+			cateDto.setName(cate.getName());
+			cateDto.setImageFile(cate.getImage());
+			categoryDtoList.add(cateDto);
+		}
+		return categoryDtoList;
 	}
 	
 

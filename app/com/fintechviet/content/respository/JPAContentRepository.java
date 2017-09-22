@@ -100,5 +100,15 @@ public class JPAContentRepository implements ContentRepository {
         });
         
 	}
+    
+    @Override
+    List<NewsCategory> getAllCategories{
+        return wrap(em -> {
+            String queryStr = "SELECT c FROM NewsCategory c "
+            Query query = em.createQuery(queryStr);
+            return  (List<NewsCategory>)query.getResultList();
+        });
+        
+	}
 
 }

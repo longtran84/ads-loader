@@ -8,6 +8,7 @@ import java.util.List;
 public class NewsCategory {
     private String code;
     private String name;
+    private String imageFile;
     List<News> newsList;
 
     public String getCode() {
@@ -33,4 +34,14 @@ public class NewsCategory {
     public void setNewsList(List<News> newsList) {
         this.newsList = newsList;
     }
+    
+    public String getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(String imageFile) {
+        this.imageFile = imageFile;
+    }
+    
+    
 }
