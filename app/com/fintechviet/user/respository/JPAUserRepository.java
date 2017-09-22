@@ -1,6 +1,8 @@
 package com.fintechviet.user.respository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
@@ -8,12 +10,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.fintechviet.user.model.User;
+import com.fintechviet.user.model.UserDeviceToken;
 import org.hibernate.exception.ConstraintViolationException;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.UserExecutionContext;
-import com.fintechviet.user.model.User;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import play.db.jpa.JPAApi;
 
@@ -25,6 +27,7 @@ public class JPAUserRepository implements UserRepository {
 	
     private final JPAApi jpaApi;
 	private final UserExecutionContext ec;
+	private static String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 	
     @Inject
     public JPAUserRepository(JPAApi jpaApi, UserExecutionContext ec) {
@@ -36,13 +39,6 @@ public class JPAUserRepository implements UserRepository {
 		return jpaApi.withTransaction(function);
 	}
 
-
-	public List findByUsername(String username) {
-		System.out.println("Query for user by username");
-		List<User> persons = jpaApi.em().createQuery("select p from Person p", User.class).getResultList();
-		return persons;
-	}
-
 	@Override
 	public CompletionStage<User> getUserInfo(String deviceToken) {
 		return supplyAsync(() -> wrap(em -> findByDeviceToken(em, deviceToken)), ec);
@@ -50,7 +46,7 @@ public class JPAUserRepository implements UserRepository {
 
 	private User findByDeviceToken(EntityManager em, String deviceToken) {
 		User user = null;
-		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.deviceToken = :deviceToken", User.class)
+		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
 				               .setParameter("deviceToken", deviceToken).getResultList();
 		if (!users.isEmpty()) {
 			user = users.get(0);
@@ -64,7 +60,7 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	private List<Object[]> getRewardInfo(EntityManager em, String deviceToken) {
-		List<Object[]> rewardInfo= em.createQuery("SELECT ed.event, SUM(ed.amount) FROM EarningDetails ed WHERE ed.user.deviceToken = :deviceToken")
+		List<Object[]> rewardInfo= em.createQuery("SELECT ed.event, SUM(ed.amount) FROM EarningDetails ed WHERE ed.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
 				.setParameter("deviceToken", deviceToken).getResultList();
 		return rewardInfo;
 	}
@@ -74,19 +70,37 @@ public class JPAUserRepository implements UserRepository {
 		return supplyAsync(() -> wrap(em -> updateUserInfo(em, deviceToken, email, gender, dob, location)), ec);
 	}
 
-	private String updateUserInfo(EntityManager em, String deviceToken, String email, String gender, int dob, String location) {
+	private String updateUserInfo(EntityManager em, String deviceToken, String username, String gender, int dob, String location) {
     	User user = findByDeviceToken(em, deviceToken);
     	if (user == null) {
 			user = new User();
-			user.setDeviceToken(deviceToken);
-			user.setEmail(email);
+			user.setUsername(username);
 			user.setGender(gender);
 			user.setDob(dob);
 			user.setLocation(location);
+			user.setEarning(2000l);
+			String inviteCode = generateRandomChars(CHARACTERS, 8);
+			List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
+					.setParameter("inviteCode", inviteCode).getResultList();
+			User u = null;
+			if (!users.isEmpty()) {
+				u = users.get(0);
+			}
+			while(u != null) {
+				inviteCode = generateRandomChars(CHARACTERS, 8);
+				users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
+						.setParameter("inviteCode", inviteCode).getResultList();
+				if (!users.isEmpty()) {
+					u = users.get(0);
+				}
+			}
+			user.setInviteCode(inviteCode);
+			UserDeviceToken userDeviceToken = new UserDeviceToken();
+			userDeviceToken.setDeviceToken(deviceToken);
+			user.addDeviceToken(userDeviceToken);
 			em.persist(user);
 		} else {
-			user.setDeviceToken(deviceToken);
-			user.setEmail(email);
+			user.setUsername(username);
 			user.setGender(gender);
 			user.setDob(dob);
 			user.setLocation(location);
@@ -95,25 +109,52 @@ public class JPAUserRepository implements UserRepository {
 		return "ok";
 	}
 
+	public static String generateRandomChars(String candidateChars, int length) {
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+		for (int i = 0; i < length; i++) {
+			sb.append(candidateChars.charAt(random.nextInt(candidateChars
+					.length())));
+		}
+
+		return sb.toString();
+	}
+
 	@Override
 	public CompletionStage<String> updateReward(String deviceToken, String event, long point) {
 		return supplyAsync(() -> wrap(em -> updateReward(em, deviceToken, event, point)), ec);
 	}
 
 	private String updateReward(EntityManager em, String deviceToken, String event, long point) {
-		int updateUserEarningCount = em.createQuery("UPDATE User SET earning = earning + :point WHERE deviceToken = :deviceToken")
+		int updateUserEarningCount = em.createQuery("UPDATE User u SET u.earning = u.earning + :point WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
 				      .setParameter("point", point).setParameter("deviceToken", deviceToken).executeUpdate();
 
-		int updateEarningDetailCount = em.createQuery("UPDATE EarningDetails SET amount = amount + :point WHERE event = :event")
+		int updateEarningDetailCount = em.createQuery("UPDATE EarningDetails ed SET ed.amount = ed.amount + :point WHERE ed.event = :event AND ed.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
 				.setParameter("point", point).setParameter("event", event).executeUpdate();
 		return "ok";
 	}
 
 	@Override
+	public CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode) {
+		return supplyAsync(() -> wrap(em -> updateInviteCode(em, deviceToken, inviteCode)), ec);
+	}
+	private String updateInviteCode(EntityManager em, String deviceToken, String inviteCode) {
+		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
+				.setParameter("inviteCode", inviteCode).getResultList();
+		if (!users.isEmpty()) {
+			em.createQuery("UPDATE User u SET u.inviteCodeUsed = :inviteCode WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
+					.setParameter("deviceToken", deviceToken).setParameter("inviteCode", inviteCode).executeUpdate();
+			return "ok";
+		} else {
+			return "InviteCode invalid";
+		}
+	}
+
+	@Override
 	public Long getUserIdByDeviceToken(String deviceToken) {
     	return wrap(em -> {
-			String queryStr = "SELECT id FROM User where deviceToken = '" + deviceToken + "'";
-			Query query = em.createQuery(queryStr);
+			String queryStr = "SELECT u.id FROM User u where u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)";
+			Query query = em.createQuery(queryStr).setParameter("deviceToken", deviceToken);
 			return  (Long)query.getSingleResult();
 
 		});

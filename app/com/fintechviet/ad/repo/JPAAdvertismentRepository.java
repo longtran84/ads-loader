@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import com.fintechviet.ad.AdExecutionContext;
-import com.fintechviet.ad.model.*;
 
 import com.fintechviet.ad.model.Ad;
 import com.fintechviet.ad.model.AdClicks;
@@ -75,7 +74,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     private String saveClick(EntityManager em, long adId, String deviceToken) {
         AdClicks click = new AdClicks();
-        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.deviceToken = :deviceToken", User.class)
+        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
                 .setParameter("deviceToken", deviceToken).getSingleResult();
         Ad ad = jpaApi.em().find(Ad.class, adId);
         click.setUser(user);
@@ -91,7 +90,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     private String saveView(EntityManager em, long adId, String deviceToken) {
         AdViews view = new AdViews();
-        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.deviceToken = :deviceToken", User.class)
+        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
                 .setParameter("deviceToken", deviceToken).getSingleResult();
         Ad ad = jpaApi.em().find(Ad.class, adId);
         view.setUser(user);

@@ -70,9 +70,21 @@ public class UserController extends Controller {
 		return userService.updateReward(deviceToken, event, addedPoint).thenApplyAsync(response -> {
 			return created(Json.toJson(response));
 		}, ec.current());
-    }	
-	
-	
+    }
+
+	/**
+	 *
+	 * @param deviceToken
+	 * @param inviteCode
+	 * @return
+	 */
+	public CompletionStage<Result> updateInviteCode(String deviceToken,
+												String inviteCode) {
+		return userService.updateInviteCode(deviceToken, inviteCode).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
+	}
+
 	//Pull from DB
 	
 	/**

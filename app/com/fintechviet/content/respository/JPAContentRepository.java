@@ -94,8 +94,8 @@ public class JPAContentRepository implements ContentRepository {
 	public List<Long> getNumberOfUserInterest(String deviceToken){
         return wrap(em -> {
             String queryStr = "SELECT i.newsCategoryId FROM MobileUserInterestItems i WHERE i.mobileUserId = "
-            		+ "(SELECT u.id FROM User u WHERE u.deviceToken = '" + deviceToken + "')";
-            Query query = em.createQuery(queryStr);
+            		+ "(SELECT u.id FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken))";
+            Query query = em.createQuery(queryStr).setParameter("deviceToken", deviceToken);
             return  (List<Long>)query.getResultList();
         });
         

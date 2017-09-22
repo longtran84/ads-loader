@@ -1,156 +1,191 @@
 package com.fintechviet.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fintechviet.content.model.NewsCategory;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
- * Created by tungn on 9/12/2017.
+ * Created by tungn on 9/21/2017.
  */
 @Entity
 @Table(name = "user_mobile")
 public class User {
-	private long id;
-	private String deviceToken;
-	private String email;
-	private String gender;
-	private Integer dob;
-	private String location;
-	private long earning;
-	private String status = "ACTIVE";
-	private Date createdDate;
-	private Set<NewsCategory> newsCategories;
+    private long id;
+    private String username;
+    private String gender;
+    private int dob;
+    private String location;
+    private long earning;
+    private String inviteCode;
+    private String inviteCodeUsed;
+    private String status = "ACTIVE";
+    private Timestamp createdDate;
+    @JsonIgnoreProperties("userMobiles")
+    private Set<NewsCategory> newsCategories;
+    private List<UserDeviceToken> userMobileDeviceTokens = new ArrayList<UserDeviceToken>();
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long getId() {
-		return id;
-	}
+    public void addDeviceToken(UserDeviceToken userDeviceToken) {
+        userMobileDeviceTokens.add(userDeviceToken);
+        userDeviceToken.setUserMobile(this);
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public long getId() {
+        return id;
+    }
 
-	@Basic
-	@Column(name = "deviceToken")
-	public String getDeviceToken() {
-		return deviceToken;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setDeviceToken(String deviceToken) {
-		this.deviceToken = deviceToken;
-	}
+    @Basic
+    @Column(name = "username")
+    public String getUsername() {
+        return username;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@Basic
-	@Column(name = "email")
-	public String getEmail() {
-		return email;
-	}
+    @Basic
+    @Column(name = "gender")
+    public String getGender() {
+        return gender;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	@Basic
-	@Column(name = "gender")
-	public String getGender() {
-		return gender;
-	}
+    @Basic
+    @Column(name = "dob")
+    public int getDob() {
+        return dob;
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public void setDob(int dob) {
+        this.dob = dob;
+    }
 
-	@Basic
-	@Column(name = "dob")
-	public Integer getDob() {
-		return dob;
-	}
+    @Basic
+    @Column(name = "location")
+    public String getLocation() {
+        return location;
+    }
 
-	public void setDob(Integer dob) {
-		this.dob = dob;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	@Basic
-	@Column(name = "location")
-	public String getLocation() {
-		return location;
-	}
+    @Basic
+    @Column(name = "earning")
+    public long getEarning() {
+        return earning;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public void setEarning(long earning) {
+        this.earning = earning;
+    }
 
-	@Basic
-	@Column(name = "earning")
-	public long getEarning() {
-		return earning;
-	}
+    @Basic
+    @Column(name = "inviteCode")
+    public String getInviteCode() {
+        return inviteCode;
+    }
 
-	public void setEarning(long earning) {
-		this.earning = earning;
-	}
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
 
-	@Basic
-	@Column(name = "status")
-	public String getStatus() {
-		return status;
-	}
+    @Basic
+    @Column(name = "inviteCodeUsed")
+    public String getInviteCodeUsed() {
+        return inviteCodeUsed;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setInviteCodeUsed(String inviteCodeUsed) {
+        this.inviteCodeUsed = inviteCodeUsed;
+    }
 
-	@Basic
-	@Column(name = "createdDate", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    @Basic
+    @Column(name = "status")
+    public String getStatus() {
+        return status;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	@ManyToMany
-	@JoinTable(name = "user_mobile_interest", joinColumns = @JoinColumn(name = "uid"), inverseJoinColumns = @JoinColumn(name = "newsCategoryId"))
-	public Set<NewsCategory> getNewsCategories() {
-		return newsCategories;
-	}
+    @Basic
+    @Column(name = "createdDate", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setNewsCategories(Set<NewsCategory> newsCategories) {
-		this.newsCategories = newsCategories;
-	}
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @ManyToMany
+    @JoinTable(name = "user_mobile_interest", joinColumns = @JoinColumn(name = "uid"), inverseJoinColumns = @JoinColumn(name = "newsCategoryId"))
+    public Set<NewsCategory> getNewsCategories() {
+        return newsCategories;
+    }
 
-		User that = (User) o;
+    public void setNewsCategories(Set<NewsCategory> newsCategories) {
+        this.newsCategories = newsCategories;
+    }
 
-		if (id != that.id) return false;
-		if (earning != that.earning) return false;
-		if (email != null ? !email.equals(that.email) : that.email != null) return false;
-		if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
-		if (dob != null ? !dob.equals(that.dob) : that.dob != null) return false;
-		if (location != null ? !location.equals(that.location) : that.location != null) return false;
-		if (status != null ? !status.equals(that.status) : that.status != null) return false;
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userMobile", cascade = CascadeType.ALL)
+    public List<UserDeviceToken> getUserMobileDeviceToken() {
+        return userMobileDeviceTokens;
+    }
 
-		return true;
-	}
+    public void setUserMobileDeviceToken(List<UserDeviceToken> userMobileDeviceTokens) {
+        this.userMobileDeviceTokens = userMobileDeviceTokens;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	@Override
-	public int hashCode() {
-		int result = (int) (id ^ (id >>> 32));
-		result = 31 * result + (email != null ? email.hashCode() : 0);
-		result = 31 * result + (gender != null ? gender.hashCode() : 0);
-		result = 31 * result + (dob != null ? dob.hashCode() : 0);
-		result = 31 * result + (location != null ? location.hashCode() : 0);
-		result = 31 * result + (status != null ? status.hashCode() : 0);
-		return result;
-	}
+        User that = (User) o;
+
+        if (id != that.id) return false;
+        if (earning != that.earning) return false;
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
+        if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        if (inviteCode != null ? !inviteCode.equals(that.inviteCode) : that.inviteCode != null) return false;
+        if (inviteCodeUsed != null ? !inviteCodeUsed.equals(that.inviteCodeUsed) : that.inviteCodeUsed != null) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (int) (earning ^ (earning >>> 32));
+        result = 31 * result + (inviteCode != null ? inviteCode.hashCode() : 0);
+        result = 31 * result + (inviteCodeUsed != null ? inviteCodeUsed.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        return result;
+    }
 }
