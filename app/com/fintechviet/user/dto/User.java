@@ -10,6 +10,10 @@ public class User {
     private String location;
     private long earning;
     private String inviteCode;
+    
+    public User(){
+    	
+    }
 
     public User(String email, String gender, int dob, String location, long earning, String inviteCode) {
         this.email = email;

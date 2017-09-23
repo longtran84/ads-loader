@@ -19,7 +19,7 @@ import com.fintechviet.ad.service.AdvertismentService;
 import io.swagger.annotations.*;
 
 
-@Api
+@Api(value="Advertisment")
 public class AdvertismentController extends Controller {
 	private static String DOMAIN = "http://10.0.2.2:9000";
 	private final AdvertismentService adsService;
@@ -63,7 +63,7 @@ public class AdvertismentController extends Controller {
 
 		return null;
 	}
-
+	@ApiOperation(value="Update Impression")
     public CompletionStage<Result> saveImpression(long adId) {
 		return adsService.saveImpression(adId).thenApplyAsync(response -> {
 			return created(Json.toJson(response));
