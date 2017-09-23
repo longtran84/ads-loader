@@ -13,8 +13,10 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Date;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import com.fintechviet.utils.DateUtils;
 
 @Api(value = "Content")
 public class ContentController extends Controller {
@@ -33,6 +35,16 @@ public class ContentController extends Controller {
 	public CompletionStage<Result> getNewsByCategories(String deviceToken, String cateIds, String lastNewsIds)
 			throws InterruptedException, ExecutionException {
 		return contentService.getNewsByUserInterest(deviceToken, cateIds, lastNewsIds).thenApplyAsync(newsList -> {
+			return created(Json.toJson(buildNewsResponse(newsList)));
+		}, ec.current());
+	}
+
+	@Transactional
+	@ApiOperation(value = "Get news base on interests 2")
+	public CompletionStage<Result> getNewsByCategories2(String deviceToken, String fromDate, String toDate)
+			throws InterruptedException, ExecutionException {
+		String format = "yyyy-MM-dd HH:mm:ss";
+		return contentService.getNewsByUserInterest2(deviceToken, DateUtils.stringToDate(fromDate, format), DateUtils.stringToDate(toDate, format)).thenApplyAsync(newsList -> {
 			return created(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}

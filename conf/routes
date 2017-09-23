@@ -22,6 +22,7 @@ GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFav
 
 #Content
 POST /content/news/userInterest/:deviceToken/:cateIds/:lastNewsIds       com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, cateIds: String, lastNewsIds: String)
+GET /content/news/userInterest/:deviceToken/:fromDate/:toDate            com.fintechviet.content.controller.ContentController.getNewsByCategories2(deviceToken: String, fromDate: String, toDate: String)
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()

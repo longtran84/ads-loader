@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
@@ -18,7 +19,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class ContentService {
 	private final ContentRepository contentRepository;
-	static final int limitResult = 3;
+	static final int limitResult = 500;
 
 	@Inject
 	public ContentService(ContentRepository contentRepository){
@@ -98,7 +99,22 @@ public class ContentService {
 		}
 		return categoryDtoList;
 	}
-	
 
+	public CompletionStage<List<News>> getNewsByUserInterest2(String deviceToken, Date fromDate, Date toDate) throws InterruptedException, ExecutionException {
+		System.out.println("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEET:" + deviceToken);
+		List<Long> categoryList = contentRepository.getNumberOfUserInterest(deviceToken);
+		List<News> newList = new ArrayList<>();
+		List<CompletableFuture<List<com.fintechviet.content.model.News>>> pendingTask = new ArrayList<>();
+		for(int i =0; i< categoryList.size(); i++){
+			Long cateId = categoryList.get(i);
+			CompletableFuture<List<com.fintechviet.content.model.News>> newsTrunkFuture =
+					supplyAsync(() -> contentRepository.getNewsByUserInterest2(deviceToken, cateId, fromDate, toDate));
+			pendingTask.add(newsTrunkFuture);
+		}
+		for(CompletableFuture<List<com.fintechviet.content.model.News>> futureTask: pendingTask){
+			newList.addAll(convertToDto(futureTask.get()));
+		}
+		return supplyAsync(() -> newList);
+	}
 
 }

@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -21,6 +22,8 @@ import java.util.function.Function;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.util.ArrayList;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 public class JPAContentRepository implements ContentRepository {
 
@@ -95,7 +98,7 @@ public class JPAContentRepository implements ContentRepository {
 	public List<Long> getNumberOfUserInterest(String deviceToken){
         return wrap(em -> {
             String queryStr = "SELECT i.newsCategoryId FROM MobileUserInterestItems i WHERE i.mobileUserId = "
-            		+ "(SELECT u.id FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken))";
+            		+ "(SELECT t.userMobile.id FROM UserDeviceToken t WHERE t.deviceToken = :deviceToken)";
             Query query = em.createQuery(queryStr).setParameter("deviceToken", deviceToken);
             return  (List<Long>)query.getResultList();
         });
@@ -110,5 +113,34 @@ public class JPAContentRepository implements ContentRepository {
             return  (List<NewsCategory>)query.getResultList();
         });
 	}
+
+    @Override
+    public List<News> getNewsByUserInterest2(String deviceToken, Long cateId, Date fromDate, Date toDate) {
+        try {
+            List<News> newsList = new ArrayList<>();
+            newsList = wrap(em -> getNewsByUserInterestByTrunk2(em, deviceToken, cateId, fromDate, toDate));
+            System.out.println("return trunk of news list size: " + newsList.size());
+            return newsList;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<News> getNewsByUserInterestByTrunk2(EntityManager em, String deviceToken, Long cateId, Date fromDate, Date toDate){
+        String queryStr = "SELECT n from News n WHERE n.newsCategory.id = " + cateId;
+        queryStr += " AND n.createdDate > :fromDate ";
+        if(toDate != null){
+            queryStr += " AND n.createdDate < :toDate ";
+        }
+
+        Query query = em.createQuery(queryStr, News.class);
+                query.setParameter("fromDate", fromDate);
+        if(toDate != null){
+            query.setParameter("toDate", toDate);
+        }
+        return query.getResultList();
+    }
 
 }
