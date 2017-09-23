@@ -3,6 +3,7 @@ package com.fintechviet.ad.service;
 import javax.inject.Inject;
 
 import com.fintechviet.ad.model.Ad;
+import com.fintechviet.ad.model.AdImpressions;
 import com.fintechviet.ad.repo.AdvertismentRepository;
 
 import java.util.concurrent.CompletionStage;
@@ -20,7 +21,7 @@ public class AdvertismentService {
 		return advertismentRepository.findAdByTemplate(template);
 	}
 
-	public CompletionStage<String> saveImpression(long adId) {
+	public CompletionStage<AdImpressions> saveImpression(long adId) {
 		return advertismentRepository.saveImpression(adId);
 	}
 

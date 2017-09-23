@@ -54,17 +54,17 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
     }
 
     @Override
-    public CompletionStage<String> saveImpression(long adId) {
+    public CompletionStage<AdImpressions> saveImpression(long adId) {
         return supplyAsync(() -> wrap(em -> saveImpression(em, adId)), ec);
     }
 
-    private String saveImpression(EntityManager em, long adId) {
+    private AdImpressions saveImpression(EntityManager em, long adId) {
         AdImpressions impression = new AdImpressions();
         Ad ad = jpaApi.em().find(Ad.class, adId);
         impression.setAd(ad);
         impression.setImpression(1);
         em.persist(impression);
-        return "ok";
+        return impression;
     }
 
     @Override

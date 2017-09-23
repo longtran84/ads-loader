@@ -47,6 +47,7 @@ public class UserController extends Controller {
 	 * @param location
 	 * @return
 	 */
+	@ApiOperation(value="Update User Details")
     public CompletionStage<Result> updateUserInfo(String deviceToken,
 												  String email,
 												  String gender,
@@ -113,9 +114,10 @@ public class UserController extends Controller {
 	 * @param deviceToken
 	 * @return
 	 */
+	@ApiOperation(value="Get User Info By Device Token")
     public CompletionStage<Result> getUserInfo(String deviceToken) {
 		return userService.getUserInfo(deviceToken).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return response != null ? created(Json.toJson(response)) : ok("User Not Found");
 		}, ec.current());
     }
 	

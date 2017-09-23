@@ -35,7 +35,7 @@ public class UserService {
 
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
 		return userRepository.getUserInfo(deviceToken).thenApplyAsync(user -> {
-			return new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode());
+			return (user != null)? new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode()) : null;
 		}, ec.current());
 	}
 
