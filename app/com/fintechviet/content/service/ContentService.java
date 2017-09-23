@@ -26,36 +26,6 @@ public class ContentService {
 		this.contentRepository = contentRepository;
 	}
 
-	/**
-	 * 
-	 * @param deviceToken
-	 * @param mappedCateIds cates Id list mapped with startNewsIds
-	 * @param mappedlastNewsIds
-	 * @return
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
-	 */
-	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken, String mappedCateIds, String mappedlastNewsIds) throws InterruptedException, ExecutionException {
-		List<Long> categoryList = contentRepository.getNumberOfUserInterest(deviceToken);
-		int trunkSize = Math.round(limitResult/categoryList.size()); 
-		String[] newsIdsArray = mappedlastNewsIds.split(",");
-		String[] cateIdsArray = mappedCateIds.split(",");
-		List<News> newList = new ArrayList<>();
-		List<CompletableFuture<List<com.fintechviet.content.model.News>>> pendingTask = new ArrayList<>();
-		for(int i =0; i< categoryList.size(); i++){
-			Long cateId = categoryList.get(i);
-			int idx = Arrays.asList(cateIdsArray).indexOf(cateId.toString());
-			Long lastNewsId = (idx >= 0)? Long.valueOf(newsIdsArray[idx])  : null;
-			CompletableFuture<List<com.fintechviet.content.model.News>> newsTrunkFuture = 
-					supplyAsync(() -> contentRepository.getNewsByUserInterest(deviceToken, cateId, lastNewsId, trunkSize));
-			pendingTask.add(newsTrunkFuture);
-		}
-		for(CompletableFuture<List<com.fintechviet.content.model.News>> futureTask: pendingTask){
-			newList.addAll(convertToDto(futureTask.get()));
-		}
-		return supplyAsync(() -> newList);
-	}
-
 	public CompletionStage<String> saveImpression() {
 		return contentRepository.saveImpression();
 	}
@@ -100,20 +70,31 @@ public class ContentService {
 		return categoryDtoList;
 	}
 
-	public CompletionStage<List<News>> getNewsByUserInterest2(String deviceToken, Date fromDate, Date toDate) throws InterruptedException, ExecutionException {
-		System.out.println("TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEET:" + deviceToken);
+	/**
+	 * 
+	 * @param deviceToken
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken, Date fromDate, Date toDate) throws InterruptedException, ExecutionException {
+		long t0 = System.currentTimeMillis();
 		List<Long> categoryList = contentRepository.getNumberOfUserInterest(deviceToken);
 		List<News> newList = new ArrayList<>();
 		List<CompletableFuture<List<com.fintechviet.content.model.News>>> pendingTask = new ArrayList<>();
 		for(int i =0; i< categoryList.size(); i++){
 			Long cateId = categoryList.get(i);
 			CompletableFuture<List<com.fintechviet.content.model.News>> newsTrunkFuture =
-					supplyAsync(() -> contentRepository.getNewsByUserInterest2(deviceToken, cateId, fromDate, toDate));
+					supplyAsync(() -> contentRepository.getNewsByUserInterest(deviceToken, cateId, fromDate, toDate));
 			pendingTask.add(newsTrunkFuture);
 		}
 		for(CompletableFuture<List<com.fintechviet.content.model.News>> futureTask: pendingTask){
 			newList.addAll(convertToDto(futureTask.get()));
 		}
+		long t1 = System.currentTimeMillis();
+		System.out.println("Total time: " + (t1 - t0) );
 		return supplyAsync(() -> newList);
 	}
 

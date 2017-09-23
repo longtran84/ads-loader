@@ -5,6 +5,7 @@ import com.fintechviet.content.dto.NewsResponse;
 import com.fintechviet.content.service.ContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import play.data.validation.Constraints.Required;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
@@ -12,17 +13,22 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Date;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import com.fintechviet.utils.DateUtils;
+import com.typesafe.config.Optional;
 
 @Api(value = "Content")
 public class ContentController extends Controller {
 	private static String DOMAIN = "http://10.0.2.2:9000";
 	private HttpExecutionContext ec;
 	private ContentService contentService;
+	private static final String  dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	@Inject()
 	public ContentController(ContentService contentService, HttpExecutionContext ec) {
@@ -31,20 +37,12 @@ public class ContentController extends Controller {
 	}
 
 	@Transactional
-	@ApiOperation(value = "Get news base on interests")
-	public CompletionStage<Result> getNewsByCategories(String deviceToken, String cateIds, String lastNewsIds)
+	@ApiOperation(value = "Get News by Interests")
+	public CompletionStage<Result> getNewsByCategories(String deviceToken, String fromDate, String toDate)
 			throws InterruptedException, ExecutionException {
-		return contentService.getNewsByUserInterest(deviceToken, cateIds, lastNewsIds).thenApplyAsync(newsList -> {
-			return created(Json.toJson(buildNewsResponse(newsList)));
-		}, ec.current());
-	}
-
-	@Transactional
-	@ApiOperation(value = "Get news base on interests 2")
-	public CompletionStage<Result> getNewsByCategories2(String deviceToken, String fromDate, String toDate)
-			throws InterruptedException, ExecutionException {
-		String format = "yyyy-MM-dd HH:mm:ss";
-		return contentService.getNewsByUserInterest2(deviceToken, DateUtils.stringToDate(fromDate, format), DateUtils.stringToDate(toDate, format)).thenApplyAsync(newsList -> {
+		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.stringToDate(fromDate, dateFormat) : null;
+		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.stringToDate(toDate, dateFormat) : null;
+		return contentService.getNewsByUserInterest(deviceToken, from, to).thenApplyAsync(newsList -> {
 			return created(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}

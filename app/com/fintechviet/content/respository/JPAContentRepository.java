@@ -40,31 +40,6 @@ public class JPAContentRepository implements ContentRepository {
     private <T> T wrap(Function<EntityManager, T> function) {
         return jpaApi.withTransaction(function);
     }
-	
-	@Override
-    public List<News> getNewsByUserInterest(String deviceToken, Long cateId, Long lastNewsId, int offset) {
-        try {
-			List<News> newsList = new ArrayList<>();
-			newsList = wrap(em -> getNewsByUserInterestByTrunk(em, deviceToken, cateId, lastNewsId, offset));
-			System.out.println("return trunk of news list size: " + newsList.size());
-			return newsList;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return null;
-	}	
-	
-	private List<News> getNewsByUserInterestByTrunk(EntityManager em, String deviceToken, Long cateId, Long lastNewsId, int offset){
-        String queryStr = "SELECT n from News n WHERE n.newsCategory.id = " + cateId;
-        		if (null != lastNewsId){
-        			queryStr+= " AND n.id < " + lastNewsId; 
-        		}
-        		queryStr += " ORDER BY n.createdDate desc";
-        TypedQuery<News> query = em.createQuery(queryStr, News.class);
-        query.setMaxResults(offset);
-        return query.getResultList();
-	}	
 
     @Override
     public List<News> getNewsByAllCategories() {
@@ -115,11 +90,15 @@ public class JPAContentRepository implements ContentRepository {
 	}
 
     @Override
-    public List<News> getNewsByUserInterest2(String deviceToken, Long cateId, Date fromDate, Date toDate) {
+    public List<News> getNewsByUserInterest(String deviceToken, Long cateId, Date fromDate, Date toDate) {
         try {
+        	System.out.println("Start getting news for " + cateId);
+        	long t0 = System.currentTimeMillis();
             List<News> newsList = new ArrayList<>();
-            newsList = wrap(em -> getNewsByUserInterestByTrunk2(em, deviceToken, cateId, fromDate, toDate));
-            System.out.println("return trunk of news list size: " + newsList.size());
+            newsList = wrap(em -> getNewsByUserInterestByTrunk(em, deviceToken, cateId, fromDate, toDate));
+            System.out.println("news number of category " + cateId + " :" + newsList.size());
+            long t1 = System.currentTimeMillis();
+            System.out.println("query for  " + cateId + ":" + (t1 - t0) );
             return newsList;
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -128,7 +107,7 @@ public class JPAContentRepository implements ContentRepository {
         return null;
     }
 
-    private List<News> getNewsByUserInterestByTrunk2(EntityManager em, String deviceToken, Long cateId, Date fromDate, Date toDate){
+    private List<News> getNewsByUserInterestByTrunk(EntityManager em, String deviceToken, Long cateId, Date fromDate, Date toDate){
         String queryStr = "SELECT n from News n WHERE n.newsCategory.id = " + cateId;
         queryStr += " AND n.createdDate > :fromDate ";
         if(toDate != null){

@@ -14,8 +14,6 @@ public interface ContentRepository {
     CompletionStage<String> saveImpression();
     CompletionStage<String> saveClick();
 	List<Long> getNumberOfUserInterest(String deviceToken);
-	List<News> getNewsByUserInterest(String deviceToken, Long cateId, Long lastNewsId,
-			int offset);
 	List<NewsCategory> getAllCategories();
-	public List<News> getNewsByUserInterest2(String deviceToken, Long cateId, Date fromDate, Date toDate);
+	public List<News> getNewsByUserInterest(String deviceToken, Long cateId, Date fromDate, Date toDate);
 }
