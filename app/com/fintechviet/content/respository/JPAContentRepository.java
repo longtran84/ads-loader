@@ -4,6 +4,7 @@ import com.fintechviet.content.ContentExecutionContext;
 import com.fintechviet.content.model.ContentClicks;
 import com.fintechviet.content.model.ContentImpressions;
 import com.fintechviet.content.model.News;
+import com.fintechviet.content.model.NewsCategory;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 
@@ -102,13 +103,12 @@ public class JPAContentRepository implements ContentRepository {
 	}
     
     @Override
-    List<NewsCategory> getAllCategories{
+    public List<NewsCategory> getAllCategories(){
         return wrap(em -> {
-            String queryStr = "SELECT c FROM NewsCategory c "
+            String queryStr = "SELECT c FROM NewsCategory c ";
             Query query = em.createQuery(queryStr);
             return  (List<NewsCategory>)query.getResultList();
         });
-        
 	}
 
 }

@@ -79,16 +79,16 @@ public class ContentService {
 		return newsDtoList;
 	}
 	
-	public List<NewsCategory> getCategoriesList(){
+	public CompletionStage<List<NewsCategory>> getCategoriesList() throws InterruptedException, ExecutionException{
 		CompletableFuture<List<com.fintechviet.content.model.NewsCategory>> cateListFuture =  
 				supplyAsync(() -> contentRepository.getAllCategories());
-		List<NewsCategory> cateList = cateListFuture.get();
-		return cateList != null ?  convertCategoriesToDto(cateList) : null
+		List<com.fintechviet.content.model.NewsCategory> cateList = cateListFuture.get();
+		return supplyAsync(() -> convertCategoriesToDto(cateList));
 		
 	}
 	
 	private List<NewsCategory> convertCategoriesToDto(List<com.fintechviet.content.model.NewsCategory> categoriesList){
-		List<News> categoryDtoList = new ArrayList<>();
+		List<NewsCategory> categoryDtoList = new ArrayList<>();
 		for(com.fintechviet.content.model.NewsCategory cate : categoriesList) {
 			NewsCategory cateDto =  new NewsCategory();
 			cateDto.setCode(cate.getCode());

@@ -1,6 +1,7 @@
 package com.fintechviet.content.respository;
 
 import com.fintechviet.content.model.News;
+import com.fintechviet.content.model.NewsCategory;
 import com.google.inject.ImplementedBy;
 
 import java.util.List;

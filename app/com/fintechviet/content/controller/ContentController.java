@@ -60,7 +60,7 @@ public class ContentController extends Controller {
 	public CompletionStage<Result> getCategoriesList()
 			throws InterruptedException, ExecutionException {
 		return contentService.getCategoriesList().thenApplyAsync(list -> {
-			return created(Json.toJson(buildNewsResponse(list)));
+			return created(Json.toJson(list));
 		}, ec.current());
 	}
 }
