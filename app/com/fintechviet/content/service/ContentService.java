@@ -96,6 +96,8 @@ public class ContentService {
 	 * @throws ExecutionException
 	 */
 	public CompletionStage<List<News>> getNewsByUserInterest(String deviceToken, Date fromDate, Date toDate) throws InterruptedException, ExecutionException {
+		String parentThreadName = Thread.currentThread().getName();
+		System.out.println("["+ parentThreadName +"] Started ");
 		long t0 = System.currentTimeMillis();
 		List<Long> categoryList = contentRepository.getNumberOfUserInterest(deviceToken);
 		List<News> newList = new ArrayList<>();
@@ -110,9 +112,11 @@ public class ContentService {
 			newList.addAll(convertToDto(futureTask.get()));
 		}
 		long t1 = System.currentTimeMillis();
-		System.out.println("Total time: " + (t1 - t0) );
+		System.out.println("["+ parentThreadName +"]Total time: " + (t1 - t0) );
 		return supplyAsync(() -> newList);
 	}
+	
+
 
 
 	public List<News> getNewsFromCrawler(List<String> interest, Date fromDate, Date toDate, Integer pageIndex) {

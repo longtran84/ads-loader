@@ -36,7 +36,6 @@ public class ContentController extends Controller {
 		this.ec = ec;
 	}
 
-	@Transactional
 	@ApiOperation(value = "Get News by Interests")
 	public CompletionStage<Result> getNewsByCategories(String deviceToken, String fromDate, String toDate)
 			throws InterruptedException, ExecutionException {
