@@ -35,7 +35,7 @@ public class ContentService {
 	private static String IMAGE_LINK = "AnhDaiDien";
 	private static String PUBLISH_DATE = "NgayDangTin";
 	private static String CRAWLER_DATE = "NgayCrawler";
-	private static int ROWS = 100;
+	private static int ROWS = 30;
 
 	@Inject
 	public ContentService(ContentRepository contentRepository){
@@ -119,18 +119,18 @@ public class ContentService {
 
 
 
-	public List<News> getNewsFromCrawler(List<String> interest, Date fromDate, Date toDate, Integer pageIndex) {
-		String startTime = DateUtils.convertDateToStringUTC(fromDate);
-		String endTime = DateUtils.convertDateToStringUTC(toDate);
+	public List<News> getNewsFromCrawler(List<String> interest, Integer pageIndex) {
+//		String startTime = DateUtils.convertDateToStringUTC(fromDate);
+//		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<News> newsList = new ArrayList<>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
 			String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interest);
 			SolrQuery query = new SolrQuery();
 			query.setQuery(queryStr);
-			String filterQueryStr = CRAWLER_DATE + ":[" + startTime + " TO " + endTime + "]";
-			filterQueryStr = filterQueryStr.replaceAll("\\+", "");
-			query.addFilterQuery(filterQueryStr);
+//			String filterQueryStr = CRAWLER_DATE + ":[" + startTime + " TO " + endTime + "]";
+//			filterQueryStr = filterQueryStr.replaceAll("\\+", "");
+//			query.addFilterQuery(filterQueryStr);
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * ROWS);
 			query.setRows(ROWS);
@@ -174,15 +174,13 @@ public class ContentService {
 	/**
 	 *
 	 * @param deviceToken
-	 * @param fromDate
-	 * @param toDate
 	 * @return
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Date fromDate, Date toDate, Integer page) throws InterruptedException, ExecutionException {
+	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Integer page) throws InterruptedException, ExecutionException {
 		List<String> categoryList = contentRepository.getUserInterests(deviceToken);
-		return supplyAsync(() -> getNewsFromCrawler(categoryList, fromDate, toDate, page));
+		return supplyAsync(() -> getNewsFromCrawler(categoryList, page));
 	}
 
 }
