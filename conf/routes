@@ -22,7 +22,8 @@ GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFav
 
 #Content
 GET /content/news/interest/:deviceToken            					     com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, fromDate: String, toDate: String ?= null)
-GET /content/news_crawler/interest/:deviceToken            				 com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler(deviceToken: String, page: String)
+GET /content/news_crawler/interest/:deviceToken            			     com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler(deviceToken: String, page: String)
+GET /content/news_crawler/interest            				             com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler1(interests: String, page: String)
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()

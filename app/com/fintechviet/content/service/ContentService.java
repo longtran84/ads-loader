@@ -115,17 +115,67 @@ public class ContentService {
 		System.out.println("["+ parentThreadName +"]Total time: " + (t1 - t0) );
 		return supplyAsync(() -> newList);
 	}
-	
 
-
-
-	public List<News> getNewsFromCrawler(List<String> interest, Integer pageIndex) {
+	public List<News> getNewsFromCrawler(List<String> interests, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<News> newsList = new ArrayList<>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
-			String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interest);
+			String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
+			SolrQuery query = new SolrQuery();
+			query.setQuery(queryStr);
+//			String filterQueryStr = CRAWLER_DATE + ":[" + startTime + " TO " + endTime + "]";
+//			filterQueryStr = filterQueryStr.replaceAll("\\+", "");
+//			query.addFilterQuery(filterQueryStr);
+			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
+			query.setStart((pageIndex - 1) * ROWS);
+			query.setRows(ROWS);
+			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.set("defType", "edismax");
+
+			QueryResponse response = client.query(query);
+			SolrDocumentList results = response.getResults();
+
+			for (SolrDocument document : results) {
+				News news = new News();
+				for (Iterator<Map.Entry<String, Object>> i = document.iterator(); i.hasNext();) {
+					Map.Entry<String, Object> element = i.next();
+					String key = element.getKey().toString();
+					String value = element.getValue().toString();
+					if (ID.equals(key)) {
+						news.setId(Long.valueOf(value));
+					} else if(CATEGORY_CODE.equals(key)) {
+						news.setNewsCategoryCode(value);
+					} else if(TITLE.equals(key)) {
+						news.setTitle(value);
+					} else if(CONTENT.equals(key)) {
+						news.setShortDescription(value);
+					} else if(LINK.equals(key)) {
+						news.setLink(value);
+					} else if(IMAGE_LINK.equals(key)) {
+						value = value.replaceAll("localhost", "222.252.16.132");
+						news.setImageLink(value);
+					} else if(CRAWLER_DATE.equals(key)) {
+						news.setCreatedDate((Date)element.getValue());
+					}
+				}
+				newsList.add(news);
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return newsList;
+	}
+
+	public List<News> getNewsFromCrawler1(String interests, Integer pageIndex) {
+//		String startTime = DateUtils.convertDateToStringUTC(fromDate);
+//		String endTime = DateUtils.convertDateToStringUTC(toDate);
+		List<News> newsList = new ArrayList<>();
+		try {
+			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
+			//String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
+			String queryStr = CATEGORY_CODE + ":" + interests;
 			SolrQuery query = new SolrQuery();
 			query.setQuery(queryStr);
 //			String filterQueryStr = CRAWLER_DATE + ":[" + startTime + " TO " + endTime + "]";
@@ -183,4 +233,14 @@ public class ContentService {
 		return supplyAsync(() -> getNewsFromCrawler(categoryList, page));
 	}
 
+	/**
+	 *
+	 * @param interests
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler1(String interests, Integer page) throws InterruptedException, ExecutionException {
+		return supplyAsync(() -> getNewsFromCrawler1(interests, page));
+	}
 }
