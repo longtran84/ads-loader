@@ -16,4 +16,5 @@ public interface ContentRepository {
 	List<Long> getNumberOfUserInterest(String deviceToken);
 	List<NewsCategory> getAllCategories();
 	public List<News> getNewsByUserInterest(String deviceToken, Long cateId, Date fromDate, Date toDate);
+    List<String> getUserInterests(String deviceToken);
 }

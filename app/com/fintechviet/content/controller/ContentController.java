@@ -39,9 +39,20 @@ public class ContentController extends Controller {
 	@ApiOperation(value = "Get News by Interests")
 	public CompletionStage<Result> getNewsByCategories(String deviceToken, String fromDate, String toDate)
 			throws InterruptedException, ExecutionException {
-		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.stringToDate(fromDate, dateFormat) : null;
-		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.stringToDate(toDate, dateFormat) : null;
+		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.convertStringToDate2(fromDate) : null;
+		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
 		return contentService.getNewsByUserInterest(deviceToken, from, to).thenApplyAsync(newsList -> {
+			return created(Json.toJson(buildNewsResponse(newsList)));
+		}, ec.current());
+	}
+
+	@ApiOperation(value = "Get News by Interests from crawler")
+	public CompletionStage<Result> getNewsByCategoriesFromCrawler(String deviceToken, String fromDate, String toDate, String page)
+			throws InterruptedException, ExecutionException {
+		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.convertStringToDate2(fromDate) : null;
+		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
+		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
+		return contentService.getNewsByUserInterestFromCrawler(deviceToken, from, to, pageIndex).thenApplyAsync(newsList -> {
 			return created(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}

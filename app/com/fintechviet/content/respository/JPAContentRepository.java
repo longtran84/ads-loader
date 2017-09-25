@@ -79,6 +79,17 @@ public class JPAContentRepository implements ContentRepository {
         });
         
 	}
+
+    @Override
+    public List<String> getUserInterests(String deviceToken) {
+        return wrap(em -> {
+            String queryStr = "SELECT nc.code FROM NewsCategory nc WHERE nc.id IN (SELECT i.newsCategoryId FROM MobileUserInterestItems i WHERE i.mobileUserId = "
+                    + "(SELECT t.userMobile.id FROM UserDeviceToken t WHERE t.deviceToken = :deviceToken))";
+            Query query = em.createQuery(queryStr).setParameter("deviceToken", deviceToken);
+            return  (List<String>)query.getResultList();
+        });
+
+    }
     
     @Override
     public List<NewsCategory> getAllCategories(){
