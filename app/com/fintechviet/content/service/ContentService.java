@@ -17,6 +17,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.jsoup.Jsoup;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -150,7 +151,7 @@ public class ContentService {
 					} else if(TITLE.equals(key)) {
 						news.setTitle(value);
 					} else if(CONTENT.equals(key)) {
-						news.setShortDescription(value);
+						news.setShortDescription(Jsoup.parse(value).text());
 					} else if(LINK.equals(key)) {
 						news.setLink(value);
 					} else if(IMAGE_LINK.equals(key)) {
@@ -203,7 +204,7 @@ public class ContentService {
 					} else if(TITLE.equals(key)) {
 						news.setTitle(value);
 					} else if(CONTENT.equals(key)) {
-						news.setShortDescription(value);
+						news.setShortDescription(Jsoup.parse(value).text());
 					} else if(LINK.equals(key)) {
 						news.setLink(value);
 					} else if(IMAGE_LINK.equals(key)) {
