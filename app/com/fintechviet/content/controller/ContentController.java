@@ -74,12 +74,14 @@ public class ContentController extends Controller {
 		return response;
 	}
 
+	@ApiOperation(value = "Save content impression")
 	public CompletionStage<Result> saveImpression() {
 		return contentService.saveImpression().thenApplyAsync(response -> {
 			return created(Json.toJson(response));
 		}, ec.current());
 	}
 
+	@ApiOperation(value = "Save content click")
 	public CompletionStage<Result> saveClick() {
 		return contentService.saveClick().thenApplyAsync(response -> {
 			return created(Json.toJson(response));

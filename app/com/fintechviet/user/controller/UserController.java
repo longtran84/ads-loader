@@ -65,6 +65,7 @@ public class UserController extends Controller {
 	 * @param addedPoint
 	 * @return
 	 */
+	@ApiOperation(value="Update User Reward")
     public CompletionStage<Result> updateReward(String deviceToken,
 							   String event,
     		                   Long addedPoint) {
@@ -79,6 +80,7 @@ public class UserController extends Controller {
 	 * @param inviteCode
 	 * @return
 	 */
+	@ApiOperation(value="Update Invite code")
 	public CompletionStage<Result> updateInviteCode(String deviceToken,
 												String inviteCode) {
 		return userService.updateInviteCode(deviceToken, inviteCode).thenApplyAsync(response -> {
@@ -126,7 +128,7 @@ public class UserController extends Controller {
 	 * @param deviceToken
 	 * @return
 	 */
-	@Transactional
+	@ApiOperation(value="Get User Reward Info")
     public CompletionStage<Result> getRewardInfo(String deviceToken) {
 		return userService.getRewardInfo(deviceToken).thenApplyAsync(response -> {
 			return created(Json.toJson(response));

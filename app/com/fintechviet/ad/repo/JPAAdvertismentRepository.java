@@ -10,10 +10,7 @@ import javax.persistence.EntityManager;
 
 import com.fintechviet.ad.AdExecutionContext;
 
-import com.fintechviet.ad.model.Ad;
-import com.fintechviet.ad.model.AdClicks;
-import com.fintechviet.ad.model.AdImpressions;
-import com.fintechviet.ad.model.AdViews;
+import com.fintechviet.ad.model.*;
 import com.fintechviet.user.model.User;
 import play.db.jpa.JPAApi;
 
@@ -60,7 +57,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     private AdImpressions saveImpression(EntityManager em, long adId) {
         AdImpressions impression = new AdImpressions();
-        Ad ad = jpaApi.em().find(Ad.class, adId);
+        Ad ad = em.find(Ad.class, adId);
         impression.setAd(ad);
         impression.setImpression(1);
         em.persist(impression);
@@ -74,7 +71,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     private String saveClick(EntityManager em, long adId, String deviceToken) {
         AdClicks click = new AdClicks();
-        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
+        User user = em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
                 .setParameter("deviceToken", deviceToken).getSingleResult();
         Ad ad = jpaApi.em().find(Ad.class, adId);
         click.setUser(user);
@@ -90,12 +87,24 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     private String saveView(EntityManager em, long adId, String deviceToken) {
         AdViews view = new AdViews();
-        User user = jpaApi.em().createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
+        User user = em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
                 .setParameter("deviceToken", deviceToken).getSingleResult();
-        Ad ad = jpaApi.em().find(Ad.class, adId);
+        Ad ad = em.find(Ad.class, adId);
         view.setUser(user);
         view.setAd(ad);
         em.persist(view);
         return "ok";
+    }
+
+    @Override
+    public CompletionStage<List<AppAd>> getListAppAd() {
+        return supplyAsync(() -> wrap(em -> getListAppAd(em)), ec);
+    }
+
+    private List<AppAd> getListAppAd(EntityManager em) {
+        List<AppAd> appAds = em.createQuery("SELECT apa FROM AppAd apa WHERE apa.campaign.startDate <= CURRENT_DATE AND (apa.campaign.endDate >= CURRENT_DATE OR apa.campaign.endDate IS NULL) " +
+                                      "AND apa.status = 'ACTIVE'")
+                .getResultList();
+        return appAds;
     }
 }
