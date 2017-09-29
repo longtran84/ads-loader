@@ -4,8 +4,10 @@ import javax.inject.Inject;
 
 import com.fintechviet.ad.model.Ad;
 import com.fintechviet.ad.model.AdImpressions;
+import com.fintechviet.ad.model.AppAd;
 import com.fintechviet.ad.repo.AdvertismentRepository;
 
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 
@@ -31,5 +33,9 @@ public class AdvertismentService {
 
 	public CompletionStage<String> saveView(long adId, String deviceToken) {
 		return advertismentRepository.saveView(adId, deviceToken);
+	}
+
+	public CompletionStage<List<AppAd>> getListAppAd() {
+		return advertismentRepository.getListAppAd();
 	}
 }
