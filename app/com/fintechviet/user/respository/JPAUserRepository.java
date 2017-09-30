@@ -13,6 +13,8 @@ import javax.persistence.Query;
 import com.fintechviet.user.model.EarningDetails;
 import com.fintechviet.user.model.User;
 import com.fintechviet.user.model.UserDeviceToken;
+
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
@@ -85,10 +87,10 @@ public class JPAUserRepository implements UserRepository {
     	User user = findByDeviceToken(em, deviceToken);
     	if (user == null) {
 			user = new User();
-			user.setUsername(username);
-			user.setGender(gender);
-			user.setDob(dob);
-			user.setLocation(location);
+			if(StringUtils.isNotEmpty(username)) user.setUsername(username);
+			if(StringUtils.isNotEmpty(gender)) user.setGender(gender);
+			if(dob > 0) user.setDob(dob);
+			if(StringUtils.isNotEmpty(location)) user.setLocation(location);
 			user.setEarning(2000l);
 			String inviteCode = generateRandomChars(CHARACTERS, 8);
 
@@ -104,10 +106,10 @@ public class JPAUserRepository implements UserRepository {
 			user.addDeviceToken(userDeviceToken);
 			em.persist(user);
 		} else {
-			user.setUsername(username);
-			user.setGender(gender);
-			user.setDob(dob);
-			user.setLocation(location);
+			if(StringUtils.isNotEmpty(username)) user.setUsername(username);
+			if(StringUtils.isNotEmpty(gender)) user.setGender(gender);
+			if(dob > 0) user.setDob(dob);
+			if(StringUtils.isNotEmpty(location)) user.setLocation(location);
 			em.merge(user);
 		}
 		return "ok";
