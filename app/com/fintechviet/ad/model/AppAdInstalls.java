@@ -1,4 +1,4 @@
-package com.fintechviet.ads.model;
+package com.fintechviet.ad.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -7,7 +7,7 @@ import java.sql.Timestamp;
  * Created by tungn on 9/28/2017.
  */
 @Entity
-@Table(name = "app_ad_installs", schema = "mobileads", catalog = "")
+@Table(name = "app_ad_installs")
 public class AppAdInstalls {
     private long id;
     private Long appAdId;

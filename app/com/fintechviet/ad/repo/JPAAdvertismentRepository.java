@@ -82,7 +82,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
     @Override
     public CompletionStage<String> saveView(long adId, String deviceToken) {
-        return supplyAsync(() -> wrap(em -> saveClick(em, adId, deviceToken)), ec);
+        return supplyAsync(() -> wrap(em -> saveView(em, adId, deviceToken)), ec);
     }
 
     private String saveView(EntityManager em, long adId, String deviceToken) {
@@ -106,5 +106,19 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
                                       "AND apa.status = 'ACTIVE'")
                 .getResultList();
         return appAds;
+    }
+
+    @Override
+    public CompletionStage<String> saveInstall(long appId, String deviceToken, String platform) {
+        return supplyAsync(() -> wrap(em -> saveInstall(em, appId, deviceToken, platform)), ec);
+    }
+
+    private String saveInstall(EntityManager em, long appId, String deviceToken, String platform) {
+        AppAdInstalls install = new AppAdInstalls();
+        install.setAppAdId(appId);
+        install.setDeviceToken(deviceToken);
+        install.setPlatform(platform);
+        em.persist(install);
+        return "ok";
     }
 }

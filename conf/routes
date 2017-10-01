@@ -34,4 +34,5 @@ GET /ad/impression/:adId                     com.fintechviet.ad.controller.Adver
 GET /ad/click                                com.fintechviet.ad.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)
 GET /ad/view                                 com.fintechviet.ad.controller.AdvertismentController.saveView(adId: Long, deviceToken: String)
 GET /ad/appAds                               com.fintechviet.ad.controller.AdvertismentController.getListAppAd()
+GET /ad/saveInstall                          com.fintechviet.ad.controller.AdvertismentController.saveInstall(appId: Long, deviceToken: String, platform: String)
 

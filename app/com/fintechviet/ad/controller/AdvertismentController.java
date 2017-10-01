@@ -105,6 +105,19 @@ public class AdvertismentController extends Controller {
     }
 
 	/**
+	 * @param appId
+	 * @param deviceToken
+	 * @param platform
+	 * @return
+	 */
+	@ApiOperation(value="Save view(platform=ios, android)")
+	public CompletionStage<Result> saveInstall(long appId, String deviceToken, String platform) {
+		return adsService.saveInstall(appId, deviceToken, platform).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
+	}
+
+	/**
 	 * @return
 	 */
 	@ApiOperation(value="Get list app ad")
