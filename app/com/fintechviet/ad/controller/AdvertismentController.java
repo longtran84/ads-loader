@@ -49,7 +49,7 @@ public class AdvertismentController extends Controller {
 			Content content = new Content();
 			decision.setAdId(ad.getId());
 			decision.setClickUrl("http://www.vnexpress.net");
-			if (template == "image") {
+			if (template.equals("image")) {
 				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + userId);
 				content.setImageUrl(ad.getCreative().getImageLink());;
 			} else {
