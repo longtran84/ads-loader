@@ -42,7 +42,7 @@ public class AdvertismentController extends Controller {
 		}, ec.current());
     }
 
-	private DecisionResponse buildAdResponse(Ad ad, String template, String userId) {
+	private DecisionResponse buildAdResponse(Ad ad, String template, String deviceToken) {
 		if (ad != null) {
 			DecisionResponse response = new DecisionResponse();
 			Decision decision = new Decision();
@@ -50,10 +50,10 @@ public class AdvertismentController extends Controller {
 			decision.setAdId(ad.getId());
 			decision.setClickUrl("http://www.vnexpress.net");
 			if (template.equals("image")) {
-				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + userId);
+				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setImageUrl(ad.getCreative().getImageLink());;
 			} else {
-				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&deviceToken=" + userId);
+				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setVideoUrl(ad.getCreative().getVideoLink());
 			}
 			decision.setImpressionUrl(DOMAIN + "/ad/impression/" + ad.getId());
@@ -101,6 +101,19 @@ public class AdvertismentController extends Controller {
 			return created(Json.toJson(response));
 		}, ec.current());
     }
+
+	/**
+	 * @param appId
+	 * @param deviceToken
+	 * @param platform
+	 * @return
+	 */
+	@ApiOperation(value="Save view(platform=ios, android)")
+	public CompletionStage<Result> saveInstall(long appId, String deviceToken, String platform) {
+		return adsService.saveInstall(appId, deviceToken, platform).thenApplyAsync(response -> {
+			return created(Json.toJson(response));
+		}, ec.current());
+	}
 
 	/**
 	 * @return

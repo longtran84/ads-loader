@@ -38,4 +38,8 @@ public class AdvertismentService {
 	public CompletionStage<List<AppAd>> getListAppAd() {
 		return advertismentRepository.getListAppAd();
 	}
+
+	public CompletionStage<String> saveInstall(long appId, String deviceToken, String platform) {
+		return advertismentRepository.saveInstall(appId, deviceToken, platform);
+	}
 }
