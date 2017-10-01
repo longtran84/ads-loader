@@ -36,31 +36,29 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Get ad")
-    public CompletionStage<Result> getAdPlacement() {
-		JsonNode json = request().body().asJson();
-		Request request = Json.fromJson(json, Request.class);
-		return adsService.findAdByTemplate(request.getPlacement().getTemplate()).thenApplyAsync(ad -> {
-			return created(Json.toJson(buildAdResponse(ad, request)));
+    public CompletionStage<Result> getAdPlacement(String template, String deviceToken) {
+		return adsService.findAdByTemplate(template).thenApplyAsync(ad -> {
+			return created(Json.toJson(buildAdResponse(ad, template, deviceToken)));
 		}, ec.current());
     }
 
-	private DecisionResponse buildAdResponse(Ad ad, Request request) {
+	private DecisionResponse buildAdResponse(Ad ad, String template, String userId) {
 		if (ad != null) {
 			DecisionResponse response = new DecisionResponse();
 			Decision decision = new Decision();
 			Content content = new Content();
 			decision.setAdId(ad.getId());
 			decision.setClickUrl("http://www.vnexpress.net");
-			if (request.getPlacement().getTemplate() == "image") {
-				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&userId=" + request.getUserId());
+			if (template == "image") {
+				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + userId);
 				content.setImageUrl(ad.getCreative().getImageLink());;
 			} else {
-				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&userId=" + request.getUserId());
+				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&deviceToken=" + userId);
 				content.setVideoUrl(ad.getCreative().getVideoLink());
 			}
 			decision.setImpressionUrl(DOMAIN + "/ad/impression/" + ad.getId());
 			content.setBody(ad.getCreative().getBody());
-			content.setTemplate(request.getPlacement().getTemplate());
+			content.setTemplate(template);
 			decision.setContent(content);
 			response.setDecision(decision);
 			return response;

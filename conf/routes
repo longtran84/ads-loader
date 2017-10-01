@@ -29,7 +29,7 @@ GET /content/click                                                       com.fin
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()
 
 #Advertisement
-GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement()
+GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement(template: String, deviceToken: String)
 GET /ad/impression/:adId                     com.fintechviet.ad.controller.AdvertismentController.saveImpression(adId: Long)
 GET /ad/click                                com.fintechviet.ad.controller.AdvertismentController.saveClick(adId: Long, deviceToken: String)
 GET /ad/view                                 com.fintechviet.ad.controller.AdvertismentController.saveView(adId: Long, deviceToken: String)
