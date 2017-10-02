@@ -10,8 +10,8 @@ GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger
 
 #User
 GET /user/interests/:favouriteList/:deviceToken                		 	 com.fintechviet.user.controller.UserController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
-GET /user/updateUserInfo/:deviceToken								     com.fintechviet.user.controller.UserController.updateUserInfo(deviceToken: String, email: String ?= "", gender: String ?= "", dob: Integer ?= 0, location: String ?= "")
-GET /user/updateUserReward/:deviceToken				                 	 com.fintechviet.user.controller.UserController.updateReward(deviceToken: String, event: String, addedPoint: Long)
+GET /user/updateUserInfo								                 com.fintechviet.user.controller.UserController.updateUserInfo(deviceToken: String, email: String ?= "", gender: String ?= "", dob: Integer ?= 0, location: String ?= "", inviteCode: String ?= "")
+GET /user/updateUserReward/:deviceToken				                 	 com.fintechviet.user.controller.UserController.updateReward(deviceToken: String, rewardCode: String, addedPoint: Long)
 GET /user/updateInviteCode/:deviceToken                      			 com.fintechviet.user.controller.UserController.updateInviteCode(deviceToken: String, inviteCode: String)
 GET /user/:deviceToken                                                   com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
 GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
@@ -27,6 +27,7 @@ GET /content/news_crawler/interest            				             com.fintechviet.c
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()
+GET /content/newsByAllCategories                                         com.fintechviet.content.controller.ContentController.getNewsByAllCategories()
 
 #Advertisement
 GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement(template: String, deviceToken: String)

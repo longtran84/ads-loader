@@ -4,15 +4,24 @@ package com.fintechviet.user.dto;
  * Created by tungn on 9/18/2017.
  */
 public class Reward {
-    private String event;
+    private String rewardCode;
+    private String rewardName;
     private long amount;
 
-    public String getEvent() {
-        return event;
+    public String getRewardCode() {
+        return rewardCode;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setRewardCode(String rewardCode) {
+        this.rewardCode = rewardCode;
+    }
+
+    public String getRewardName() {
+        return rewardName;
+    }
+
+    public void setRewardName(String rewardName) {
+        this.rewardName = rewardName;
     }
 
     public long getAmount() {

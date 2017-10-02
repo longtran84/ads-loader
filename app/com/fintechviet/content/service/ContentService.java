@@ -117,9 +117,43 @@ public class ContentService {
 		return supplyAsync(() -> newList);
 	}
 
-	public List<News> getNewsFromCrawler(List<String> interests, Integer pageIndex) {
+	private List<News> buildNewsList(SolrDocumentList results) {
+		List<News> newsList = new ArrayList<>();
+		for (SolrDocument document : results) {
+			News news = new News();
+			for (Iterator<Map.Entry<String, Object>> i = document.iterator(); i.hasNext();) {
+				Map.Entry<String, Object> element = i.next();
+				String key = element.getKey().toString();
+				String value = element.getValue().toString();
+				if (ID.equals(key)) {
+					news.setId(Long.valueOf(value));
+				} else if(CATEGORY_CODE.equals(key)) {
+					news.setNewsCategoryCode(value);
+				} else if(TITLE.equals(key)) {
+					news.setTitle(value);
+				} else if(CONTENT.equals(key)) {
+					news.setShortDescription(Jsoup.parse(value).text());
+				} else if(LINK.equals(key)) {
+					news.setLink(value);
+				} else if(IMAGE_LINK.equals(key)) {
+					value = value.replaceAll("localhost", "222.252.16.132");
+					news.setImageLink(value);
+				} else if(CRAWLER_DATE.equals(key)) {
+					news.setCreatedDate((Date)element.getValue());
+				}
+			}
+			newsList.add(news);
+		}
+		return newsList;
+	}
+
+	public List<News> getNewsFromCrawler(List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
+		List<String> interests = new ArrayList<String>();
+		for (com.fintechviet.content.model.NewsCategory newsCategory : newsCategries) {
+			interests.add(newsCategory.getCode());
+		}
 		List<News> newsList = new ArrayList<>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
@@ -137,32 +171,7 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-
-			for (SolrDocument document : results) {
-				News news = new News();
-				for (Iterator<Map.Entry<String, Object>> i = document.iterator(); i.hasNext();) {
-					Map.Entry<String, Object> element = i.next();
-					String key = element.getKey().toString();
-					String value = element.getValue().toString();
-					if (ID.equals(key)) {
-						news.setId(Long.valueOf(value));
-					} else if(CATEGORY_CODE.equals(key)) {
-						news.setNewsCategoryCode(value);
-					} else if(TITLE.equals(key)) {
-						news.setTitle(value);
-					} else if(CONTENT.equals(key)) {
-						news.setShortDescription(Jsoup.parse(value).text());
-					} else if(LINK.equals(key)) {
-						news.setLink(value);
-					} else if(IMAGE_LINK.equals(key)) {
-						value = value.replaceAll("localhost", "222.252.16.132");
-						news.setImageLink(value);
-					} else if(CRAWLER_DATE.equals(key)) {
-						news.setCreatedDate((Date)element.getValue());
-					}
-				}
-				newsList.add(news);
-			}
+			newsList = buildNewsList(results);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -190,36 +199,61 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-
-			for (SolrDocument document : results) {
-				News news = new News();
-				for (Iterator<Map.Entry<String, Object>> i = document.iterator(); i.hasNext();) {
-					Map.Entry<String, Object> element = i.next();
-					String key = element.getKey().toString();
-					String value = element.getValue().toString();
-					if (ID.equals(key)) {
-						news.setId(Long.valueOf(value));
-					} else if(CATEGORY_CODE.equals(key)) {
-						news.setNewsCategoryCode(value);
-					} else if(TITLE.equals(key)) {
-						news.setTitle(value);
-					} else if(CONTENT.equals(key)) {
-						news.setShortDescription(Jsoup.parse(value).text());
-					} else if(LINK.equals(key)) {
-						news.setLink(value);
-					} else if(IMAGE_LINK.equals(key)) {
-						value = value.replaceAll("localhost", "222.252.16.132");
-						news.setImageLink(value);
-					} else if(CRAWLER_DATE.equals(key)) {
-						news.setCreatedDate((Date)element.getValue());
-					}
-				}
-				newsList.add(news);
-			}
+			newsList = buildNewsList(results);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 		return newsList;
+	}
+
+	private List<NewsCategory> buildCategoryList(Hashtable<String, List<News>> categoryHash, List<com.fintechviet.content.model.NewsCategory> categoryList) {
+		List<NewsCategory> newsCategoryDTOs = new ArrayList<NewsCategory>();
+		for (com.fintechviet.content.model.NewsCategory newsCategory  : categoryList) {
+			NewsCategory newsCategoryDTO = new NewsCategory();
+			newsCategoryDTO.setCode(newsCategory.getCode());
+			newsCategoryDTO.setImageFile(newsCategory.getImage());
+			newsCategoryDTO.setName(newsCategory.getName());
+			newsCategoryDTO.setNewsList(categoryHash.get(newsCategory.getCode()));
+			newsCategoryDTOs.add(newsCategoryDTO);
+		}
+		return newsCategoryDTOs;
+	}
+
+	public List<NewsCategory> getNewsByInterests() {
+		List<NewsCategory> newsCategoryList = new ArrayList<>();
+		try {
+			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
+			SolrQuery query = new SolrQuery();
+			query.setQuery("*.*");
+			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
+			query.setStart(0);
+			query.setRows(500);
+			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.set("defType", "edismax");
+
+			QueryResponse response = client.query(query);
+			SolrDocumentList results = response.getResults();
+			List<News> newsList = buildNewsList(results);
+			Hashtable<String, List<News>> categoryHash = new Hashtable<String, List<News>>();
+			for (News news : newsList) {
+				String cateCode = news.getNewsCategoryCode();
+				if (categoryHash.containsKey(cateCode)) {
+					if (categoryHash.get(cateCode).size() < 20) {
+						categoryHash.get(cateCode).add(news);
+					}
+				} else {
+					List<News> nList = new ArrayList<News>();
+					nList.add(news);
+					categoryHash.put(cateCode, nList);
+				}
+			}
+			List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getAllCategories();
+			newsCategoryList = buildCategoryList(categoryHash, categoryList);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return newsCategoryList;
 	}
 
 	/**
@@ -230,7 +264,7 @@ public class ContentService {
 	 * @throws ExecutionException
 	 */
 	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Integer page) throws InterruptedException, ExecutionException {
-		List<String> categoryList = contentRepository.getUserInterests(deviceToken);
+		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
 		return supplyAsync(() -> getNewsFromCrawler(categoryList, page));
 	}
 
@@ -243,5 +277,15 @@ public class ContentService {
 	 */
 	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler1(String interests, Integer page) throws InterruptedException, ExecutionException {
 		return supplyAsync(() -> getNewsFromCrawler1(interests, page));
+	}
+
+	/**
+	 *
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<NewsCategory>> getNewsByAllCategories() throws InterruptedException, ExecutionException {
+		return supplyAsync(() -> getNewsByInterests());
 	}
 }
