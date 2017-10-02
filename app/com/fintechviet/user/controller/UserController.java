@@ -136,7 +136,7 @@ public class UserController extends Controller {
 		}, ec.current());
     }
 
-	@ApiOperation(value="Get User Reward Info")
+	@ApiOperation(value="Get User Lucky Number")
 	public CompletionStage<Result> getUserLuckyNumberByToken(String deviceToken) {
 		return userService.getUserLuckyNumberByToken(deviceToken).thenApplyAsync(response -> {
 			return response != null ? created(Json.toJson(response)) : ok("Lucky Number Not Found");
