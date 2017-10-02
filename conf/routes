@@ -15,6 +15,7 @@ GET /user/updateUserReward/:deviceToken				                 	 com.fintechviet.us
 GET /user/updateInviteCode/:deviceToken                      			 com.fintechviet.user.controller.UserController.updateInviteCode(deviceToken: String, inviteCode: String)
 GET /user/:deviceToken                                                   com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
 GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
+GET /user/luckynumber/:deviceToken                                       com.fintechviet.user.controller.UserController.getUserLuckyNumberByToken(deviceToken: String)
 
 GET /user/ads/fav com.fintechviet.user.controller.UserController.getFavouriteCategories(userId: String)
 GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFavouriteCategoriesByDevice(deviceToken: String)

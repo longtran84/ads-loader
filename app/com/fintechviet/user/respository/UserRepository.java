@@ -5,6 +5,7 @@ import java.util.concurrent.CompletionStage;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.model.User;
+import com.fintechviet.user.model.UserLuckyNumber;
 import com.google.inject.ImplementedBy;
 
 @ImplementedBy(JPAUserRepository.class)
@@ -16,4 +17,5 @@ public interface UserRepository{
     List<MobileUserInterestItems> updateUserInterest(String deviceToken, List<MobileUserInterestItems> interests );
     CompletionStage<List<Object[]>> getRewardInfo(String deviceToken);
     CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode);
+    CompletionStage<List<UserLuckyNumber>> getUserLuckyNumberByToken(String deviceToken);
 }

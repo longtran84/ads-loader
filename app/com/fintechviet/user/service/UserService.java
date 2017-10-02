@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.dto.Reward;
+import com.fintechviet.user.model.UserLuckyNumber;
 import com.fintechviet.user.respository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -74,5 +75,10 @@ public class UserService {
 	public CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode){
 		return userRepository.updateInviteCode(deviceToken, inviteCode);
 	}
+
+	public CompletionStage<List<UserLuckyNumber>> getUserLuckyNumberByToken(String deviceToken){
+		return userRepository.getUserLuckyNumberByToken(deviceToken);
+	}
+
 
 }

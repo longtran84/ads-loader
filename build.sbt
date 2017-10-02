@@ -45,7 +45,8 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.6.2",
   "io.springfox" % "springfox-swagger-ui" % "2.7.0",
   "org.apache.solr" % "solr-solrj" % "6.6.1",
-  "org.jsoup" % "jsoup" % "1.10.3"
+  "org.jsoup" % "jsoup" % "1.10.3",
+  "io.vavr" % "vavr" % "0.9.1"
   //"org.webjars" % "swagger-ui" % "3.2.0"
 )
 

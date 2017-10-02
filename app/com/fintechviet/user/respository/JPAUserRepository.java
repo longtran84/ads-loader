@@ -1,10 +1,10 @@
 package com.fintechviet.user.respository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -14,6 +14,9 @@ import com.fintechviet.user.model.EarningDetails;
 import com.fintechviet.user.model.User;
 import com.fintechviet.user.model.UserDeviceToken;
 
+import com.fintechviet.user.model.UserLuckyNumber;
+import com.fintechviet.utils.DateUtils;
+import io.vavr.Tuple2;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -23,8 +26,6 @@ import com.fintechviet.user.UserExecutionContext;
 import play.db.jpa.JPAApi;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-
-import java.util.ArrayList;
 
 public class JPAUserRepository implements UserRepository {
 	
@@ -169,6 +170,47 @@ public class JPAUserRepository implements UserRepository {
 	public CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode) {
 		return supplyAsync(() -> wrap(em -> updateInviteCode(em, deviceToken, inviteCode)), ec);
 	}
+
+	@Override
+	public CompletionStage<List<UserLuckyNumber>> getUserLuckyNumberByToken(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getLuckyNumbers(em, deviceToken)), ec);
+	}
+
+	private List<UserLuckyNumber> getLuckyNumbers(EntityManager em, String deviceToken) {
+		StringBuilder updateStr = new StringBuilder("UPDATE UserLuckyNumber uln SET uln.status = 'VALID'");
+		updateStr.append("  WHERE uln.userMobileId = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
+		updateStr.append("  AND uln.createDate= :nowDate");
+		Query queryUpdate = em.createQuery(updateStr.toString()).setParameter("deviceToken", deviceToken).setParameter("nowDate", Calendar.getInstance().getTime());
+
+		int rowUpdated = queryUpdate.executeUpdate();
+		if (rowUpdated == 0) {
+			return null;
+		}
+
+		Tuple2<Date, Date> weekInterval = DateUtils.getCurrentWeekInterval();
+		StringBuilder queryStr = new StringBuilder("SELECT uln FROM UserLuckyNumber uln WHERE uln.userMobileId = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
+		queryStr.append(" AND uln.startDateWeek= :startDate AND uln.endDateWeek = :endDate");
+		Query query = em.createQuery(queryStr.toString()).setParameter("deviceToken", deviceToken).setParameter("startDate", weekInterval._1).setParameter("endDate", weekInterval._2);
+		List<UserLuckyNumber> results = (List<UserLuckyNumber>) query.getResultList();
+
+		if (results == null || results.isEmpty()) {
+			return null;
+		}
+
+		Date now = today();
+		return results.stream().filter(e -> now.equals(e.getCreateDate()) || "INVALID".equals(e.getStatus())).collect(Collectors.toList());
+	}
+
+	private Date today() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+
 	private String updateInviteCode(EntityManager em, String deviceToken, String inviteCode) {
 		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
 				.setParameter("inviteCode", inviteCode).getResultList();

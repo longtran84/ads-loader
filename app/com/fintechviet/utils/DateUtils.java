@@ -1,5 +1,8 @@
 package com.fintechviet.utils;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -75,5 +78,31 @@ public class DateUtils {
         } catch (ParseException ex){
         }
         return DateUtils.EQUAL;
+    }
+
+    public static Tuple2<Date, Date> getCurrentWeekInterval() {
+        Calendar today = Calendar.getInstance();
+        today.setFirstDayOfWeek(Calendar.MONDAY);
+
+        Calendar first, last;
+
+        first = (Calendar) today.clone();
+        int dayOfWeek = first.get(Calendar.DAY_OF_WEEK);
+        switch (dayOfWeek) {
+            case Calendar.SUNDAY:
+                last = (Calendar) first.clone();
+                first.add(Calendar.DAY_OF_WEEK, -6);
+
+                break;
+            default:
+                first.add(Calendar.DAY_OF_WEEK, Calendar.MONDAY - dayOfWeek);
+
+                last = (Calendar) first.clone();
+                last.add(Calendar.DAY_OF_WEEK, 6);
+
+                break;
+        }
+
+        return Tuple.of(first.getTime(), last.getTime());
     }
 }
