@@ -25,12 +25,12 @@ public class UserService {
 		this.ec = ec;
 	}
 
-	public CompletionStage<String> updateUserInfo(String deviceToken, String email, String gender, int dob, String location) {
-		return userRepository.updateUserInfo(deviceToken, email, gender, dob, location);
+	public CompletionStage<String> updateUserInfo(String deviceToken, String email, String gender, int dob, String location, String inviteCode) {
+		return userRepository.updateUserInfo(deviceToken, email, gender, dob, location, inviteCode);
 	}
 
-	public CompletionStage<String> updateReward(String deviceToken, String event, long point){
-		return userRepository.updateReward(deviceToken, event, point);
+	public CompletionStage<String> updateReward(String deviceToken, String rewardCode, long point){
+		return userRepository.updateReward(deviceToken, rewardCode, point);
 	}
 
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
@@ -42,10 +42,12 @@ public class UserService {
 	private List<Reward> buildRewardInfo(List<Object[]> rewardObjs) {
 		List<Reward> rewards = new ArrayList<Reward>();
 		for (Object row[] : rewardObjs) {
-			String event = (String)row[0];
-			long amount = (long)row[1];
+			String rewardCode = (String)row[0];
+			String rewardName = (String)row[1];
+			long amount = (long)row[2];
 			Reward reward = new Reward();
-			reward.setEvent(event);
+			reward.setRewardCode(rewardCode);
+			reward.setRewardName(rewardName);
 			reward.setAmount(amount);
 			rewards.add(reward);
 		}

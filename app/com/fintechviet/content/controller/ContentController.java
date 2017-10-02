@@ -96,4 +96,12 @@ public class ContentController extends Controller {
 			return created(Json.toJson(list));
 		}, ec.current());
 	}
+
+	@ApiOperation(value = "Get News by all categories")
+	public CompletionStage<Result> getNewsByAllCategories()
+			throws InterruptedException, ExecutionException {
+		return contentService.getNewsByAllCategories().thenApplyAsync(newsCategories -> {
+			return created(Json.toJson(newsCategories));
+		}, ec.current());
+	}
 }

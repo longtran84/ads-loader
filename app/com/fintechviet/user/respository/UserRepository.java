@@ -9,8 +9,8 @@ import com.google.inject.ImplementedBy;
 
 @ImplementedBy(JPAUserRepository.class)
 public interface UserRepository{
-    CompletionStage<String> updateUserInfo(String deviceToken, String username, String gender, int dob, String location);
-    CompletionStage<String> updateReward(String deviceToken, String event, long point);
+    CompletionStage<String> updateUserInfo(String deviceToken, String username, String gender, int dob, String location, String inviteCode);
+    CompletionStage<String> updateReward(String deviceToken, String rewardCode, long point);
     CompletionStage<User> getUserInfo(String deviceToken);
     Long getUserIdByDeviceToken(String deviceToken);
     List<MobileUserInterestItems> updateUserInterest(String deviceToken, List<MobileUserInterestItems> interests );

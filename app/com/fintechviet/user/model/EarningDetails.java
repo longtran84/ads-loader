@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class EarningDetails {
     private long id;
     private User user;
-    private String event;
+    private String rewardCode;
     private Long amount;
     private Timestamp date;
 
@@ -27,13 +27,13 @@ public class EarningDetails {
     }
 
     @Basic
-    @Column(name = "event")
-    public String getEvent() {
-        return event;
+    @Column(name = "rewardCode")
+    public String getRewardCode() {
+        return rewardCode;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setRewardCode(String rewardCode) {
+        this.rewardCode = rewardCode;
     }
 
     @Basic
@@ -73,7 +73,7 @@ public class EarningDetails {
         EarningDetails that = (EarningDetails) o;
 
         if (id != that.id) return false;
-        if (event != null ? !event.equals(that.event) : that.event != null) return false;
+        if (rewardCode != null ? !rewardCode.equals(that.rewardCode) : that.rewardCode != null) return false;
         if (amount != null ? !amount.equals(that.amount) : that.amount != null) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
 
@@ -83,7 +83,7 @@ public class EarningDetails {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (event != null ? event.hashCode() : 0);
+        result = 31 * result + (rewardCode != null ? rewardCode.hashCode() : 0);
         result = 31 * result + (amount != null ? amount.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         return result;

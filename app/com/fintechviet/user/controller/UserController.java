@@ -47,13 +47,14 @@ public class UserController extends Controller {
 	 * @param location
 	 * @return
 	 */
-	@ApiOperation(value="Update User Details")
+	@ApiOperation(value="Update User Details. Gender(MALE, FEMALE).Location follow https://vi.wikipedia.org/wiki/B%E1%BA%A3n_m%E1%BA%ABu:K%C3%BD_ki%E1%BB%87u_quy_%C6%B0%E1%BB%9Bc_c%C3%A1c_t%E1%BB%89nh_th%C3%A0nh_Vi%E1%BB%87t_Nam")
     public CompletionStage<Result> updateUserInfo(String deviceToken,
 												  String email,
 												  String gender,
 												  int dob,
-												  String location) {
-		return userService.updateUserInfo(deviceToken, email, gender, dob, location).thenApplyAsync(response -> {
+												  String location,
+												  String inviteCode) {
+		return userService.updateUserInfo(deviceToken, email, gender, dob, location, inviteCode).thenApplyAsync(response -> {
 			return created(Json.toJson(response));
 		}, ec.current());
     }
@@ -61,15 +62,15 @@ public class UserController extends Controller {
 	/**
 	 * 
 	 * @param deviceToken
-	 * @param event
+	 * @param rewardCode
 	 * @param addedPoint
 	 * @return
 	 */
-	@ApiOperation(value="Update User Reward")
+	@ApiOperation(value="Update User Reward. rewardCode(INSTALL, INVITE, READ, EVENT)")
     public CompletionStage<Result> updateReward(String deviceToken,
-							   String event,
+							   String rewardCode,
     		                   Long addedPoint) {
-		return userService.updateReward(deviceToken, event, addedPoint).thenApplyAsync(response -> {
+		return userService.updateReward(deviceToken, rewardCode, addedPoint).thenApplyAsync(response -> {
 			return created(Json.toJson(response));
 		}, ec.current());
     }
