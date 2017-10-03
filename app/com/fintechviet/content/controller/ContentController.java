@@ -42,7 +42,7 @@ public class ContentController extends Controller {
 		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.convertStringToDate2(fromDate) : null;
 		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
 		return contentService.getNewsByUserInterest(deviceToken, from, to).thenApplyAsync(newsList -> {
-			return created(Json.toJson(buildNewsResponse(newsList)));
+			return ok(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}
 
@@ -53,7 +53,7 @@ public class ContentController extends Controller {
 //		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
 		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
 		return contentService.getNewsByUserInterestFromCrawler(deviceToken, pageIndex).thenApplyAsync(newsList -> {
-			return created(Json.toJson(buildNewsResponse(newsList)));
+			return ok(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}
 
@@ -64,7 +64,7 @@ public class ContentController extends Controller {
 //		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
 		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
 		return contentService.getNewsByUserInterestFromCrawler1(interests, pageIndex).thenApplyAsync(newsList -> {
-			return created(Json.toJson(buildNewsResponse(newsList)));
+			return ok(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}
 
@@ -77,23 +77,23 @@ public class ContentController extends Controller {
 	@ApiOperation(value = "Save content impression")
 	public CompletionStage<Result> saveImpression() {
 		return contentService.saveImpression().thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
 	}
 
 	@ApiOperation(value = "Save content click")
 	public CompletionStage<Result> saveClick() {
 		return contentService.saveClick().thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
 	}
-	
+
 	@Transactional
 	@ApiOperation(value = "Get categories list")
 	public CompletionStage<Result> getCategoriesList()
 			throws InterruptedException, ExecutionException {
 		return contentService.getCategoriesList().thenApplyAsync(list -> {
-			return created(Json.toJson(list));
+			return ok(Json.toJson(list));
 		}, ec.current());
 	}
 
@@ -101,7 +101,15 @@ public class ContentController extends Controller {
 	public CompletionStage<Result> getNewsByAllCategories()
 			throws InterruptedException, ExecutionException {
 		return contentService.getNewsByAllCategories().thenApplyAsync(newsCategories -> {
-			return created(Json.toJson(newsCategories));
+			return ok(Json.toJson(newsCategories));
+		}, ec.current());
+	}
+
+	@ApiOperation(value = "Get News on Lock screen")
+	public CompletionStage<Result> getNewsOnLockScreen(String deviceToken)
+			throws InterruptedException, ExecutionException {
+		return contentService.getNewsOnLockScreen(deviceToken).thenApplyAsync(news -> {
+			return ok(Json.toJson(news));
 		}, ec.current());
 	}
 }

@@ -16,9 +16,8 @@ GET /user/updateInviteCode/:deviceToken                      			 com.fintechviet
 GET /user/:deviceToken                                                   com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
 GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
 GET /user/luckynumber/:deviceToken                                       com.fintechviet.user.controller.UserController.getUserLuckyNumberByToken(deviceToken: String)
-
-GET /user/ads/fav com.fintechviet.user.controller.UserController.getFavouriteCategories(userId: String)
-GET /user/ads/fav/bydevice com.fintechviet.user.controller.UserController.getFavouriteCategoriesByDevice(deviceToken: String)
+GET /user/messages/:deviceToken                                          com.fintechviet.user.controller.UserController.getMessages(deviceToken: String)
+GET /user/updateMessage/:deviceToken/:messageId                          com.fintechviet.user.controller.UserController.updateMessage(deviceToken: String, messageId: Long)
 
 
 #Content
@@ -29,6 +28,7 @@ GET /content/impression                                                  com.fin
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()
 GET /content/newsByAllCategories                                         com.fintechviet.content.controller.ContentController.getNewsByAllCategories()
+GET /content/newsOnLockScreen/:deviceToken                               com.fintechviet.content.controller.ContentController.getNewsOnLockScreen(deviceToken: String)
 
 #Advertisement
 GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement(template: String, deviceToken: String)

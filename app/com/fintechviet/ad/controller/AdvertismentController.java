@@ -36,11 +36,11 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Get ad")
-    public CompletionStage<Result> getAdPlacement(String template, String deviceToken) {
+	public CompletionStage<Result> getAdPlacement(String template, String deviceToken) {
 		return adsService.findAdByTemplate(template).thenApplyAsync(ad -> {
-			return created(Json.toJson(buildAdResponse(ad, template, deviceToken)));
+			return ok(Json.toJson(buildAdResponse(ad, template, deviceToken)));
 		}, ec.current());
-    }
+	}
 
 	private DecisionResponse buildAdResponse(Ad ad, String template, String deviceToken) {
 		if (ad != null) {
@@ -72,11 +72,11 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Save impression")
-    public CompletionStage<Result> saveImpression(long adId) {
+	public CompletionStage<Result> saveImpression(long adId) {
 		return adsService.saveImpression(adId).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
-    }
+	}
 
 	/**
 	 * @param adId
@@ -84,11 +84,11 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Save click")
-    public CompletionStage<Result> saveClick(long adId, String deviceToken) {
+	public CompletionStage<Result> saveClick(long adId, String deviceToken) {
 		return adsService.saveClick(adId, deviceToken).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
-    }
+	}
 
 	/**
 	 * @param adId
@@ -96,11 +96,11 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Save view")
-    public CompletionStage<Result> saveView(long adId, String deviceToken) {
+	public CompletionStage<Result> saveView(long adId, String deviceToken) {
 		return adsService.saveView(adId, deviceToken).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
-    }
+	}
 
 	/**
 	 * @param appId
@@ -108,10 +108,10 @@ public class AdvertismentController extends Controller {
 	 * @param platform
 	 * @return
 	 */
-	@ApiOperation(value="Save view(platform=ios, android)")
+	@ApiOperation(value="Save install(platform=ios, android)")
 	public CompletionStage<Result> saveInstall(long appId, String deviceToken, String platform) {
 		return adsService.saveInstall(appId, deviceToken, platform).thenApplyAsync(response -> {
-			return created(Json.toJson(response));
+			return ok(Json.toJson(response));
 		}, ec.current());
 	}
 
@@ -121,7 +121,7 @@ public class AdvertismentController extends Controller {
 	@ApiOperation(value="Get list app ad")
 	public CompletionStage<Result> getListAppAd() {
 		return adsService.getListAppAd().thenApplyAsync(list -> {
-			return created(Json.toJson(buildDTO(list)));
+			return ok(Json.toJson(buildDTO(list)));
 		}, ec.current());
 	}
 

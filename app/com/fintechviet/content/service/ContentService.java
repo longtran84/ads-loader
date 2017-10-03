@@ -50,7 +50,7 @@ public class ContentService {
 	public CompletionStage<String> saveClick() {
 		return contentRepository.saveClick();
 	}
-	
+
 	private List<News> convertToDto(List<com.fintechviet.content.model.News> newsModelList){
 		List<News> newsDtoList = new ArrayList<>();
 		for(com.fintechviet.content.model.News news : newsModelList) {
@@ -66,15 +66,15 @@ public class ContentService {
 		}
 		return newsDtoList;
 	}
-	
+
 	public CompletionStage<List<NewsCategory>> getCategoriesList() throws InterruptedException, ExecutionException{
-		CompletableFuture<List<com.fintechviet.content.model.NewsCategory>> cateListFuture =  
+		CompletableFuture<List<com.fintechviet.content.model.NewsCategory>> cateListFuture =
 				supplyAsync(() -> contentRepository.getAllCategories());
 		List<com.fintechviet.content.model.NewsCategory> cateList = cateListFuture.get();
 		return supplyAsync(() -> convertCategoriesToDto(cateList));
-		
+
 	}
-	
+
 	private List<NewsCategory> convertCategoriesToDto(List<com.fintechviet.content.model.NewsCategory> categoriesList){
 		List<NewsCategory> categoryDtoList = new ArrayList<>();
 		for(com.fintechviet.content.model.NewsCategory cate : categoriesList) {
@@ -88,7 +88,7 @@ public class ContentService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param deviceToken
 	 * @param fromDate
 	 * @param toDate
@@ -256,6 +256,33 @@ public class ContentService {
 		return newsCategoryList;
 	}
 
+	public List<News> getTopNews(List<com.fintechviet.content.model.NewsCategory> newsCategries) {
+		List<News> newsList = new ArrayList<News>();
+		try {
+			List<String> interests = new ArrayList<String>();
+			for (com.fintechviet.content.model.NewsCategory newsCategory : newsCategries) {
+				interests.add(newsCategory.getCode());
+			}
+			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
+			SolrQuery query = new SolrQuery();
+			String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
+			query.setQuery(queryStr);
+			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
+			query.setStart(0);
+			query.setRows(50);
+			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.set("defType", "edismax");
+
+			QueryResponse response = client.query(query);
+			SolrDocumentList results = response.getResults();
+			newsList = buildNewsList(results);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return newsList;
+	}
+
 	/**
 	 *
 	 * @param deviceToken
@@ -287,5 +314,16 @@ public class ContentService {
 	 */
 	public CompletionStage<List<NewsCategory>> getNewsByAllCategories() throws InterruptedException, ExecutionException {
 		return supplyAsync(() -> getNewsByInterests());
+	}
+
+	/**
+	 *
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<News>> getNewsOnLockScreen(String deviceToken) throws InterruptedException, ExecutionException {
+		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
+		return supplyAsync(() -> getTopNews(categoryList));
 	}
 }

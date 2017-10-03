@@ -1,13 +1,13 @@
 package com.fintechviet.user.service;
 
-import javax.inject.Inject;
-
 import com.fintechviet.content.model.MobileUserInterestItems;
+import com.fintechviet.user.dto.Message;
 import com.fintechviet.user.dto.Reward;
 import com.fintechviet.user.model.UserLuckyNumber;
 import com.fintechviet.user.respository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +55,19 @@ public class UserService {
 		return rewards;
 	}
 
+	private List<Message> buildMessages(List<com.fintechviet.user.model.Message> messages) {
+		List<Message> messageDTOs = new ArrayList<Message>();
+		for (com.fintechviet.user.model.Message message : messages) {
+			Message mess = new Message();
+			mess.setId(message.getId());
+			mess.setBody(message.getBody());
+			mess.setRead(Byte.valueOf("0"));
+			mess.setCreatedDate(message.getCreatedDate());
+			messageDTOs.add(mess);
+		}
+		return messageDTOs;
+	}
+
 	public CompletionStage<List<Reward>> getRewardInfo(String deviceToken){
 		return userRepository.getRewardInfo(deviceToken).thenApplyAsync(rewards -> {
 			return buildRewardInfo(rewards);
@@ -80,5 +93,13 @@ public class UserService {
 		return userRepository.getUserLuckyNumberByToken(deviceToken);
 	}
 
+	public CompletionStage<List<Message>> getMessages(String deviceToken){
+		return userRepository.getMessages(deviceToken).thenApplyAsync(messages -> {
+			return buildMessages(messages);
+		}, ec.current());
+	}
 
+	public CompletionStage<String> updateMessage(String deviceToken, long messageId){
+		return userRepository.updateMessage(deviceToken, messageId);
+	}
 }
