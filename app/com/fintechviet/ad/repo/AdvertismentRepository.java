@@ -10,7 +10,7 @@ import com.google.inject.ImplementedBy;
 
 @ImplementedBy(JPAAdvertismentRepository.class)
 public interface AdvertismentRepository{
-    CompletionStage<Ad> findAdByTemplate(String template);
+    CompletionStage<Ad> findAdByTemplate(String template, int adTypeId);
     CompletionStage<AdImpressions> saveImpression(long adId);
     CompletionStage<String> saveClick(long adId, String deviceToken);
     CompletionStage<String> saveView(long adId, String deviceToken);

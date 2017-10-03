@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class Creative {
     private Long id;
     private Advertiser advertiser;
+    private AdType adType;
     private String title;
     private String body;
     private String alt;
@@ -37,6 +38,16 @@ public class Creative {
 
     public void setAdvertiser(Advertiser advertiser) {
         this.advertiser = advertiser;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "adTypeId")
+    public AdType getAdType() {
+        return adType;
+    }
+
+    public void setAdType(AdType adType) {
+        this.adType = adType;
     }
 
     @Basic

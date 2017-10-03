@@ -22,7 +22,7 @@ import io.swagger.annotations.*;
 
 @Api(value="Advertisment")
 public class AdvertismentController extends Controller {
-	private static String DOMAIN = "http://10.0.2.2:9000";
+	private static String DOMAIN = "http://222.252.16.132:9000";
 	private final AdvertismentService adsService;
 	private final HttpExecutionContext ec;
 
@@ -36,9 +36,12 @@ public class AdvertismentController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Get ad")
-	public CompletionStage<Result> getAdPlacement(String template, String deviceToken) {
-		return adsService.findAdByTemplate(template).thenApplyAsync(ad -> {
-			return ok(Json.toJson(buildAdResponse(ad, template, deviceToken)));
+	public CompletionStage<Result> getAdPlacement(String template, String deviceToken, Integer adTypeId) {
+		if (adTypeId == null) {
+			adTypeId = 0;
+		}
+		return adsService.findAdByTemplate(template, adTypeId).thenApplyAsync(ad -> {
+			return ad != null ? ok(Json.toJson(buildAdResponse(ad, template, deviceToken))) : badRequest("Ad not found");
 		}, ec.current());
 	}
 

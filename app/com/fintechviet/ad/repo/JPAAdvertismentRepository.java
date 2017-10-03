@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.fintechviet.ad.AdExecutionContext;
 
@@ -32,15 +33,24 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
     }
 
 	@Override
-	public CompletionStage<Ad> findAdByTemplate(String template) {
-        return supplyAsync(() -> wrap(em -> findAdByTemplate(em, template)), ec);
+	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId) {
+        return supplyAsync(() -> wrap(em -> findAdByTemplate(em, template, adTypeId)), ec);
 	}
 
-    private Ad findAdByTemplate(EntityManager em, String template) {
-        List<Ad> ads = em.createQuery("SELECT ad FROM Ad ad WHERE ad.flight.startDate <= CURRENT_DATE AND (ad.flight.endDate >= CURRENT_DATE OR ad.flight.endDate IS NULL) " +
-                                             "AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'")
-                         .setParameter("template", template)
-                         .getResultList();
+    private Ad findAdByTemplate(EntityManager em, String template, int adTypeId) {
+        StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.startDate <= CURRENT_DATE AND (ad.flight.endDate >= CURRENT_DATE OR ad.flight.endDate IS NULL) ");
+        queryStr.append("AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'");
+        if (adTypeId != 0) {
+            queryStr.append(" AND ad.creative.adType.id = :adTypeId");
+        }
+
+        Query query = em.createQuery(queryStr.toString());
+        query.setParameter("template", template);
+        if (adTypeId != 0) {
+            query.setParameter("adTypeId", adTypeId);
+        }
+
+        List<Ad> ads = query.getResultList();
         Ad ad = null;
         if (!ads.isEmpty()) {
             Random randomGenerator = new Random();
