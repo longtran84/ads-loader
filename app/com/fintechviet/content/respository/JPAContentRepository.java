@@ -1,10 +1,7 @@
 package com.fintechviet.content.respository;
 
 import com.fintechviet.content.ContentExecutionContext;
-import com.fintechviet.content.model.ContentClicks;
-import com.fintechviet.content.model.ContentImpressions;
-import com.fintechviet.content.model.News;
-import com.fintechviet.content.model.NewsCategory;
+import com.fintechviet.content.model.*;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 
@@ -131,6 +128,13 @@ public class JPAContentRepository implements ContentRepository {
             query.setParameter("toDate", toDate);
         }
         return query.getResultList();
+    }
+
+    @Override
+    public CompletionStage<List<Game>> getGames(){
+        return supplyAsync(() -> wrap(em -> {
+            return  (List<Game>)em.createQuery("SELECT g FROM Game g WHERE g.status = 'ACTIVE'").getResultList();
+        }), ec);
     }
 
 }

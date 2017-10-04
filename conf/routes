@@ -29,6 +29,8 @@ GET /content/click                                                       com.fin
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()
 GET /content/newsByAllCategories                                         com.fintechviet.content.controller.ContentController.getNewsByAllCategories()
 GET /content/newsOnLockScreen/:deviceToken                               com.fintechviet.content.controller.ContentController.getNewsOnLockScreen(deviceToken: String)
+GET /content/adnews                                                      com.fintechviet.content.controller.ContentController.getAdNewsList(page: String)
+GET /content/games                                                       com.fintechviet.content.controller.ContentController.getGames()
 
 #Advertisement
 GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement(template: String, deviceToken: String, adTypeId: Integer ?= null)

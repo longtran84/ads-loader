@@ -2,6 +2,7 @@ package com.fintechviet.content.controller;
 
 import com.fintechviet.content.dto.News;
 import com.fintechviet.content.dto.NewsResponse;
+import com.fintechviet.content.model.Game;
 import com.fintechviet.content.service.ContentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.util.concurrent.CompletionStage;
@@ -110,6 +112,35 @@ public class ContentController extends Controller {
 			throws InterruptedException, ExecutionException {
 		return contentService.getNewsOnLockScreen(deviceToken).thenApplyAsync(news -> {
 			return ok(Json.toJson(news));
+		}, ec.current());
+	}
+
+	@ApiOperation(value = "Get Ad News")
+	public CompletionStage<Result> getAdNewsList(String page)
+			throws InterruptedException, ExecutionException {
+		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
+		return contentService.getListAdNews(pageIndex).thenApplyAsync(news -> {
+			return ok(Json.toJson(news));
+		}, ec.current());
+	}
+
+	private List<com.fintechviet.content.dto.Game> buildGamesResponse(List<Game> gameList) {
+		List<com.fintechviet.content.dto.Game> games = new ArrayList<com.fintechviet.content.dto.Game>();
+		for (Game game : gameList) {
+			com.fintechviet.content.dto.Game gameDTO = new com.fintechviet.content.dto.Game();
+			gameDTO.setName(game.getName());
+			gameDTO.setLink(game.getLink());
+			gameDTO.setImage(game.getImage());
+			games.add(gameDTO);
+		}
+		return games;
+	}
+
+	@ApiOperation(value = "Get list of games")
+	public CompletionStage<Result> getGames()
+			throws InterruptedException, ExecutionException {
+		return contentService.getGames().thenApplyAsync(games -> {
+			return ok(Json.toJson(buildGamesResponse(games)));
 		}, ec.current());
 	}
 }

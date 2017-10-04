@@ -2,6 +2,7 @@ package com.fintechviet.content.service;
 
 import com.fintechviet.content.dto.News;
 import com.fintechviet.content.dto.NewsCategory;
+import com.fintechviet.content.model.Game;
 import com.fintechviet.content.respository.ContentRepository;
 import com.fintechviet.utils.CommonUtils;
 import com.fintechviet.utils.DateUtils;
@@ -26,7 +27,8 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class ContentService {
 	private final ContentRepository contentRepository;
 	static final int limitResult = 500;
-	private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
+	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
+	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/Crawler";
 	private static String ID = "id";
 	private static String CATEGORY_CODE = "MaChuyenMuc";
 	private static String SOURCE_NAME = "TenMien";
@@ -147,7 +149,7 @@ public class ContentService {
 		return newsList;
 	}
 
-	public List<News> getNewsFromCrawler(List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
+	private List<News> getNewsFromCrawler(List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<String> interests = new ArrayList<String>();
@@ -178,7 +180,7 @@ public class ContentService {
 		return newsList;
 	}
 
-	public List<News> getNewsFromCrawler1(String interests, Integer pageIndex) {
+	private List<News> getNewsFromCrawler1(String interests, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<News> newsList = new ArrayList<>();
@@ -219,7 +221,7 @@ public class ContentService {
 		return newsCategoryDTOs;
 	}
 
-	public List<NewsCategory> getNewsByInterests() {
+	private List<NewsCategory> getNewsByInterests() {
 		List<NewsCategory> newsCategoryList = new ArrayList<>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
@@ -256,7 +258,7 @@ public class ContentService {
 		return newsCategoryList;
 	}
 
-	public List<News> getTopNews(List<com.fintechviet.content.model.NewsCategory> newsCategries) {
+	private List<News> getTopNews(List<com.fintechviet.content.model.NewsCategory> newsCategries) {
 		List<News> newsList = new ArrayList<News>();
 		try {
 			List<String> interests = new ArrayList<String>();
@@ -270,6 +272,29 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
 			query.setRows(50);
+			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.set("defType", "edismax");
+
+			QueryResponse response = client.query(query);
+			SolrDocumentList results = response.getResults();
+			newsList = buildNewsList(results);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return newsList;
+	}
+
+	private List<News> getAdNews(Integer pageIndex) {
+		List<News> newsList = new ArrayList<News>();
+		try {
+			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
+			SolrQuery query = new SolrQuery();
+			String queryStr = CATEGORY_CODE + ":" + "TaiChinh";
+			query.setQuery(queryStr);
+			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
+			query.setStart((pageIndex - 1) * ROWS);
+			query.setRows(ROWS);
 			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
@@ -325,5 +350,25 @@ public class ContentService {
 	public CompletionStage<List<News>> getNewsOnLockScreen(String deviceToken) throws InterruptedException, ExecutionException {
 		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
 		return supplyAsync(() -> getTopNews(categoryList));
+	}
+
+	/**
+	 *
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<Game>> getGames() throws InterruptedException, ExecutionException {
+		return contentRepository.getGames();
+	}
+
+	/**
+	 *
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<News>> getListAdNews(Integer pageIndex) throws InterruptedException, ExecutionException {
+		return supplyAsync(() -> getAdNews(pageIndex));
 	}
 }
