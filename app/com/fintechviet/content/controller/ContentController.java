@@ -99,11 +99,11 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
-	@ApiOperation(value = "Get News by all categories")
-	public CompletionStage<Result> getNewsByAllCategories()
+	@ApiOperation(value = "Get top 20 news by category")
+	public CompletionStage<Result> getTopNewsByCategory(String categoryCode)
 			throws InterruptedException, ExecutionException {
-		return contentService.getNewsByAllCategories().thenApplyAsync(newsCategories -> {
-			return ok(Json.toJson(newsCategories));
+		return contentService.getTopNewsByCategory(categoryCode).thenApplyAsync(news -> {
+			return ok(Json.toJson(news));
 		}, ec.current());
 	}
 

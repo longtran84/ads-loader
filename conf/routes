@@ -27,7 +27,7 @@ GET /content/news_crawler/interest            				             com.fintechviet.c
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
 GET /content/categories                                                  com.fintechviet.content.controller.ContentController.getCategoriesList()
-GET /content/newsByAllCategories                                         com.fintechviet.content.controller.ContentController.getNewsByAllCategories()
+GET /content/topNewsByCategory                                           com.fintechviet.content.controller.ContentController.getTopNewsByCategory(categoryCode: String)
 GET /content/newsOnLockScreen/:deviceToken                               com.fintechviet.content.controller.ContentController.getNewsOnLockScreen(deviceToken: String)
 GET /content/adnews                                                      com.fintechviet.content.controller.ContentController.getAdNewsList(page: String)
 GET /content/games                                                       com.fintechviet.content.controller.ContentController.getGames()

@@ -221,41 +221,27 @@ public class ContentService {
 		return newsCategoryDTOs;
 	}
 
-	private List<NewsCategory> getNewsByInterests() {
-		List<NewsCategory> newsCategoryList = new ArrayList<>();
+	private List<News> getNewsByCategory(String categoryCode) {
+		List<News> newsList = new ArrayList<News>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
 			SolrQuery query = new SolrQuery();
-			query.setQuery("*.*");
+			String queryStr = CATEGORY_CODE + ":" + categoryCode;
+			query.setQuery(queryStr);
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
-			query.setRows(500);
+			query.setRows(20);
 			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-			List<News> newsList = buildNewsList(results);
-			Hashtable<String, List<News>> categoryHash = new Hashtable<String, List<News>>();
-			for (News news : newsList) {
-				String cateCode = news.getNewsCategoryCode();
-				if (categoryHash.containsKey(cateCode)) {
-					if (categoryHash.get(cateCode).size() < 20) {
-						categoryHash.get(cateCode).add(news);
-					}
-				} else {
-					List<News> nList = new ArrayList<News>();
-					nList.add(news);
-					categoryHash.put(cateCode, nList);
-				}
-			}
-			List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getAllCategories();
-			newsCategoryList = buildCategoryList(categoryHash, categoryList);
+			newsList = buildNewsList(results);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 
-		return newsCategoryList;
+		return newsList;
 	}
 
 	private List<News> getTopNews(List<com.fintechviet.content.model.NewsCategory> newsCategries) {
@@ -337,8 +323,8 @@ public class ContentService {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public CompletionStage<List<NewsCategory>> getNewsByAllCategories() throws InterruptedException, ExecutionException {
-		return supplyAsync(() -> getNewsByInterests());
+	public CompletionStage<List<News>> getTopNewsByCategory(String categoryCode) throws InterruptedException, ExecutionException {
+		return supplyAsync(() -> getNewsByCategory(categoryCode));
 	}
 
 	/**
