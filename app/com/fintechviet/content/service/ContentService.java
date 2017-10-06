@@ -159,7 +159,10 @@ public class ContentService {
 		List<News> newsList = new ArrayList<>();
 		try {
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
-			String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
+			String queryStr = "*.*";
+			if (!interests.isEmpty()) {
+				queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
+			}
 			SolrQuery query = new SolrQuery();
 			query.setQuery(queryStr);
 //			String filterQueryStr = CRAWLER_DATE + ":[" + startTime + " TO " + endTime + "]";

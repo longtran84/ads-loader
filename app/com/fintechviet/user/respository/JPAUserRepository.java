@@ -24,7 +24,7 @@ public class JPAUserRepository implements UserRepository {
     private final JPAApi jpaApi;
 	private final UserExecutionContext ec;
 	private static String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-	private static String MESSAGE_BODY = "Chào mừng bạn đến với SMA,\nSMA xin tặng bạn 2.000đ cho lần dùng ứng dụng đàu tiên.";
+	private static String MESSAGE_BODY = "Chào mừng bạn đến với SMA,\nSMA xin tặng bạn 2.000đ cho lần dùng ứng dụng đầu tiên.";
 	
     @Inject
     public JPAUserRepository(JPAApi jpaApi, UserExecutionContext ec) {
@@ -110,6 +110,11 @@ public class JPAUserRepository implements UserRepository {
 			userDeviceToken.setDeviceToken(deviceToken);
 			user.addDeviceToken(userDeviceToken);
 			em.persist(user);
+			EarningDetails ed = new EarningDetails();
+			ed.setRewardCode("INSTALL");
+			ed.setAmount(2000l);
+			ed.setUser(user);
+			em.persist(ed);
 			Message message = new Message();
 			message.setBody(MESSAGE_BODY);
 			message.setUser(user);
