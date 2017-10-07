@@ -124,6 +124,15 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	@ApiOperation(value = "Get News from Lock screen")
+	public CompletionStage<Result> getNewsFromLockScreen(String deviceToken, String newsId, String page)
+			throws InterruptedException, ExecutionException {
+		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
+		return contentService.getNewsFromLockScreen(deviceToken, pageIndex, newsId).thenApplyAsync(news -> {
+			return ok(Json.toJson(news));
+		}, ec.current());
+	}
+
 	private List<com.fintechviet.content.dto.Game> buildGamesResponse(List<Game> gameList) {
 		List<com.fintechviet.content.dto.Game> games = new ArrayList<com.fintechviet.content.dto.Game>();
 		for (Game game : gameList) {

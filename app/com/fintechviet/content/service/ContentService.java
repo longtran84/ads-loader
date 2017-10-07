@@ -211,19 +211,6 @@ public class ContentService {
 		return newsList;
 	}
 
-	private List<NewsCategory> buildCategoryList(Hashtable<String, List<News>> categoryHash, List<com.fintechviet.content.model.NewsCategory> categoryList) {
-		List<NewsCategory> newsCategoryDTOs = new ArrayList<NewsCategory>();
-		for (com.fintechviet.content.model.NewsCategory newsCategory  : categoryList) {
-			NewsCategory newsCategoryDTO = new NewsCategory();
-			newsCategoryDTO.setCode(newsCategory.getCode());
-			newsCategoryDTO.setImageFile(newsCategory.getImage());
-			newsCategoryDTO.setName(newsCategory.getName());
-			newsCategoryDTO.setNewsList(categoryHash.get(newsCategory.getCode()));
-			newsCategoryDTOs.add(newsCategoryDTO);
-		}
-		return newsCategoryDTOs;
-	}
-
 	private List<News> getNewsByCategory(String categoryCode) {
 		List<News> newsList = new ArrayList<News>();
 		try {
@@ -297,6 +284,29 @@ public class ContentService {
 		return newsList;
 	}
 
+	private List<News> getNewsById(String newsId) {
+		List<News> newsList = new ArrayList<>();
+		try {
+			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
+			String queryStr = ID + ":" + newsId;
+			SolrQuery query = new SolrQuery();
+			query.setQuery(queryStr);
+			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
+			query.setStart(0);
+			query.setRows(1);
+			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.set("defType", "edismax");
+
+			QueryResponse response = client.query(query);
+			SolrDocumentList results = response.getResults();
+			newsList = buildNewsList(results);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return newsList;
+	}
+
+
 	/**
 	 *
 	 * @param deviceToken
@@ -359,5 +369,19 @@ public class ContentService {
 	 */
 	public CompletionStage<List<News>> getListAdNews(Integer pageIndex) throws InterruptedException, ExecutionException {
 		return supplyAsync(() -> getAdNews(pageIndex));
+	}
+
+	/**
+	 *
+	 * @param deviceToken
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public CompletionStage<List<News>> getNewsFromLockScreen(String deviceToken, Integer page, String newsId) throws InterruptedException, ExecutionException {
+		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
+		List<News> newsList = getNewsById(newsId);
+		newsList.addAll(getNewsFromCrawler(categoryList, page));
+		return supplyAsync(() -> newsList);
 	}
 }
