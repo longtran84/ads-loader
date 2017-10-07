@@ -84,6 +84,7 @@ public class ContentService {
 			cateDto.setCode(cate.getCode());
 			cateDto.setName(cate.getName());
 			cateDto.setImageFile(cate.getImage());
+			cateDto.setId(cate.getId());
 			categoryDtoList.add(cateDto);
 		}
 		return categoryDtoList;
@@ -314,8 +315,13 @@ public class ContentService {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Integer page) throws InterruptedException, ExecutionException {
+	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Integer page, String newsId) throws InterruptedException, ExecutionException {
 		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
+		List<News> newsList = new ArrayList<News>();
+		if (newsId != null && !newsId.equals("")) {
+			newsList.addAll(getNewsById(newsId));
+		}
+		newsList.addAll(getNewsFromCrawler(categoryList, page));
 		return supplyAsync(() -> getNewsFromCrawler(categoryList, page));
 	}
 
@@ -369,19 +375,5 @@ public class ContentService {
 	 */
 	public CompletionStage<List<News>> getListAdNews(Integer pageIndex) throws InterruptedException, ExecutionException {
 		return supplyAsync(() -> getAdNews(pageIndex));
-	}
-
-	/**
-	 *
-	 * @param deviceToken
-	 * @return
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public CompletionStage<List<News>> getNewsFromLockScreen(String deviceToken, Integer page, String newsId) throws InterruptedException, ExecutionException {
-		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
-		List<News> newsList = getNewsById(newsId);
-		newsList.addAll(getNewsFromCrawler(categoryList, page));
-		return supplyAsync(() -> newsList);
 	}
 }

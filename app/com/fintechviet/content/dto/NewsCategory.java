@@ -6,6 +6,7 @@ import java.util.List;
  * Created by tungn on 9/14/2017.
  */
 public class NewsCategory {
+    private long id;
     private String code;
     private String name;
     private String imageFile;
@@ -42,6 +43,12 @@ public class NewsCategory {
     public void setImageFile(String imageFile) {
         this.imageFile = imageFile;
     }
-    
-    
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

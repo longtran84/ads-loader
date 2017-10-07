@@ -49,12 +49,12 @@ public class ContentController extends Controller {
 	}
 
 	@ApiOperation(value = "Get News by Interests from crawler")
-	public CompletionStage<Result> getNewsByCategoriesFromCrawler(String deviceToken, String page)
+	public CompletionStage<Result> getNewsByCategoriesFromCrawler(String deviceToken, String page, String newsId)
 			throws InterruptedException, ExecutionException {
 //		Date from = StringUtils.isNotEmpty(fromDate) ? DateUtils.convertStringToDate2(fromDate) : null;
 //		Date to = StringUtils.isNotEmpty(toDate) ? DateUtils.convertStringToDate2(toDate) : null;
 		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
-		return contentService.getNewsByUserInterestFromCrawler(deviceToken, pageIndex).thenApplyAsync(newsList -> {
+		return contentService.getNewsByUserInterestFromCrawler(deviceToken, pageIndex, newsId).thenApplyAsync(newsList -> {
 			return ok(Json.toJson(buildNewsResponse(newsList)));
 		}, ec.current());
 	}
@@ -120,15 +120,6 @@ public class ContentController extends Controller {
 			throws InterruptedException, ExecutionException {
 		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
 		return contentService.getListAdNews(pageIndex).thenApplyAsync(news -> {
-			return ok(Json.toJson(news));
-		}, ec.current());
-	}
-
-	@ApiOperation(value = "Get News from Lock screen")
-	public CompletionStage<Result> getNewsFromLockScreen(String deviceToken, String newsId, String page)
-			throws InterruptedException, ExecutionException {
-		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
-		return contentService.getNewsFromLockScreen(deviceToken, pageIndex, newsId).thenApplyAsync(news -> {
 			return ok(Json.toJson(news));
 		}, ec.current());
 	}

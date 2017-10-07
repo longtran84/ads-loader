@@ -17,6 +17,15 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class JPAUserRepository implements UserRepository {
@@ -254,9 +263,15 @@ public class JPAUserRepository implements UserRepository {
 	}
 	private List<MobileUserInterestItems> updateUserInterest(EntityManager em, List<MobileUserInterestItems> interests) {
 		List<MobileUserInterestItems> returnList = new ArrayList<MobileUserInterestItems>();
+		//remove old category
+		Session session=em.unwrap(Session.class);
+		Long uid = interests.get(0).getMobileUserId();
+		String hql = "Delete from MobileUserInterestItems where mobileUserId = :uid";
+		session.createQuery(hql).setLong("uid", uid).executeUpdate();
 		for(MobileUserInterestItems interest: interests){
 			try {
-				returnList.add(em.merge(interest));
+				em.persist(interest);
+				returnList.add(interest);
 			} catch (Exception e) {
 				if(e.getCause() instanceof ConstraintViolationException){
 					interest.setErrorMessage("Already existed");

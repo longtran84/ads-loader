@@ -22,7 +22,7 @@ GET /user/updateMessage/:deviceToken/:messageId                          com.fin
 
 #Content
 GET /content/news/interest/:deviceToken            					     com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, fromDate: String, toDate: String ?= null)
-GET /content/news_crawler/interest/:deviceToken            			     com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler(deviceToken: String, page: String)
+GET /content/news_crawler/interest/:deviceToken            			     com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler(deviceToken: String, page: String, newsId: String ?="")
 GET /content/news_crawler/interest            				             com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler1(interests: String, page: String)
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
@@ -31,7 +31,6 @@ GET /content/topNewsByCategory                                           com.fin
 GET /content/newsOnLockScreen/:deviceToken                               com.fintechviet.content.controller.ContentController.getNewsOnLockScreen(deviceToken: String)
 GET /content/adnews                                                      com.fintechviet.content.controller.ContentController.getAdNewsList(page: String)
 GET /content/games                                                       com.fintechviet.content.controller.ContentController.getGames()
-GET /content/news_crawler/lockscreen/:deviceToken            			 com.fintechviet.content.controller.ContentController.getNewsFromLockScreen(deviceToken: String, newsId: String, page: String)
 
 #Advertisement
 GET /ad/placement                            com.fintechviet.ad.controller.AdvertismentController.getAdPlacement(template: String, deviceToken: String, adTypeId: Integer ?= null)
