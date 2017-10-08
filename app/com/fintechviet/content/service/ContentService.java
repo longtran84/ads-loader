@@ -322,7 +322,7 @@ public class ContentService {
 			newsList.addAll(getNewsById(newsId));
 		}
 		newsList.addAll(getNewsFromCrawler(categoryList, page));
-		return supplyAsync(() -> getNewsFromCrawler(categoryList, page));
+		return supplyAsync(() -> newsList);
 	}
 
 	/**
