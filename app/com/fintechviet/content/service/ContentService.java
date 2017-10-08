@@ -321,7 +321,15 @@ public class ContentService {
 		if (newsId != null && !newsId.equals("")) {
 			newsList.addAll(getNewsById(newsId));
 		}
-		newsList.addAll(getNewsFromCrawler(categoryList, page));
+		List<News> newsByCategory = getNewsFromCrawler(categoryList, page);
+		for (News news : newsByCategory) {
+			if (newsId != null && !newsId.equals("")) {
+				if (news.getId() != Long.parseLong(newsId))
+					newsList.add(news);
+			} else {
+				newsList.add(news);
+			}
+		}
 		return supplyAsync(() -> newsList);
 	}
 
