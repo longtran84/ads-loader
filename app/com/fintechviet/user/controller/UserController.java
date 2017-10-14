@@ -1,6 +1,7 @@
 package com.fintechviet.user.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fintechviet.common.ErrorResponse;
 import com.fintechviet.user.dto.UserInterest;
 import com.fintechviet.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -55,7 +56,7 @@ public class UserController extends Controller {
 												  String location,
 												  String inviteCode) {
 		return userService.updateUserInfo(deviceToken, email, gender, dob, location, inviteCode).thenApplyAsync(response -> {
-			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(response));
+			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse(response)));
 		}, ec.current());
 	}
 
