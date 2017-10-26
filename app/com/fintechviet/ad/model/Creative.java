@@ -17,6 +17,7 @@ public class Creative {
     private String template;
     private String imageLink;
     private String videoLink;
+    private String clickUrl;
     private String status;
 
     @Id
@@ -108,6 +109,16 @@ public class Creative {
 
     public void setVideoLink(String videoLink) {
         this.videoLink = videoLink;
+    }
+
+    @Basic
+    @Column(name = "clickUrl")
+    public String getClickUrl() {
+        return clickUrl;
+    }
+
+    public void setClickUrl(String clickUrl) {
+        this.clickUrl = clickUrl;
     }
 
     @Basic

@@ -27,10 +27,8 @@ import com.typesafe.config.Optional;
 
 @Api(value = "Content")
 public class ContentController extends Controller {
-	private static String DOMAIN = "http://10.0.2.2:9000";
 	private HttpExecutionContext ec;
 	private ContentService contentService;
-	private static final String  dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	@Inject()
 	public ContentController(ContentService contentService, HttpExecutionContext ec) {
@@ -38,6 +36,12 @@ public class ContentController extends Controller {
 		this.ec = ec;
 	}
 
+	/**
+	 * @param deviceToken
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
 	@ApiOperation(value = "Get News by Interests")
 	public CompletionStage<Result> getNewsByCategories(String deviceToken, String fromDate, String toDate)
 			throws InterruptedException, ExecutionException {
@@ -48,6 +52,12 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param deviceToken
+	 * @param page
+	 * @param newsId
+	 * @return
+	 */
 	@ApiOperation(value = "Get News by Interests from crawler")
 	public CompletionStage<Result> getNewsByCategoriesFromCrawler(String deviceToken, String page, String newsId)
 			throws InterruptedException, ExecutionException {
@@ -59,6 +69,11 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param interests
+	 * @param page
+	 * @return
+	 */
 	@ApiOperation(value = "Get News by Interests from crawler")
 	public CompletionStage<Result> getNewsByCategoriesFromCrawler1(String interests, String page)
 			throws InterruptedException, ExecutionException {
@@ -99,6 +114,10 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param categoryCode
+	 * @return
+	 */
 	@ApiOperation(value = "Get top 20 news by category")
 	public CompletionStage<Result> getTopNewsByCategory(String categoryCode)
 			throws InterruptedException, ExecutionException {
@@ -107,6 +126,10 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param deviceToken
+	 * @return
+	 */
 	@ApiOperation(value = "Get News on Lock screen")
 	public CompletionStage<Result> getNewsOnLockScreen(String deviceToken)
 			throws InterruptedException, ExecutionException {
@@ -115,6 +138,10 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param page
+	 * @return
+	 */
 	@ApiOperation(value = "Get Ad News")
 	public CompletionStage<Result> getAdNewsList(String page)
 			throws InterruptedException, ExecutionException {

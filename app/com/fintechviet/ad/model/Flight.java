@@ -27,6 +27,11 @@ public class Flight {
     private boolean isFreCapTmp;
     private String freCapTmp;
     private String freCapDurationTmp;
+    private String userGender;
+    private String userLocation;
+    private Integer userAgeFrom;
+    private Integer userAgeTo;
+    private String userInterest;
 
     @Id
     @Column(name = "id")
@@ -202,6 +207,56 @@ public class Flight {
 
     public void setFreCapDurationTmp(String freCapDurationTmp) {
         this.freCapDurationTmp = freCapDurationTmp;
+    }
+
+    @Basic
+    @Column(name = "user_gender")
+    public String getUserGender() {
+        return userGender;
+    }
+
+    public void setUserGender(String userGender) {
+        this.userGender = userGender;
+    }
+
+    @Basic
+    @Column(name = "user_location")
+    public String getUserLocation() {
+        return userLocation;
+    }
+
+    public void setUserLocation(String userLocation) {
+        this.userLocation = userLocation;
+    }
+
+    @Basic
+    @Column(name = "user_age_from")
+    public Integer getUserAgeFrom() {
+        return userAgeFrom;
+    }
+
+    public void setUserAgeFrom(Integer userAgeFrom) {
+        this.userAgeFrom = userAgeFrom;
+    }
+
+    @Basic
+    @Column(name = "user_age_to")
+    public Integer getUserAgeTo() {
+        return userAgeTo;
+    }
+
+    public void setUserAgeTo(Integer userAgeTo) {
+        this.userAgeTo = userAgeTo;
+    }
+
+    @Basic
+    @Column(name = "user_interest")
+    public String getUserInterest() {
+        return userInterest;
+    }
+
+    public void setUserInterest(String userInterest) {
+        this.userInterest = userInterest;
     }
 
     @Override

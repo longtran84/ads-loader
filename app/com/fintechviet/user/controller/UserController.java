@@ -48,7 +48,7 @@ public class UserController extends Controller {
 	 * @param location
 	 * @return
 	 */
-	@ApiOperation(value="Update User Details. Gender(MALE, FEMALE).Location follow https://vi.wikipedia.org/wiki/B%E1%BA%A3n_m%E1%BA%ABu:K%C3%BD_ki%E1%BB%87u_quy_%C6%B0%E1%BB%9Bc_c%C3%A1c_t%E1%BB%89nh_th%C3%A0nh_Vi%E1%BB%87t_Nam")
+	@ApiOperation(value="Update User Details")
 	public CompletionStage<Result> updateUserInfo(String deviceToken,
 												  String email,
 												  String gender,
@@ -72,7 +72,7 @@ public class UserController extends Controller {
 												String rewardCode,
 												Long addedPoint) {
 		return userService.updateReward(deviceToken, rewardCode, addedPoint).thenApplyAsync(response -> {
-			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(response));
+			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse(response)));
 		}, ec.current());
 	}
 
@@ -98,7 +98,7 @@ public class UserController extends Controller {
 	@ApiOperation(value="Get User Info By Device Token")
 	public CompletionStage<Result> getUserInfo(String deviceToken) {
 		return userService.getUserInfo(deviceToken).thenApplyAsync(response -> {
-			return response != null ? ok(Json.toJson(response)) : badRequest(Json.toJson("User Not Found"));
+			return response != null ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse("UserNotFound")));
 		}, ec.current());
 	}
 
@@ -114,6 +114,10 @@ public class UserController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param deviceToken
+	 * @return
+	 */
 	@ApiOperation(value="Get User Lucky Number")
 	public CompletionStage<Result> getUserLuckyNumberByToken(String deviceToken) {
 		return userService.getUserLuckyNumberByToken(deviceToken).thenApplyAsync(response -> {
@@ -122,7 +126,6 @@ public class UserController extends Controller {
 	}
 
 	/**
-	 *
 	 * @param deviceToken
 	 * @return
 	 */
@@ -134,7 +137,6 @@ public class UserController extends Controller {
 	}
 
 	/**
-	 *
 	 * @param deviceToken
 	 * @param messageId
 	 * @return

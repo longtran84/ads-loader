@@ -1,4 +1,4 @@
-name := """play-java-rest-api-example"""
+name := """ads-loader"""
 
 version := "2.6.x"
 

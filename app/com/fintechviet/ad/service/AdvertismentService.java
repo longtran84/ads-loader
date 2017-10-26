@@ -19,8 +19,12 @@ public class AdvertismentService {
 		this.advertismentRepository = advertismentRepository;
 	}
 
-	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId) {
-		return advertismentRepository.findAdByTemplate(template, adTypeId);
+	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId, String deviceToken) {
+		return advertismentRepository.findAdByTemplate(template, adTypeId, deviceToken);
+	}
+
+	public CompletionStage<List<Ad>> getTopAdv(String deviceToken) {
+		return advertismentRepository.getTopAdv(deviceToken);
 	}
 
 	public CompletionStage<AdImpressions> saveImpression(long adId) {
