@@ -126,8 +126,10 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 
         List<Ad> ads = query.getResultList();
         List<Ad> adsResult = filterByUser(ads, user);
-
-        return adsResult;
+        if (adsResult.size() > 0 ) {
+            return adsResult;
+        }
+        return ads;
     }
 
     @Override
