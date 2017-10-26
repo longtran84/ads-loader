@@ -93,6 +93,11 @@ public class JPAUserRepository implements UserRepository {
 			if (users.isEmpty()) {
 				return "InviteCodeInvalid";
 			}
+			List<UserDeviceToken> tokens = em.createQuery("SELECT u FROM UserDeviceToken u WHERE u.deviceToken = :deviceToken", UserDeviceToken.class)
+					.setParameter("deviceToken", deviceToken).getResultList();
+			if (!tokens.isEmpty()) {
+				return "AlreadyInstallApp";
+			}
 		}
 
     	User user = findByDeviceToken(em, deviceToken);

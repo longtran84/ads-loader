@@ -1,5 +1,7 @@
 package com.fintechviet.ad.repo;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletionStage;
@@ -12,7 +14,9 @@ import javax.persistence.Query;
 import com.fintechviet.ad.AdExecutionContext;
 
 import com.fintechviet.ad.model.*;
+import com.fintechviet.content.model.NewsCategory;
 import com.fintechviet.user.model.User;
+import org.apache.commons.lang3.StringUtils;
 import play.db.jpa.JPAApi;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -21,6 +25,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
 	
     private final JPAApi jpaApi;
     private final AdExecutionContext ec;
+    private static int ADVS = 5;
 	
     @Inject
     public JPAAdvertismentRepository(JPAApi jpaApi, AdExecutionContext ec) {
@@ -33,31 +38,96 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
     }
 
 	@Override
-	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId) {
-        return supplyAsync(() -> wrap(em -> findAdByTemplate(em, template, adTypeId)), ec);
+	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId, String deviceToken) {
+        return supplyAsync(() -> wrap(em -> findAdByTemplate(em, template, adTypeId, deviceToken)), ec);
 	}
 
-    private Ad findAdByTemplate(EntityManager em, String template, int adTypeId) {
-        StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.startDate <= CURRENT_DATE AND (ad.flight.endDate >= CURRENT_DATE OR ad.flight.endDate IS NULL) ");
+    private Ad findAdByTemplate(EntityManager em, String template, int adTypeId, String deviceToken) {
+        User user = em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
+                .setParameter("deviceToken", deviceToken).getSingleResult();
+        StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.id IN ");
+        queryStr.append("(SELECT fl.id FROM Flight fl WHERE fl.startDate <= CURRENT_DATE AND (fl.endDate >= CURRENT_DATE OR fl.endDate IS NULL))");
         queryStr.append("AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'");
         if (adTypeId != 0) {
             queryStr.append(" AND ad.creative.adType.id = :adTypeId");
         }
 
+
         Query query = em.createQuery(queryStr.toString());
         query.setParameter("template", template);
+
         if (adTypeId != 0) {
             query.setParameter("adTypeId", adTypeId);
         }
 
         List<Ad> ads = query.getResultList();
+        List<Ad> adsResult = filterByUser(ads, user);
+
         Ad ad = null;
-        if (!ads.isEmpty()) {
+        if (!adsResult.isEmpty()) {
             Random randomGenerator = new Random();
-            int index = randomGenerator.nextInt(ads.size());
-            ad = ads.get(index);
+            int index = randomGenerator.nextInt(adsResult.size());
+            ad = adsResult.get(index);
+        } else {
+            if (!ads.isEmpty()) {
+                Random randomGenerator = new Random();
+                int index = randomGenerator.nextInt(ads.size());
+                ad = ads.get(index);
+            }
         }
         return ad;
+    }
+
+    private List<Ad> filterByUser(List<Ad> ads, User user) {
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+        List<String> userInterests = new ArrayList<String>();
+        for (NewsCategory newsCategory : user.getNewsCategories()) {
+            userInterests.add(newsCategory.getCode());
+        }
+
+        List<Ad> adsResult = new ArrayList<Ad>();
+        boolean isContainInterest = false;
+        for (Ad ad : ads) {
+            Flight flight = ad.getFlight();
+            if (StringUtils.isNotEmpty(flight.getUserInterest())) {
+                for (String userInterest : userInterests) {
+                    if (flight.getUserInterest().contains(userInterest)) {
+                        isContainInterest = true;
+                        break;
+                    }
+                }
+            }
+            if ((StringUtils.isNotEmpty(flight.getUserGender()) && flight.getUserGender().equals(user.getGender()))
+                    || (flight.getUserAgeFrom() != 0 && flight.getUserAgeTo() != 0 && flight.getUserAgeFrom() <= (currentYear - user.getDob()) && flight.getUserAgeTo() >= (currentYear - user.getDob()))
+                    || (StringUtils.isNotEmpty(flight.getUserLocation()) && flight.getUserLocation().contains(user.getLocation()))
+                    || (StringUtils.isNotEmpty(flight.getUserInterest()) && isContainInterest)) {
+                adsResult.add(ad);
+            }
+        }
+
+        return adsResult;
+    }
+
+    @Override
+    public CompletionStage<List<Ad>> getTopAdv(String deviceToken) {
+        return supplyAsync(() -> wrap(em -> getTopAdv(em, deviceToken)), ec);
+    }
+
+    private List<Ad> getTopAdv(EntityManager em, String deviceToken) {
+        User user = em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)", User.class)
+                .setParameter("deviceToken", deviceToken).getSingleResult();
+        StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.id IN ");
+        queryStr.append("(SELECT fl.id FROM Flight fl WHERE fl.startDate <= CURRENT_DATE AND (fl.endDate >= CURRENT_DATE OR fl.endDate IS NULL))");
+        queryStr.append("AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = 'image' AND ad.creative.adType.id = 1 AND ad.status = 'ACTIVE'");
+
+        Query query = em.createQuery(queryStr.toString());
+        query.setMaxResults(ADVS);
+
+        List<Ad> ads = query.getResultList();
+        List<Ad> adsResult = filterByUser(ads, user);
+
+        return adsResult;
     }
 
     @Override

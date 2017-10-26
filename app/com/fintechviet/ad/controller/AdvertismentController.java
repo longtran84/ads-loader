@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fintechviet.ad.dto.*;
 import com.fintechviet.ad.dto.AppAd;
 import com.fintechviet.ad.model.*;
+import com.fintechviet.common.ErrorResponse;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -33,6 +34,9 @@ public class AdvertismentController extends Controller {
 	}
 
 	/**
+	 * @param template
+	 * @param deviceToken
+	 * @param adTypeId
 	 * @return
 	 */
 	@ApiOperation(value="Get ad")
@@ -40,9 +44,28 @@ public class AdvertismentController extends Controller {
 		if (adTypeId == null) {
 			adTypeId = 0;
 		}
-		return adsService.findAdByTemplate(template, adTypeId).thenApplyAsync(ad -> {
-			return ad != null ? ok(Json.toJson(buildAdResponse(ad, template, deviceToken))) : badRequest("Ad not found");
+		return adsService.findAdByTemplate(template, adTypeId, deviceToken).thenApplyAsync(ad -> {
+			return ad != null ? ok(Json.toJson(buildAdResponse(ad, template, deviceToken))) : badRequest(Json.toJson(new ErrorResponse("AdNotFound")));
 		}, ec.current());
+	}
+
+	/**
+	 * @param deviceToken
+	 * @return
+	 */
+	@ApiOperation(value="Get top ad")
+	public CompletionStage<Result> getTopAdv(String deviceToken) {
+		return adsService.getTopAdv(deviceToken).thenApplyAsync(ads -> {
+			return ads.size() > 0 ? ok(Json.toJson(buildAdsResponse(ads, deviceToken))) : badRequest(Json.toJson(new ErrorResponse("AdNotFound")));
+		}, ec.current());
+	}
+
+	private List<DecisionResponse> buildAdsResponse(List<Ad> ads, String deviceToken) {
+		List<DecisionResponse> dtos = new ArrayList<DecisionResponse>();
+		for (Ad ad : ads) {
+			dtos.add(buildAdResponse(ad, "image", deviceToken));
+		}
+		return  dtos;
 	}
 
 	private DecisionResponse buildAdResponse(Ad ad, String template, String deviceToken) {
@@ -51,7 +74,7 @@ public class AdvertismentController extends Controller {
 			Decision decision = new Decision();
 			Content content = new Content();
 			decision.setAdId(ad.getId());
-			decision.setClickUrl("http://www.vnexpress.net");
+			decision.setClickUrl(ad.getCreative().getClickUrl());
 			if (template.equals("image")) {
 				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setImageUrl(ad.getCreative().getImageLink());;
