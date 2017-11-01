@@ -130,21 +130,21 @@ public class UserController extends Controller {
 	 * @return
 	 */
 	@ApiOperation(value="Get User messages")
-	public CompletionStage<Result> getMessages(String deviceToken) {
-		return userService.getMessages(deviceToken).thenApplyAsync(response -> {
+	public CompletionStage<Result> getMessages(String deviceToken, String type) {
+		return userService.getMessages(deviceToken, type).thenApplyAsync(response -> {
 			return ok(Json.toJson(response));
 		}, ec.current());
 	}
 
+
 	/**
-	 * @param deviceToken
 	 * @param messageId
+	 * @param status
 	 * @return
 	 */
 	@ApiOperation(value="Update User message")
-	public CompletionStage<Result> updateMessage(String deviceToken,
-												 Long messageId) {
-		return userService.updateMessage(deviceToken, messageId).thenApplyAsync(response -> {
+	public CompletionStage<Result> updateMessage(Long messageId, String status) {
+		return userService.updateMessage(messageId, status).thenApplyAsync(response -> {
 			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(response));
 		}, ec.current());
 	}

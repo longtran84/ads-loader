@@ -288,25 +288,41 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	@Override
-	public CompletionStage<List<Message>> getMessages(String deviceToken) {
-		return supplyAsync(() -> wrap(em -> getMessages(em, deviceToken)), ec);
+	public CompletionStage<List<Message>> getMessages(String deviceToken, String type) {
+		return supplyAsync(() -> wrap(em -> getMessages(em, deviceToken, type)), ec);
 	}
 
-	private List<Message> getMessages(EntityManager em, String deviceToken) {
-		List<Message> messages= em.createQuery("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
-				.setParameter("deviceToken", deviceToken).getResultList();
+	private List<Message> getMessages(EntityManager em, String deviceToken, String type) {
+		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken) AND mes.read = 0");
+		if (StringUtils.isNotEmpty(type)) {
+			queryStr.append(" AND mes.type = :type");
+		}
+		Query query = em.createQuery(queryStr.toString());
+		query.setParameter("deviceToken", deviceToken);
+
+		if (StringUtils.isNotEmpty(type)) {
+			query.setParameter("type", type);
+		}
+
+		List<Message> messages= query.getResultList();
 		return messages;
 	}
 
 	@Override
-	public CompletionStage<String> updateMessage(String deviceToken, long messageId) {
-		return supplyAsync(() -> wrap(em -> updateMessage(em, deviceToken, messageId)), ec);
+	public CompletionStage<String> updateMessage(long messageId, String status) {
+		return supplyAsync(() -> wrap(em -> updateMessage(em, messageId, status)), ec);
 	}
 
-	private String updateMessage(EntityManager em, String deviceToken, long messageId) {
+	private String updateMessage(EntityManager em, long messageId, String status) {
     	try {
-			em.createQuery("UPDATE Message mes SET mes.read = 1 WHERE mes.id = :messageId AND mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
-					.setParameter("deviceToken", deviceToken).setParameter("messageId", messageId).executeUpdate();
+    		if (status.equals("READ")) {
+				em.createQuery("UPDATE Message mes SET mes.read = 1 WHERE mes.id = :messageId")
+						.setParameter("messageId", messageId).executeUpdate();
+			}
+			if (status.equals("RECEIVE")) {
+				em.createQuery("UPDATE Message mes SET mes.receive = 1 WHERE mes.id = :messageId")
+						.setParameter("messageId", messageId).executeUpdate();
+			}
 		} catch (Exception ex) {
     		ex.printStackTrace();
     		return "error";

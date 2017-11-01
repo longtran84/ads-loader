@@ -19,6 +19,6 @@ public interface UserRepository{
     CompletionStage<List<Object[]>> getRewardInfo(String deviceToken);
     CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode);
     CompletionStage<List<UserLuckyNumber>> getUserLuckyNumberByToken(String deviceToken);
-    CompletionStage<List<Message>> getMessages(String deviceToken);
-    CompletionStage<String> updateMessage(String deviceToken, long messageId);
+    CompletionStage<List<Message>> getMessages(String deviceToken, String type);
+    CompletionStage<String> updateMessage(long messageId, String status);
 }

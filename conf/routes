@@ -16,8 +16,8 @@ GET /user/updateInviteCode/:deviceToken                      			 com.fintechviet
 GET /user/:deviceToken                                                   com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
 GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
 GET /user/luckynumber/:deviceToken                                       com.fintechviet.user.controller.UserController.getUserLuckyNumberByToken(deviceToken: String)
-GET /user/messages/:deviceToken                                          com.fintechviet.user.controller.UserController.getMessages(deviceToken: String)
-GET /user/updateMessage/:deviceToken/:messageId                          com.fintechviet.user.controller.UserController.updateMessage(deviceToken: String, messageId: Long)
+GET /user/messages/:deviceToken                                          com.fintechviet.user.controller.UserController.getMessages(deviceToken: String, type: String ?= "")
+GET /user/updateMessage/:messageId/:status                               com.fintechviet.user.controller.UserController.updateMessage(messageId: Long, status: String)
 
 
 #Content
