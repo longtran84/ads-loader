@@ -288,14 +288,28 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	@Override
-	public CompletionStage<List<Message>> getMessages(String deviceToken, String type) {
-		return supplyAsync(() -> wrap(em -> getMessages(em, deviceToken, type)), ec);
+	public CompletionStage<List<Message>> getMessages(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getMessages(em, deviceToken)), ec);
 	}
 
-	private List<Message> getMessages(EntityManager em, String deviceToken, String type) {
+	private List<Message> getMessages(EntityManager em, String deviceToken) {
+		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.receive = 1 AND mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
+		Query query = em.createQuery(queryStr.toString());
+		query.setParameter("deviceToken", deviceToken);
+
+		List<Message> messages= query.getResultList();
+		return messages;
+	}
+
+	@Override
+	public CompletionStage<List<Message>> getMessagesByType(String deviceToken, String type) {
+		return supplyAsync(() -> wrap(em -> getMessagesByType(em, deviceToken, type)), ec);
+	}
+
+	private List<Message> getMessagesByType(EntityManager em, String deviceToken, String type) {
 		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
 		if (StringUtils.isNotEmpty(type)) {
-			queryStr.append(" AND mes.read = 0 AND mes.type = :type");
+			queryStr.append(" AND mes.receive = 0 AND mes.type = :type");
 		}
 		Query query = em.createQuery(queryStr.toString());
 		query.setParameter("deviceToken", deviceToken);
