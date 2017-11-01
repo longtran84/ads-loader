@@ -11,7 +11,9 @@ public class Message {
     private long id;
     private User user;
     private String body;
+    private String type;
     private Byte read = 0;
+    private Byte receive = 0;
     private Timestamp createdDate;
 
     @Id
@@ -35,6 +37,16 @@ public class Message {
     }
 
     @Basic
+    @Column(name = "type")
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Basic
     @Column(name = "body")
     public String getBody() {
         return body;
@@ -42,6 +54,16 @@ public class Message {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    @Basic
+    @Column(name = "receive")
+    public Byte getReceive() {
+        return receive;
+    }
+
+    public void setReceive(Byte receive) {
+        this.receive = receive;
     }
 
     @Basic

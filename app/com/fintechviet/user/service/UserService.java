@@ -93,13 +93,13 @@ public class UserService {
 		return userRepository.getUserLuckyNumberByToken(deviceToken);
 	}
 
-	public CompletionStage<List<Message>> getMessages(String deviceToken){
-		return userRepository.getMessages(deviceToken).thenApplyAsync(messages -> {
+	public CompletionStage<List<Message>> getMessages(String deviceToken, String type){
+		return userRepository.getMessages(deviceToken, type).thenApplyAsync(messages -> {
 			return buildMessages(messages);
 		}, ec.current());
 	}
 
-	public CompletionStage<String> updateMessage(String deviceToken, long messageId){
-		return userRepository.updateMessage(deviceToken, messageId);
+	public CompletionStage<String> updateMessage(long messageId, String status){
+		return userRepository.updateMessage(messageId, status);
 	}
 }
