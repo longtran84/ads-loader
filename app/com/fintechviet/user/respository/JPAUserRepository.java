@@ -293,7 +293,7 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	private List<Message> getMessages(EntityManager em, String deviceToken, String type) {
-		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
+		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken) AND mes.read = 0");
 		if (StringUtils.isNotEmpty(type)) {
 			queryStr.append(" AND mes.type = :type");
 		}
