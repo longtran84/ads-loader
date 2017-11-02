@@ -60,6 +60,7 @@ public class UserService {
 		for (com.fintechviet.user.model.Message message : messages) {
 			Message mess = new Message();
 			mess.setId(message.getId());
+			mess.setSubject(message.getSubject());
 			mess.setBody(message.getBody());
 			mess.setRead(Byte.valueOf("0"));
 			mess.setCreatedDate(message.getCreatedDate());
