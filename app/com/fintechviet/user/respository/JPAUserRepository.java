@@ -130,6 +130,7 @@ public class JPAUserRepository implements UserRepository {
 			ed.setUser(user);
 			em.persist(ed);
 			Message message = new Message();
+			message.setSubject(MESSAGE_BODY);
 			message.setBody(MESSAGE_BODY);
 			message.setUser(user);
 			em.persist(message);

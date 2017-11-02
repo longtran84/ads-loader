@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 public class Message {
     private long id;
     private User user;
+    private String subject;
     private String body;
     private String type = "PRIMARY";
     private Byte read = 0;
@@ -44,6 +45,16 @@ public class Message {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Basic
+    @Column(name = "subject")
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     @Basic

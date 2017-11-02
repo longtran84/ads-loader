@@ -7,9 +7,18 @@ import java.util.Date;
  */
 public class Message {
     private long id;
+    private String subject;
     private String body;
     private Date createdDate;
     private byte read;
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
     public String getBody() {
         return body;
