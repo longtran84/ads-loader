@@ -1,5 +1,10 @@
 package com.fintechviet.content.service;
 
+import com.fintechviet.ad.dto.Content;
+import com.fintechviet.ad.dto.Decision;
+import com.fintechviet.ad.dto.DecisionResponse;
+import com.fintechviet.ad.model.Ad;
+import com.fintechviet.ad.repo.AdvertismentRepository;
 import com.fintechviet.content.dto.News;
 import com.fintechviet.content.dto.NewsCategory;
 import com.fintechviet.content.model.Game;
@@ -19,16 +24,18 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.jsoup.Jsoup;
+import play.Configuration;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 
-
 public class ContentService {
 	private final ContentRepository contentRepository;
+	private final AdvertismentRepository advertismentRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
 	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/Crawler";
+	private static String DOMAIN = "http://222.252.16.132:9000";
 	private static String ID = "id";
 	private static String CATEGORY_CODE = "MaChuyenMuc";
 	private static String SOURCE_NAME = "TenMien";
@@ -38,11 +45,14 @@ public class ContentService {
 	private static String IMAGE_LINK = "AnhDaiDien";
 	private static String PUBLISH_DATE = "NgayDangTin";
 	private static String CRAWLER_DATE = "NgayCrawler";
-	private static int ROWS = 30;
 
 	@Inject
-	public ContentService(ContentRepository contentRepository){
+	private Configuration configuration;
+
+	@Inject
+	public ContentService(ContentRepository contentRepository, AdvertismentRepository advertismentRepository){
 		this.contentRepository = contentRepository;
+		this.advertismentRepository = advertismentRepository;
 	}
 
 	public CompletionStage<String> saveImpression() {
@@ -150,6 +160,86 @@ public class ContentService {
 		return newsList;
 	}
 
+	private List<News> buildNewsListAndAdv(SolrDocumentList results, String legacyId) {
+		List<News> newsList = new ArrayList<>();
+		for (SolrDocument document : results) {
+			News news = new News();
+			for (Iterator<Map.Entry<String, Object>> i = document.iterator(); i.hasNext();) {
+				Map.Entry<String, Object> element = i.next();
+				String key = element.getKey().toString();
+				String value = element.getValue().toString();
+				if (ID.equals(key)) {
+					news.setId(Long.valueOf(value));
+				} else if(CATEGORY_CODE.equals(key)) {
+					news.setNewsCategoryCode(value);
+				} else if(TITLE.equals(key)) {
+					news.setTitle(value);
+				} else if(CONTENT.equals(key)) {
+					news.setShortDescription(Jsoup.parse(value).text());
+				} else if(LINK.equals(key)) {
+					news.setLink(value);
+				} else if(IMAGE_LINK.equals(key)) {
+					value = value.replaceAll("localhost", "222.252.16.132");
+					news.setImageLink(value);
+				} else if(CRAWLER_DATE.equals(key)) {
+					news.setCreatedDate((Date)element.getValue());
+				}
+			}
+			newsList.add(news);
+		}
+		int advNumber = Integer.parseInt(configuration.getString("adv.display.number"));
+		Random rd = new Random();
+		for (int i = 0; i < advNumber; i++) {
+			int templateIndex = rd.nextInt(advNumber);
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
+			int index = rd.nextInt(rows);
+			String template;
+			if (templateIndex == 0) {
+				template = "image";
+			} else {
+				template = "video";
+			}
+			Ad ad;
+			if (template.equals("image")) {
+				ad = advertismentRepository.getAdByTemplate(template, 1);
+			} else {
+				ad = advertismentRepository.getAdByTemplate(template, 0);
+			}
+
+			DecisionResponse adv = buildAdResponse(ad, template, legacyId);
+			if (index <= newsList.size() - 1) {
+				News news = newsList.get(index);
+				news.setDecisionResponse(adv);
+			}
+		}
+		return newsList;
+	}
+
+	private DecisionResponse buildAdResponse(Ad ad, String template, String legacyId) {
+		if (ad != null) {
+			DecisionResponse response = new DecisionResponse();
+			Decision decision = new Decision();
+			Content content = new Content();
+			decision.setAdId(ad.getId());
+			decision.setClickUrl(ad.getCreative().getClickUrl());
+			if (template.equals("image")) {
+				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&legacyId=" + legacyId);
+				content.setImageUrl(ad.getCreative().getImageLink());;
+			} else {
+				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&legacyId=" + legacyId);
+				content.setVideoUrl(ad.getCreative().getVideoLink());
+			}
+			decision.setImpressionUrl(DOMAIN + "/ad/impression/" + ad.getId());
+			content.setBody(ad.getCreative().getBody());
+			content.setTemplate(template);
+			decision.setContent(content);
+			response.setDecision(decision);
+			return response;
+		}
+
+		return null;
+	}
+
 	private List<News> getNewsFromCrawler(List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
@@ -159,6 +249,7 @@ public class ContentService {
 		}
 		List<News> newsList = new ArrayList<>();
 		try {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
 			String queryStr = "*.*";
 			if (!interests.isEmpty()) {
@@ -170,8 +261,8 @@ public class ContentService {
 //			filterQueryStr = filterQueryStr.replaceAll("\\+", "");
 //			query.addFilterQuery(filterQueryStr);
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
-			query.setStart((pageIndex - 1) * ROWS);
-			query.setRows(ROWS);
+			query.setStart((pageIndex - 1) * rows);
+			query.setRows(rows);
 			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
@@ -189,6 +280,7 @@ public class ContentService {
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<News> newsList = new ArrayList<>();
 		try {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
 			//String queryStr = CATEGORY_CODE + ":" + CommonUtils.convertListToString(interests);
 			String queryStr = CATEGORY_CODE + ":" + interests;
@@ -198,8 +290,8 @@ public class ContentService {
 //			filterQueryStr = filterQueryStr.replaceAll("\\+", "");
 //			query.addFilterQuery(filterQueryStr);
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
-			query.setStart((pageIndex - 1) * ROWS);
-			query.setRows(ROWS);
+			query.setStart((pageIndex - 1) * rows);
+			query.setRows(rows);
 			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
@@ -265,13 +357,14 @@ public class ContentService {
 	private List<News> getAdNews(Integer pageIndex) {
 		List<News> newsList = new ArrayList<News>();
 		try {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			SolrClient client = new HttpSolrClient.Builder(CRAWLER_ENPOINT).build();
 			SolrQuery query = new SolrQuery();
 			String queryStr = CATEGORY_CODE + ":" + "TaiChinh";
 			query.setQuery(queryStr);
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
-			query.setStart((pageIndex - 1) * ROWS);
-			query.setRows(ROWS);
+			query.setStart((pageIndex - 1) * rows);
+			query.setRows(rows);
 			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 

@@ -78,6 +78,32 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
         return ad;
     }
 
+    @Override
+    public Ad getAdByTemplate(String template, int adTypeId) {
+        return wrap(em -> {
+            StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.startDate <= CURRENT_DATE AND (ad.flight.endDate >= CURRENT_DATE OR ad.flight.endDate IS NULL) ");
+            queryStr.append("AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'");
+            if (adTypeId != 0) {
+                queryStr.append(" AND ad.creative.adType.id = :adTypeId");
+            }
+
+            Query query = em.createQuery(queryStr.toString());
+            query.setParameter("template", template);
+            if (adTypeId != 0) {
+                query.setParameter("adTypeId", adTypeId);
+            }
+
+            List<Ad> ads = query.getResultList();
+            Ad ad = null;
+            if (!ads.isEmpty()) {
+                Random randomGenerator = new Random();
+                int index = randomGenerator.nextInt(ads.size());
+                ad = ads.get(index);
+            }
+            return ad;
+        });
+    }
+
     private List<Ad> filterByUser(List<Ad> ads, User user) {
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);

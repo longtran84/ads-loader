@@ -1,5 +1,7 @@
 package com.fintechviet.content.dto;
 
+import com.fintechviet.ad.dto.DecisionResponse;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ public class News {
     private String imageLink;
     private String link;
     private String newsCategoryCode;
+    private DecisionResponse decisionResponse;
     private Date createdDate;
 
     public String getTitle() {
@@ -73,5 +76,13 @@ public class News {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public DecisionResponse getDecisionResponse() {
+        return decisionResponse;
+    }
+
+    public void setDecisionResponse(DecisionResponse decisionResponse) {
+        this.decisionResponse = decisionResponse;
     }
 }
