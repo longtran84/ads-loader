@@ -17,4 +17,5 @@ public interface AdvertismentRepository{
     CompletionStage<String> saveView(long adId, String deviceToken);
     CompletionStage<List<AppAd>> getListAppAd();
     CompletionStage<String> saveInstall(long appId, String deviceToken, String platform);
+    Ad getAdByTemplate(String template, int adTypeId);
 }
