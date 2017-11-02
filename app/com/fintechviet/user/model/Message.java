@@ -11,7 +11,7 @@ public class Message {
     private long id;
     private User user;
     private String body;
-    private String type;
+    private String type = "PRIMARY";
     private Byte read = 0;
     private Byte receive = 0;
     private Timestamp createdDate;
