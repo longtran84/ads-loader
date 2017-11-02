@@ -160,7 +160,7 @@ public class ContentService {
 		return newsList;
 	}
 
-	private List<News> buildNewsListAndAdv(SolrDocumentList results, String legacyId) {
+	private List<News> buildNewsListAndAdv(SolrDocumentList results, String deviceToken) {
 		List<News> newsList = new ArrayList<>();
 		for (SolrDocument document : results) {
 			News news = new News();
@@ -206,7 +206,7 @@ public class ContentService {
 				ad = advertismentRepository.getAdByTemplate(template, 0);
 			}
 
-			DecisionResponse adv = buildAdResponse(ad, template, legacyId);
+			DecisionResponse adv = buildAdResponse(ad, template, deviceToken);
 			if (index <= newsList.size() - 1) {
 				News news = newsList.get(index);
 				news.setDecisionResponse(adv);
@@ -215,7 +215,7 @@ public class ContentService {
 		return newsList;
 	}
 
-	private DecisionResponse buildAdResponse(Ad ad, String template, String legacyId) {
+	private DecisionResponse buildAdResponse(Ad ad, String template, String deviceToken) {
 		if (ad != null) {
 			DecisionResponse response = new DecisionResponse();
 			Decision decision = new Decision();
@@ -223,10 +223,10 @@ public class ContentService {
 			decision.setAdId(ad.getId());
 			decision.setClickUrl(ad.getCreative().getClickUrl());
 			if (template.equals("image")) {
-				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&legacyId=" + legacyId);
+				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setImageUrl(ad.getCreative().getImageLink());;
 			} else {
-				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&legacyId=" + legacyId);
+				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setVideoUrl(ad.getCreative().getVideoLink());
 			}
 			decision.setImpressionUrl(DOMAIN + "/ad/impression/" + ad.getId());
@@ -240,7 +240,7 @@ public class ContentService {
 		return null;
 	}
 
-	private List<News> getNewsFromCrawler(List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
+	private List<News> getNewsFromCrawler(String deviceToken, List<com.fintechviet.content.model.NewsCategory> newsCategries, Integer pageIndex) {
 //		String startTime = DateUtils.convertDateToStringUTC(fromDate);
 //		String endTime = DateUtils.convertDateToStringUTC(toDate);
 		List<String> interests = new ArrayList<String>();
@@ -268,7 +268,7 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-			newsList = buildNewsList(results);
+			newsList = buildNewsListAndAdv(results, deviceToken);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -414,7 +414,7 @@ public class ContentService {
 		if (newsId != null && !newsId.equals("")) {
 			newsList.addAll(getNewsById(newsId));
 		}
-		List<News> newsByCategory = getNewsFromCrawler(categoryList, page);
+		List<News> newsByCategory = getNewsFromCrawler(deviceToken, categoryList, page);
 		for (News news : newsByCategory) {
 			if (newsId != null && !newsId.equals("")) {
 				if (news.getId() != Long.parseLong(newsId))
