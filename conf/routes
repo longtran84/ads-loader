@@ -42,3 +42,17 @@ GET /ad/view                                 com.fintechviet.ad.controller.Adver
 GET /ad/appAds                               com.fintechviet.ad.controller.AdvertismentController.getListAppAd()
 GET /ad/saveInstall                          com.fintechviet.ad.controller.AdvertismentController.saveInstall(appId: Long, deviceToken: String, platform: String)
 
+#Loyalty
+GET /loyalty/phonecards                                      com.fintechviet.loyalty.controller.LoyaltyController.getPhonecards()
+GET /loyalty/giftcodes                                       com.fintechviet.loyalty.controller.LoyaltyController.getGiftcodes()
+GET /loyalty/gamecards                                       com.fintechviet.loyalty.controller.LoyaltyController.getGamecards()
+GET /loyalty/vouchers                                        com.fintechviet.loyalty.controller.LoyaltyController.getVouchers()
+GET /loyalty/voucher/images/:voucherId                       com.fintechviet.loyalty.controller.LoyaltyController.getVoucherImages(voucherId: Integer)
+GET /loyalty/voucher/:voucherId                              com.fintechviet.loyalty.controller.LoyaltyController.getVoucherInfo(voucherId: Integer)
+POST /loyalty/cart/addToCart/:deviceToken                    com.fintechviet.loyalty.controller.LoyaltyController.addToCart(deviceToken: String, itemId: Integer, quantity: Integer, price: Double, type: String)
+POST /loyalty/cart/deleteCart/:deviceToken                   com.fintechviet.loyalty.controller.LoyaltyController.deleteCart(deviceToken: String)
+GET /loyalty/cart/:deviceToken                               com.fintechviet.loyalty.controller.LoyaltyController.getCartInfo(deviceToken: String)
+POST /loyalty/order/placeOrder/:deviceToken                  com.fintechviet.loyalty.controller.LoyaltyController.placeOrder(deviceToken: String, customerName: String, address: String, phone: String)
+GET /loyalty/order/:orderId                                  com.fintechviet.loyalty.controller.LoyaltyController.getOrderInfo(orderId: Long)
+GET /loyalty/orders/:deviceToken                             com.fintechviet.loyalty.controller.LoyaltyController.getOrders(deviceToken: String)
+
