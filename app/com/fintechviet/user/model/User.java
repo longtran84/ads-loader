@@ -26,7 +26,6 @@ public class User {
     private String inviteCodeUsed;
     private String status = "ACTIVE";
     private Timestamp createdDate;
-    @JsonIgnoreProperties("userMobiles")
     private Set<NewsCategory> newsCategories;
     private List<UserDeviceToken> userMobileDeviceTokens = new ArrayList<UserDeviceToken>();
 
@@ -136,6 +135,7 @@ public class User {
         this.createdDate = createdDate;
     }
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_mobile_interest", joinColumns = @JoinColumn(name = "uid"), inverseJoinColumns = @JoinColumn(name = "newsCategoryId"))
     public Set<NewsCategory> getNewsCategories() {
