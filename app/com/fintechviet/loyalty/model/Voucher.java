@@ -19,9 +19,11 @@ public class Voucher {
     private Integer quantity;
     private String status = "NEW";
     private Timestamp createdDate;
+    private int pointExchange;
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
         return id;
     }
@@ -118,6 +120,16 @@ public class Voucher {
 
     public void setCreatedDate(Timestamp createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Basic
+    @Column(name = "pointExchange")
+    public int getPointExchange() {
+        return pointExchange;
+    }
+
+    public void setPointExchange(int pointExchange) {
+        this.pointExchange = pointExchange;
     }
 
     @Override

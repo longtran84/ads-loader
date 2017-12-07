@@ -1,9 +1,12 @@
 package com.fintechviet.loyalty.controller;
 
 import com.fintechviet.common.ErrorResponse;
+import com.fintechviet.common.SuccessResponse;
 import com.fintechviet.loyalty.service.LoyaltyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import play.i18n.Lang;
+import play.i18n.MessagesApi;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -17,11 +20,13 @@ import java.util.concurrent.ExecutionException;
 public class LoyaltyController extends Controller {
 	private HttpExecutionContext ec;
 	private LoyaltyService loyaltyService;
+	private final MessagesApi messagesApi;
 
 	@Inject()
-	public LoyaltyController(LoyaltyService loyaltyService, HttpExecutionContext ec) {
+	public LoyaltyController(LoyaltyService loyaltyService, HttpExecutionContext ec , MessagesApi messagesApi) {
 		this.loyaltyService = loyaltyService;
 		this.ec = ec;
+		this.messagesApi = messagesApi;
 	}
 
 	/**
@@ -102,7 +107,7 @@ public class LoyaltyController extends Controller {
 	public CompletionStage<Result> addToCart(String deviceToken, int itemId, int quantity, double price, String type)
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.addToCart(deviceToken, itemId, quantity, price, type).thenApplyAsync(response -> {
-			return response != null ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse("AddToCartError")));
+			return response.equals("ok") ? ok(Json.toJson(new SuccessResponse("ok"))) : badRequest(Json.toJson(new ErrorResponse(messagesApi.get(Lang.forCode("vi"), response))));
 		}, ec.current());
 	}
 
@@ -114,7 +119,7 @@ public class LoyaltyController extends Controller {
 	public CompletionStage<Result> deleteCart(String deviceToken)
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.deleteCart(deviceToken).thenApplyAsync(response -> {
-			return response != null ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse("AddToCartError")));
+			return response.equals("ok") ? ok(Json.toJson(new SuccessResponse("ok"))) : badRequest(Json.toJson(new ErrorResponse(messagesApi.get(Lang.forCode("vi"), "cart.delete.error"))));
 		}, ec.current());
 	}
 
@@ -135,13 +140,14 @@ public class LoyaltyController extends Controller {
 	 * @param customerName
 	 * @param address
 	 * @param phone
+	 * @param email
 	 * @return
 	 */
 	@ApiOperation(value = "Place order")
-	public CompletionStage<Result> placeOrder(String deviceToken, String customerName, String address, String phone)
+	public CompletionStage<Result> placeOrder(String deviceToken, String customerName, String address, String phone, String email)
 			throws InterruptedException, ExecutionException {
-		return loyaltyService.placeOrder(deviceToken, customerName, address,phone).thenApplyAsync(response -> {
-			return response != null ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse("PlaceOrderError")));
+		return loyaltyService.placeOrder(deviceToken, customerName, address, phone, email).thenApplyAsync(response -> {
+			return response.equals("ok") ? ok(Json.toJson(new SuccessResponse(messagesApi.get(Lang.forCode("vi"),"order.place.success")))) : badRequest(Json.toJson(new ErrorResponse(messagesApi.get(Lang.forCode("vi"), response))));
 		}, ec.current());
 	}
 
@@ -161,11 +167,23 @@ public class LoyaltyController extends Controller {
 	 * @param deviceToken
 	 * @return
 	 */
-	@ApiOperation(value = "Get order list. Status = NEW, PROCESSING, SUCCESS, FINISH")
+	@ApiOperation(value = "Get order list. Status = NEW, PROCESSING, CANCELLED, SUCCESSFUL, CLOSE")
 	public CompletionStage<Result> getOrders(String deviceToken)
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.getOrders(deviceToken).thenApplyAsync(order -> {
 			return ok(Json.toJson(order));
+		}, ec.current());
+	}
+
+	/**
+	 * @param orderId
+	 * @return
+	 */
+	@ApiOperation(value = "Cancel order")
+	public CompletionStage<Result> cancelOrder(long orderId)
+			throws InterruptedException, ExecutionException {
+		return loyaltyService.cancelOrder(orderId).thenApplyAsync(response -> {
+			return response.equals("ok") ? ok(Json.toJson(new SuccessResponse(messagesApi.get(Lang.forCode("vi"), "order.cancel.ok")))) : badRequest(Json.toJson(new ErrorResponse(messagesApi.get(Lang.forCode("vi"), "order.cancel.error"))));
 		}, ec.current());
 	}
 }

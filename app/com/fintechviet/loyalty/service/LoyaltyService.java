@@ -57,8 +57,8 @@ public class LoyaltyService {
 		return loyaltyRepository.getCartInfo(deviceToken);
 	}
 
-	public CompletionStage<String> placeOrder(String deviceToken, String customerName, String address, String phone) {
-		return loyaltyRepository.placeOrder(deviceToken, customerName, address, phone);
+	public CompletionStage<String> placeOrder(String deviceToken, String customerName, String address, String phone, String email) {
+		return loyaltyRepository.placeOrder(deviceToken, customerName, address, phone, email);
 	}
 
 	public CompletionStage<OrderLoyalty> getOrderInfo(long orderId) {
@@ -67,5 +67,9 @@ public class LoyaltyService {
 
 	public CompletionStage<List<OrderLoyalty>> getOrders(String deviceToken) {
 		return loyaltyRepository.getOrders(deviceToken);
+	}
+
+	public CompletionStage<String> cancelOrder(long orderId) {
+		return loyaltyRepository.cancelOrder(orderId);
 	}
 }

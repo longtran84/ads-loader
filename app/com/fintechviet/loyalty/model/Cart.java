@@ -25,6 +25,7 @@ public class Cart {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() {
         return id;
     }
@@ -115,7 +116,7 @@ public class Cart {
     }
 
     @Basic
-    @Column(name = "createdDate")
+    @Column(name = "createdDate", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Timestamp getCreatedDate() {
         return createdDate;
     }

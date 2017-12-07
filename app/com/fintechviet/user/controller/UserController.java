@@ -14,6 +14,7 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
+import play.Logger;
 
 
 @Api(value="User")
