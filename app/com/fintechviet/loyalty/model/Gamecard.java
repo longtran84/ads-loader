@@ -15,6 +15,7 @@ public class Gamecard {
     private Integer price;
     private String status = "NEW";
     private Timestamp createdDate;
+    private int pointExchange;
 
     @Id
     @Column(name = "id")
@@ -75,6 +76,16 @@ public class Gamecard {
 
     public void setCreatedDate(Timestamp createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Basic
+    @Column(name = "pointExchange")
+    public int getPointExchange() {
+        return pointExchange;
+    }
+
+    public void setPointExchange(int pointExchange) {
+        this.pointExchange = pointExchange;
     }
 
     @Override
