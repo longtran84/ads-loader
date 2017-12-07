@@ -52,7 +52,8 @@ GET /loyalty/voucher/:voucherId                              com.fintechviet.loy
 POST /loyalty/cart/addToCart/:deviceToken                    com.fintechviet.loyalty.controller.LoyaltyController.addToCart(deviceToken: String, itemId: Integer, quantity: Integer, price: Double, type: String)
 POST /loyalty/cart/deleteCart/:deviceToken                   com.fintechviet.loyalty.controller.LoyaltyController.deleteCart(deviceToken: String)
 GET /loyalty/cart/:deviceToken                               com.fintechviet.loyalty.controller.LoyaltyController.getCartInfo(deviceToken: String)
-POST /loyalty/order/placeOrder/:deviceToken                  com.fintechviet.loyalty.controller.LoyaltyController.placeOrder(deviceToken: String, customerName: String, address: String, phone: String)
+POST /loyalty/order/placeOrder/:deviceToken                  com.fintechviet.loyalty.controller.LoyaltyController.placeOrder(deviceToken: String, customerName: String ?= "", address: String ?= "", phone: String ?= "", email: String ?= "")
+GET /loyalty/order/cancelOrder/:orderId                      com.fintechviet.loyalty.controller.LoyaltyController.cancelOrder(orderId: Long)
 GET /loyalty/order/:orderId                                  com.fintechviet.loyalty.controller.LoyaltyController.getOrderInfo(orderId: Long)
 GET /loyalty/orders/:deviceToken                             com.fintechviet.loyalty.controller.LoyaltyController.getOrders(deviceToken: String)
 

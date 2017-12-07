@@ -17,7 +17,8 @@ public interface LoyaltyRepository {
     CompletionStage<String> addToCart(String deviceToken, int itemId, int quantity, double price, String type);
     CompletionStage<String> deleteCart(String deviceToken);
     CompletionStage<Cart> getCartInfo(String deviceToken);
-    CompletionStage<String> placeOrder(String deviceToken, String customerName, String address, String phone);
+    CompletionStage<String> placeOrder(String deviceToken, String customerName, String address, String phone, String email);
     CompletionStage<OrderLoyalty> getOrderInfo(long orderId);
     CompletionStage<List<OrderLoyalty>> getOrders(String deviceToken);
+    CompletionStage<String> cancelOrder(long orderId);
 }

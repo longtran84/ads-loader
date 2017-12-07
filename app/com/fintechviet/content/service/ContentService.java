@@ -25,6 +25,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.jsoup.Jsoup;
 import play.Configuration;
+import play.Logger;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -409,6 +410,7 @@ public class ContentService {
 	 * @throws ExecutionException
 	 */
 	public CompletionStage<List<News>> getNewsByUserInterestFromCrawler(String deviceToken, Integer page, String newsId) throws InterruptedException, ExecutionException {
+		Logger.info("######################### Start get news for user #######################");
 		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
 		List<News> newsList = new ArrayList<News>();
 		if (newsId != null && !newsId.equals("")) {
@@ -423,6 +425,7 @@ public class ContentService {
 				newsList.add(news);
 			}
 		}
+		Logger.info("######################### End get news for user #######################");
 		return supplyAsync(() -> newsList);
 	}
 
