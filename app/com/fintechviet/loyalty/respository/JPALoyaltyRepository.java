@@ -152,6 +152,10 @@ public class JPALoyaltyRepository implements LoyaltyRepository {
                     cart.setVoucher(voucher);
                 } else if (type.equals("GAME_CARD")) {
                     Gamecard gamecard = getGameCardById(itemId);
+                    int pointExchange = gamecard.getPointExchange();
+                    if (user.getEarning() < pointExchange * quantity) {
+                        return "cart.add.point.invalid";
+                    }
                     cart.setGameCard(gamecard);
                 } else if (type.equals("PHONE_CARD")) {
                     Phonecard phonecard = getPhoneCardById(itemId);
