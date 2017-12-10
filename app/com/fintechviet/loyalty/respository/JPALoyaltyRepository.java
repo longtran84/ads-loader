@@ -239,49 +239,53 @@ public class JPALoyaltyRepository implements LoyaltyRepository {
     @Override
     public CompletionStage<String> placeOrder(String deviceToken, String customerName, String address, String phone, String email) {
         return supplyAsync(() -> wrap(em -> {
-            List<Cart> carts = (List<Cart>)em.createQuery("SELECT c FROM Cart c WHERE c.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)").setParameter("deviceToken", deviceToken).getResultList();
-            Cart cart = null;
-            if (carts.size() > 0) {
-                cart =  carts.get(0);
+            try {
+                List<Cart> carts = (List<Cart>)em.createQuery("SELECT c FROM Cart c WHERE c.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)").setParameter("deviceToken", deviceToken).getResultList();
+                Cart cart = null;
+                if (carts.size() > 0) {
+                    cart =  carts.get(0);
+                }
+                int pointExchange = 0;
+                int quantity = cart.getQuantity();
+                Voucher voucher = null;
+                OrderLoyalty order = new OrderLoyalty();
+                order.setUser(cart.getUser());
+                order.setQuantity(quantity);
+                order.setPrice(cart.getPrice());
+                order.setTotal(quantity * cart.getPrice());
+                if (cart.getVoucher() != null) {
+                    order.setVoucher(cart.getVoucher());
+                    pointExchange = cart.getVoucher().getPointExchange();
+                    voucher = cart.getVoucher();
+                    int vcQuantity = voucher.getQuantity();
+                    voucher.setQuantity(vcQuantity - 1);
+                } else if (cart.getGameCard() != null) {
+                    order.setGameCard(cart.getGameCard());
+                } else if (cart.getPhoneCard() != null) {
+                    order.setPhoneCard(cart.getPhoneCard());
+                    pointExchange = cart.getPhoneCard().getPointExchange();
+                } else {
+                    order.setGiftCode(cart.getGiftCode());
+                }
+                order.setTotalPoint(pointExchange * quantity);
+                Pattern pattern = Pattern.compile("^[0-9]{10,11}$");
+                Matcher matcher = pattern.matcher(phone);
+                if (StringUtils.isEmpty(customerName) || (StringUtils.isNotEmpty(customerName) && customerName.length() > 100)
+                        || StringUtils.isEmpty(address) || (StringUtils.isNotEmpty(address) && address.length() > 255)
+                        || !matcher.matches()) {
+                    return "order.place.address.invalid";
+                }
+                order.setCustomerName(customerName);
+                order.setAddress(address);
+                order.setPhone(phone);
+                order.setEmail(email);
+                em.persist(order);
+                em.remove(cart);
+                em.flush();
+                return "ok";
+            } catch (Exception ex) {
+                return "order.place.error";
             }
-            int pointExchange = 0;
-            int quantity = cart.getQuantity();
-            Voucher voucher = null;
-            OrderLoyalty order = new OrderLoyalty();
-            order.setUser(cart.getUser());
-            order.setQuantity(quantity);
-            order.setPrice(cart.getPrice());
-            order.setTotal(quantity * cart.getPrice());
-            if (cart.getVoucher() != null) {
-                order.setVoucher(cart.getVoucher());
-                pointExchange = cart.getVoucher().getPointExchange();
-                voucher = cart.getVoucher();
-                int vcQuantity = voucher.getQuantity();
-                voucher.setQuantity(vcQuantity - 1);
-            } else if (cart.getGameCard() != null) {
-                order.setGameCard(cart.getGameCard());
-            } else if (cart.getPhoneCard() != null) {
-                order.setPhoneCard(cart.getPhoneCard());
-                pointExchange = cart.getPhoneCard().getPointExchange();
-            } else {
-                order.setGiftCode(cart.getGiftCode());
-            }
-            order.setTotalPoint(pointExchange * quantity);
-            Pattern pattern = Pattern.compile("^[0-9]{10,11}$");
-            Matcher matcher = pattern.matcher(phone);
-            if (StringUtils.isEmpty(customerName) || (StringUtils.isNotEmpty(customerName) && customerName.length() > 100)
-                    || StringUtils.isEmpty(address) || (StringUtils.isNotEmpty(address) && address.length() > 255)
-                    || !matcher.matches()) {
-                return "order.place.address.invalid";
-            }
-            order.setCustomerName(customerName);
-            order.setAddress(address);
-            order.setPhone(phone);
-            order.setEmail(email);
-            em.persist(order);
-            em.remove(cart);
-            em.flush();
-            return "ok";
         }), ec);
     }
 
