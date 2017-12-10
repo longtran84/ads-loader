@@ -11,6 +11,7 @@ import java.sql.Timestamp;
  * Created by tungn on 11/9/2017.
  */
 @Entity
+@Table(name = "cart")
 public class Cart {
     private long id;
     private User user;
