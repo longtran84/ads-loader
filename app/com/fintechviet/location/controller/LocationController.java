@@ -28,12 +28,14 @@ public class LocationController extends Controller {
 	}
 
 	/**
+	 * @param longitude
+	 * @param latitude
 	 * @return
 	 */
 	@ApiOperation(value = "Search nearby")
-	public CompletionStage<Result> searchNearBy()
+	public CompletionStage<Result> searchNearBy(String longitude, String latitude)
 			throws InterruptedException, ExecutionException {
-		return locationService.searchNearBy().thenApplyAsync(places -> {
+		return locationService.searchNearBy(longitude, latitude).thenApplyAsync(places -> {
 			return ok(Json.toJson(places));
 		}, ec.current());
 	}
