@@ -7,5 +7,5 @@ import java.util.List;
 
 @ImplementedBy(JPALocationRepository.class)
 public interface LocationRepository {
-    List<AdLocation> findAdLocationsNearBy(double lng, double lat);
+    List<AdLocation> findAdLocationsNearBy(String lng, String lat);
 }

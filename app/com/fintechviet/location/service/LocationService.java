@@ -109,7 +109,7 @@ public class LocationService {
 		return resultList;
 	}
 
-	public List<Place> search(String keyword, double lat, double lng, int radius) {
+	public List<Place> search(String keyword, String lng, String lat, int radius) {
 		List<Place> resultList = new ArrayList<>();
 
 		HttpURLConnection conn = null;
@@ -229,17 +229,18 @@ public class LocationService {
 		return place;
 	}
 
-	public CompletionStage<List<Place>> searchNearBy() {
-		return supplyAsync(() -> search("Vietinbank", 21.0318272, 105.787884, 5000));
+	public CompletionStage<List<Place>> searchNearBy(String longitude, String latitude) {
+		return supplyAsync(() -> search("Vietinbank", longitude, latitude, 5000));
 		//return search("Maritime bank", 21.0318272, 105.787884, 100000);
 	}
 
 	public CompletionStage<List<AdLocation>> searchAdLocationsNearby(String longitude, String latitude) throws IOException {
-		return supplyAsync(() -> locationRepository.findAdLocationsNearBy(105.787884, 21.0318272));
+		return supplyAsync(() -> locationRepository.findAdLocationsNearBy(longitude, latitude));
+		//return supplyAsync(() -> locationRepository.findAdLocationsNearBy(105.787884, 21.0318272));
 	}
 
 	public CompletionStage<String> checkAdLocationsNearby(String deviceToken, String registrationToken, String longitude, String latitude) throws IOException, InterruptedException  {
-		List<AdLocation> adLocations = locationRepository.findAdLocationsNearBy( 105.787884, 21.0318272);
+		List<AdLocation> adLocations = locationRepository.findAdLocationsNearBy( longitude, latitude);
 		String regToken = userRepository.getRegistrationByDeviceToken(deviceToken, registrationToken);
 		for (AdLocation adLocation : adLocations) {
 			PushAdsHelper.pushAdNotificationTorUsers(regToken, adLocation);
