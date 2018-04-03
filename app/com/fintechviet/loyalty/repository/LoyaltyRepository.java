@@ -1,4 +1,4 @@
-package com.fintechviet.loyalty.respository;
+package com.fintechviet.loyalty.repository;
 
 import com.fintechviet.loyalty.model.*;
 import com.google.inject.ImplementedBy;

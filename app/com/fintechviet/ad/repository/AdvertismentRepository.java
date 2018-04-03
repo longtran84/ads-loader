@@ -1,4 +1,4 @@
-package com.fintechviet.ad.repo;
+package com.fintechviet.ad.repository;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;

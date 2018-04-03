@@ -24,6 +24,7 @@ public class User {
     private long earning;
     private String inviteCode;
     private String inviteCodeUsed;
+    private String registrationToken;
     private String status = "ACTIVE";
     private Timestamp createdDate;
     private Set<NewsCategory> newsCategories;
@@ -116,6 +117,16 @@ public class User {
     }
 
     @Basic
+    @Column(name = "registrationToken")
+    public String getRegistrationToken() {
+        return registrationToken;
+    }
+
+    public void setRegistrationToken(String registrationToken) {
+        this.registrationToken = registrationToken;
+    }
+
+    @Basic
     @Column(name = "status")
     public String getStatus() {
         return status;
@@ -155,6 +166,7 @@ public class User {
     public void setUserMobileDeviceToken(List<UserDeviceToken> userMobileDeviceTokens) {
         this.userMobileDeviceTokens = userMobileDeviceTokens;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

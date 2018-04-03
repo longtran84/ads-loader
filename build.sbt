@@ -32,7 +32,9 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.43"
 libraryDependencies += "org.hibernate" % "hibernate-core" % "5.2.9.Final"
 libraryDependencies += "io.dropwizard.metrics" % "metrics-core" % "3.2.1"
 libraryDependencies += "com.palominolabs.http" % "url-builder" % "1.1.0"
+libraryDependencies += "org.json" % "json" % "20171018"
 libraryDependencies += "net.jodah" % "failsafe" % "1.0.3"
+libraryDependencies += "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC1"
 
 libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.3.0" % Test
 libraryDependencies += "io.gatling" % "gatling-test-framework" % "2.3.0" % Test

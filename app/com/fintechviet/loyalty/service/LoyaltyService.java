@@ -1,7 +1,7 @@
 package com.fintechviet.loyalty.service;
 
 import com.fintechviet.loyalty.model.*;
-import com.fintechviet.loyalty.respository.LoyaltyRepository;
+import com.fintechviet.loyalty.repository.LoyaltyRepository;
 import play.Configuration;
 
 import javax.inject.Inject;
