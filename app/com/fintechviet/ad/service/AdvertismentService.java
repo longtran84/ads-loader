@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import com.fintechviet.ad.model.Ad;
 import com.fintechviet.ad.model.AdImpressions;
 import com.fintechviet.ad.model.AppAd;
-import com.fintechviet.ad.repo.AdvertismentRepository;
+import com.fintechviet.ad.repository.AdvertismentRepository;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;

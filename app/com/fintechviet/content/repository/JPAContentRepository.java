@@ -1,26 +1,21 @@
-package com.fintechviet.content.respository;
+package com.fintechviet.content.repository;
 
 import com.fintechviet.content.ContentExecutionContext;
 import com.fintechviet.content.model.*;
 import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import java.util.List;
 import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.util.ArrayList;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 public class JPAContentRepository implements ContentRepository {
 

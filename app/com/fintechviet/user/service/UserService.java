@@ -4,7 +4,7 @@ import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.dto.Message;
 import com.fintechviet.user.dto.Reward;
 import com.fintechviet.user.model.UserLuckyNumber;
-import com.fintechviet.user.respository.UserRepository;
+import com.fintechviet.user.repository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;

@@ -24,6 +24,7 @@ GET /user/updateMessage/:messageId/:status                               com.fin
 #Content
 GET /content/news/interest/:deviceToken            					     com.fintechviet.content.controller.ContentController.getNewsByCategories(deviceToken: String, fromDate: String, toDate: String ?= null)
 GET /content/news_crawler/interest/:deviceToken            			     com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler(deviceToken: String, page: String, newsId: String ?="")
+GET /content/news_crawler/newsByCategory/:deviceToken            		 com.fintechviet.content.controller.ContentController.getNewsByCategoryFromCrawler(deviceToken: String, page: String, categoryCode: String)
 GET /content/news_crawler/interest            				             com.fintechviet.content.controller.ContentController.getNewsByCategoriesFromCrawler1(interests: String, page: String)
 GET /content/impression                                                  com.fintechviet.content.controller.ContentController.saveImpression()
 GET /content/click                                                       com.fintechviet.content.controller.ContentController.saveClick()
@@ -57,3 +58,7 @@ GET /loyalty/order/cancelOrder/:orderId                      com.fintechviet.loy
 GET /loyalty/order/:orderId                                  com.fintechviet.loyalty.controller.LoyaltyController.getOrderInfo(orderId: Long)
 GET /loyalty/orders/:deviceToken                             com.fintechviet.loyalty.controller.LoyaltyController.getOrders(deviceToken: String)
 
+#Location
+GET /location/searchNearBy          com.fintechviet.location.controller.LocationController.searchNearBy()
+GET /location/searchAdLocationsNearBy  com.fintechviet.location.controller.LocationController.searchAdLocationsNearBy(longitude: String, latitude : String)
+GET /location/checkAdLocationsNearBy  com.fintechviet.location.controller.LocationController.checkAdLocationsNearBy(deviceToken: String, registrationToken: String, longitude: String, latitude : String)

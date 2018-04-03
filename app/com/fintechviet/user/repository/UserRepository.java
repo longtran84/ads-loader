@@ -1,4 +1,4 @@
-package com.fintechviet.user.respository;
+package com.fintechviet.user.repository;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.model.Message;
@@ -22,4 +22,5 @@ public interface UserRepository{
     CompletionStage<List<Message>> getMessages(String deviceToken);
     CompletionStage<List<Message>> getMessagesByType(String deviceToken, String type);
     CompletionStage<String> updateMessage(long messageId, String status);
+    String getRegistrationByDeviceToken(String deviceToken, String registrationToken);
 }

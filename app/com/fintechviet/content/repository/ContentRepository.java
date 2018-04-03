@@ -1,4 +1,4 @@
-package com.fintechviet.content.respository;
+package com.fintechviet.content.repository;
 
 import com.fintechviet.content.model.Game;
 import com.fintechviet.content.model.News;

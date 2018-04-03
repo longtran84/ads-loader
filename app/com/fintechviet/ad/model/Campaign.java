@@ -19,7 +19,6 @@ public class Campaign {
     private String freCapType;
     private String description;
     private String status;
-    private Advertiser advertiser;
     private String startDateTmp;
     private String endDateTmp;
     private boolean isFreCapTmp;
@@ -125,16 +124,6 @@ public class Campaign {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "advertiserId")
-    public Advertiser getAdvertiser() {
-        return advertiser;
-    }
-
-    public void setAdvertiser(Advertiser advertiser) {
-        this.advertiser = advertiser;
     }
 
     @Transient

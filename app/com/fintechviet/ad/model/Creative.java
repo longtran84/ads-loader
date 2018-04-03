@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Table(name = "creative")
 public class Creative {
     private Long id;
-    private Advertiser advertiser;
     private AdType adType;
     private String title;
     private String body;
@@ -29,16 +28,6 @@ public class Creative {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "advertiserId")
-    public Advertiser getAdvertiser() {
-        return advertiser;
-    }
-
-    public void setAdvertiser(Advertiser advertiser) {
-        this.advertiser = advertiser;
     }
 
     @ManyToOne

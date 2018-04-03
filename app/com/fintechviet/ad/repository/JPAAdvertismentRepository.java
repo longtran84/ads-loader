@@ -1,4 +1,4 @@
-package com.fintechviet.ad.repo;
+package com.fintechviet.ad.repository;
 
 import java.util.ArrayList;
 import java.util.Calendar;

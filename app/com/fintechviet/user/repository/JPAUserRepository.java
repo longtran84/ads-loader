@@ -1,4 +1,4 @@
-package com.fintechviet.user.respository;
+package com.fintechviet.user.repository;
 
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.UserExecutionContext;
@@ -17,13 +17,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -344,5 +337,20 @@ public class JPAUserRepository implements UserRepository {
 		}
 
 		return "ok";
+	}
+
+	@Override
+	public String getRegistrationByDeviceToken(String deviceToken, String registrationToken) {
+		return wrap(em -> {
+			String queryStr = "SELECT u.registrationToken FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)";
+			Query query = em.createQuery(queryStr).setParameter("deviceToken", deviceToken);
+			String oldRegistrationToken = (String)query.getSingleResult();
+			if (!registrationToken.equals(oldRegistrationToken)) {
+				em.createQuery("UPDATE User u SET u.registrationToken = :registrationToken WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
+						.setParameter("registrationToken", registrationToken)
+						.setParameter("deviceToken", deviceToken).executeUpdate();
+			}
+			return (!registrationToken.equals(oldRegistrationToken)) ? registrationToken : oldRegistrationToken;
+		});
 	}
 }

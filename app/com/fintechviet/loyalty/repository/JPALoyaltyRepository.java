@@ -1,4 +1,4 @@
-package com.fintechviet.loyalty.respository;
+package com.fintechviet.loyalty.repository;
 
 import com.fintechviet.content.ContentExecutionContext;
 import com.fintechviet.loyalty.model.*;

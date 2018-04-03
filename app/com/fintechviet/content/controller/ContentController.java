@@ -70,6 +70,21 @@ public class ContentController extends Controller {
 	}
 
 	/**
+	 * @param deviceToken
+	 * @param page
+	 * @param categoryCode
+	 * @return
+	 */
+	@ApiOperation(value = "Get News by Category from crawler")
+	public CompletionStage<Result> getNewsByCategoryFromCrawler(String deviceToken, String page, String categoryCode)
+			throws InterruptedException, ExecutionException {
+		int pageIndex = StringUtils.isNotEmpty(page) ? Integer.valueOf(page) : 1;
+		return contentService.getNewsByCategory(deviceToken, pageIndex, categoryCode).thenApplyAsync(newsList -> {
+			return ok(Json.toJson(buildNewsResponse(newsList)));
+		}, ec.current());
+	}
+
+	/**
 	 * @param interests
 	 * @param page
 	 * @return
