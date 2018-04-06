@@ -126,7 +126,7 @@ public class LocationService {
 
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
-			InputStreamReader in = new InputStreamReader(conn.getInputStream());
+			InputStreamReader in = new InputStreamReader(conn.getInputStream(), "utf-8");
 
 			int read;
 			char[] buff = new char[1024];
