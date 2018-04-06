@@ -28,30 +28,17 @@ public class LocationController extends Controller {
 	}
 
 	/**
+	 * @param type
 	 * @param longitude
 	 * @param latitude
 	 * @return
 	 */
-	@ApiOperation(value = "Search nearby")
-	public CompletionStage<Result> searchNearBy(String longitude, String latitude)
+	@ApiOperation(value = "Search by type (BANK_AGENCY, ATM, AD_LOCATION)")
+	public CompletionStage<Result> searchNearBy(String type, String longitude, String latitude)
 			throws InterruptedException, ExecutionException {
-		return locationService.searchNearBy(longitude, latitude).thenApplyAsync(places -> {
+		return locationService.searchNearBy(type, longitude, latitude).thenApplyAsync(places -> {
 			return ok(Json.toJson(places));
 		}, ec.current());
-	}
-
-	/**
-	 * @param longitude
-	 * @param latitude
-	 * @return
-	 */
-	@ApiOperation(value = "Search ad location nearby")
-	public CompletionStage<Result> searchAdLocationsNearBy(String longitude, String latitude)
-			throws InterruptedException, ExecutionException, IOException {
-		return locationService.searchAdLocationsNearby(longitude, latitude).thenApplyAsync(result -> {
-			return ok(Json.toJson(result));
-		}, ec.current());
-
 	}
 
 	/**
@@ -61,7 +48,7 @@ public class LocationController extends Controller {
 	 * @param latitude
 	 * @return
 	 */
-	@ApiOperation(value = "Search ad location nearby")
+	@ApiOperation(value = "Check ad location nearby")
 	public CompletionStage<Result> checkAdLocationsNearBy(String deviceToken, String registrationToken, String longitude, String latitude)
 			throws InterruptedException, ExecutionException, IOException {
 		return locationService.checkAdLocationsNearby(deviceToken, registrationToken, longitude, latitude).thenApplyAsync(result -> {
