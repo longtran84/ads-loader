@@ -9,8 +9,9 @@ public class Place {
     private String formattedAddress;
     private String formattedPhoneNumber;
     private String reference;
-    private String vicinity;
-    private String geometry;
+    private String address;
+    private String longitude;
+    private String latitude;
 
     public String getIcon() {
         return icon;
@@ -52,19 +53,27 @@ public class Place {
         this.formattedPhoneNumber = formattedPhoneNumber;
     }
 
-    public String getVicinity() {
-        return vicinity;
+    public String getAddress() {
+        return address;
     }
 
-    public void setVicinity(String vicinity) {
-        this.vicinity = vicinity;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getGeometry() {
-        return geometry;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setGeometry(String geometry) {
-        this.geometry = geometry;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 }

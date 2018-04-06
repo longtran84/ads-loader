@@ -158,9 +158,11 @@ public class LocationService {
 				place.setIcon(jsObj.getString("icon"));
 				place.setReference(jsObj.getString("reference"));
 				place.setName(jsObj.getString("name"));
-				place.setVicinity(jsObj.getString("vicinity"));
+				place.setAddress(jsObj.getString("vicinity"));
 				if (jsObj.has("geometry")) {
-					place.setGeometry(jsObj.getJSONObject("geometry").toString());
+					JSONObject locationObj = jsObj.getJSONObject("geometry").getJSONObject("location");
+					place.setLongitude(locationObj.get("lng").toString());
+					place.setLatitude(locationObj.get("lat").toString());
 				}
 				if (jsObj.has("formatted_address")) {
 					place.setFormattedAddress(jsObj.getString("formatted_address"));
@@ -229,13 +231,34 @@ public class LocationService {
 		return place;
 	}
 
-	public CompletionStage<List<Place>> searchNearBy(String longitude, String latitude) {
-		return supplyAsync(() -> search("Vietinbank", longitude, latitude, 5000));
+	public CompletionStage<List<Place>> searchNearBy(String type, String longitude, String latitude) {
+		if ("BANK_AGENCY".equals(type)) {
+			return supplyAsync(() -> search("Vietinbank", longitude, latitude, 5000));
+		} else if ("ATM".equals(type)) {
+			return supplyAsync(() -> search("ATM Vietinbank", longitude, latitude, 5000));
+		} else {
+			return supplyAsync(() -> searchAdLocationsNearby(longitude, latitude));
+		}
 		//return search("Maritime bank", 21.0318272, 105.787884, 100000);
 	}
 
-	public CompletionStage<List<AdLocation>> searchAdLocationsNearby(String longitude, String latitude) throws IOException {
-		return supplyAsync(() -> locationRepository.findAdLocationsNearBy(longitude, latitude));
+	public CompletionStage<List<Place>> searchATMNearBy(String longitude, String latitude) {
+		return supplyAsync(() -> search("ATM Vietinbank", longitude, latitude, 5000));
+		//return search("Maritime bank", 21.0318272, 105.787884, 100000);
+	}
+
+	public List<Place> searchAdLocationsNearby(String longitude, String latitude) {
+		List<AdLocation> adLocations = locationRepository.findAdLocationsNearBy(longitude, latitude);
+		List<Place> places = new ArrayList<Place>();
+		for (AdLocation adLocation : adLocations) {
+			Place place = new Place();
+			place.setName(adLocation.getName());
+			place.setAddress(adLocation.getAddress());
+			place.setLongitude(adLocation.getLng());
+			place.setLongitude(adLocation.getLat());
+			places.add(place);
+		}
+		return places;
 		//return supplyAsync(() -> locationRepository.findAdLocationsNearBy(105.787884, 21.0318272));
 	}
 

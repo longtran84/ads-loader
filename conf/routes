@@ -59,6 +59,5 @@ GET /loyalty/order/:orderId                                  com.fintechviet.loy
 GET /loyalty/orders/:deviceToken                             com.fintechviet.loyalty.controller.LoyaltyController.getOrders(deviceToken: String)
 
 #Location
-GET /location/searchNearBy          com.fintechviet.location.controller.LocationController.searchNearBy(longitude: String, latitude : String)
-GET /location/searchAdLocationsNearBy  com.fintechviet.location.controller.LocationController.searchAdLocationsNearBy(longitude: String, latitude : String)
-GET /location/checkAdLocationsNearBy  com.fintechviet.location.controller.LocationController.checkAdLocationsNearBy(deviceToken: String, registrationToken: String, longitude: String, latitude : String)
+GET /location/searchNearBy                    com.fintechviet.location.controller.LocationController.searchNearBy(type: String, longitude: String, latitude : String)
+GET /location/checkAdLocationsNearBy          com.fintechviet.location.controller.LocationController.checkAdLocationsNearBy(deviceToken: String, registrationToken: String, longitude: String, latitude : String)
