@@ -34,17 +34,26 @@ public class ContentService {
 	private final AdvertismentRepository advertismentRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
-	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/Crawler";
+	//private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/Crawler";
+	private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
 	private static String DOMAIN = "http://222.252.16.132:9000";
 	private static String ID = "id";
-	private static String CATEGORY_CODE = "MaChuyenMuc";
-	private static String SOURCE_NAME = "TenMien";
-	private static String TITLE = "TieuDe";
-	private static String CONTENT = "NoiDung";
-	private static String LINK = "DuongDan";
-	private static String IMAGE_LINK = "AnhDaiDien";
-	private static String PUBLISH_DATE = "NgayDangTin";
-	private static String CRAWLER_DATE = "NgayCrawler";
+	private static String CATEGORY_CODE = "category";
+	private static String SOURCE_NAME = "source";
+	private static String TITLE = "title";
+	private static String CONTENT = "content";
+	private static String LINK = "url";
+	private static String IMAGE_LINK = "content_img";
+	private static String PUBLISH_DATE = "publish_date";
+	private static String CRAWLER_DATE = "created_date";
+//	private static String CATEGORY_CODE = "MaChuyenMuc";
+//	private static String SOURCE_NAME = "TenMien";
+//	private static String TITLE = "TieuDe";
+//	private static String CONTENT = "NoiDung";
+//	private static String LINK = "DuongDan";
+//	private static String IMAGE_LINK = "AnhDaiDien";
+//	private static String PUBLISH_DATE = "NgayDangTin";
+//	private static String CRAWLER_DATE = "NgayCrawler";
 
 	@Inject
 	private Configuration configuration;
@@ -139,20 +148,20 @@ public class ContentService {
 				String key = element.getKey().toString();
 				String value = element.getValue().toString();
 				if (ID.equals(key)) {
-					news.setId(Long.valueOf(value));
+					//news.setId(Long.valueOf(value));
 				} else if(CATEGORY_CODE.equals(key)) {
-					news.setNewsCategoryCode(value);
+					news.setNewsCategoryCode(value.replace("[", "").replace("]", ""));
 				} else if(TITLE.equals(key)) {
-					news.setTitle(value);
+					news.setTitle(value.replace("[", "").replace("]", ""));
 				} else if(CONTENT.equals(key)) {
-					news.setShortDescription(Jsoup.parse(value).text());
+					news.setShortDescription(Jsoup.parse(value).text().replace("[", "").replace("]", ""));
 				} else if(LINK.equals(key)) {
-					news.setLink(value);
+					news.setLink(value.replace("[", "").replace("]", ""));
 				} else if(IMAGE_LINK.equals(key)) {
-					value = value.replaceAll("localhost", "222.252.16.132");
-					news.setImageLink(value);
+					//value = value.replaceAll("localhost", "222.252.16.132");
+					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					news.setCreatedDate((Date)element.getValue());
+					//news.setCreatedDate((Date)element.getValue());
 				}
 			}
 			newsList.add(news);
@@ -169,20 +178,20 @@ public class ContentService {
 				String key = element.getKey().toString();
 				String value = element.getValue().toString();
 				if (ID.equals(key)) {
-					news.setId(Long.valueOf(value));
+					//news.setId(Long.valueOf(value));
 				} else if(CATEGORY_CODE.equals(key)) {
-					news.setNewsCategoryCode(value);
+					news.setNewsCategoryCode(value.replace("[", "").replace("]", ""));
 				} else if(TITLE.equals(key)) {
-					news.setTitle(value);
+					news.setTitle(value.replace("[", "").replace("]", ""));
 				} else if(CONTENT.equals(key)) {
-					news.setShortDescription(Jsoup.parse(value).text());
+					news.setShortDescription(Jsoup.parse(value).text().replace("[", "").replace("]", ""));
 				} else if(LINK.equals(key)) {
-					news.setLink(value);
+					news.setLink(value.replace("[", "").replace("]", ""));
 				} else if(IMAGE_LINK.equals(key)) {
-					value = value.replaceAll("localhost", "222.252.16.132");
-					news.setImageLink(value);
+					//value = value.replaceAll("localhost", "222.252.16.132");
+					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					news.setCreatedDate((Date)element.getValue());
+					//news.setCreatedDate((Date)element.getValue());
 				}
 			}
 			newsList.add(news);
@@ -263,7 +272,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -288,7 +297,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -339,7 +348,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
 			query.setRows(20);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);

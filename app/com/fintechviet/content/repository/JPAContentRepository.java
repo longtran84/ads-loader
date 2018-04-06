@@ -86,7 +86,7 @@ public class JPAContentRepository implements ContentRepository {
     @Override
     public List<NewsCategory> getAllCategories(){
         return wrap(em -> {
-            String queryStr = "SELECT c FROM NewsCategory c ";
+            String queryStr = "SELECT c FROM NewsCategory c WHERE c.status='ACTIVE'";
             Query query = em.createQuery(queryStr);
             return  (List<NewsCategory>)query.getResultList();
         });
