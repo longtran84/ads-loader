@@ -12,7 +12,6 @@ public class Message {
     private User user;
     private String subject;
     private String body;
-    private String type = "PRIMARY";
     private Byte read = 0;
     private Byte receive = 0;
     private Timestamp createdDate;
@@ -35,16 +34,6 @@ public class Message {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    @Basic
-    @Column(name = "type")
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     @Basic

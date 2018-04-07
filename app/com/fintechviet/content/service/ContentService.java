@@ -34,8 +34,8 @@ public class ContentService {
 	private final AdvertismentRepository advertismentRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
-	//private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/Crawler";
-	private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
+	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
+	//private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
 	private static String DOMAIN = "http://222.252.16.132:9000";
 	private static String ID = "id";
 	private static String CATEGORY_CODE = "category";
