@@ -12,6 +12,7 @@ import java.util.concurrent.CompletionStage;
 @ImplementedBy(JPAUserRepository.class)
 public interface UserRepository{
     CompletionStage<String> updateUserInfo(String deviceToken, String username, String gender, int dob, String location, String inviteCode);
+    CompletionStage<String> registerUser(String deviceToken);
     CompletionStage<String> updateReward(String deviceToken, String rewardCode, long point);
     CompletionStage<User> getUserInfo(String deviceToken);
     Long getUserIdByDeviceToken(String deviceToken);
@@ -20,7 +21,7 @@ public interface UserRepository{
     CompletionStage<String> updateInviteCode(String deviceToken, String inviteCode);
     CompletionStage<List<UserLuckyNumber>> getUserLuckyNumberByToken(String deviceToken);
     CompletionStage<List<Message>> getMessages(String deviceToken);
-    CompletionStage<List<Message>> getMessagesByType(String deviceToken, String type);
+    CompletionStage<List<Message>> getNewMessages(String deviceToken);
     CompletionStage<String> updateMessage(long messageId, String status);
     String getRegistrationByDeviceToken(String deviceToken, String registrationToken);
 }

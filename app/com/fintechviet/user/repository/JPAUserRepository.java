@@ -140,6 +140,44 @@ public class JPAUserRepository implements UserRepository {
 		return "ok";
 	}
 
+	@Override
+	public CompletionStage<String> registerUser(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> registerUser(em, deviceToken)), ec);
+	}
+
+	private String registerUser(EntityManager em, String deviceToken) {
+		User user = findByDeviceToken(em, deviceToken);
+		if (user == null) {
+			user = new User();
+			user.setEarning(2000l);
+			String inviteCodeGen = generateRandomChars(CHARACTERS, 8);
+
+			User u = findUserByInviteCode(em, inviteCodeGen);
+
+			while(u != null) {
+				inviteCodeGen = generateRandomChars(CHARACTERS, 8);
+				u = findUserByInviteCode(em, inviteCodeGen);
+			}
+			user.setInviteCode(inviteCodeGen);
+
+			UserDeviceToken userDeviceToken = new UserDeviceToken();
+			userDeviceToken.setDeviceToken(deviceToken);
+			user.addDeviceToken(userDeviceToken);
+			em.persist(user);
+			EarningDetails ed = new EarningDetails();
+			ed.setRewardCode("INSTALL");
+			ed.setAmount(2000l);
+			ed.setUser(user);
+			em.persist(ed);
+			Message message = new Message();
+			message.setSubject(MESSAGE_BODY);
+			message.setBody(MESSAGE_BODY);
+			message.setUser(user);
+			em.persist(message);
+		}
+		return "ok";
+	}
+
 	public static String generateRandomChars(String candidateChars, int length) {
 		StringBuilder sb = new StringBuilder();
 		Random random = new Random();
@@ -229,15 +267,26 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	private String updateInviteCode(EntityManager em, String deviceToken, String inviteCode) {
-		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
-				.setParameter("inviteCode", inviteCode).getResultList();
-		if (!users.isEmpty()) {
-			em.createQuery("UPDATE User u SET u.inviteCodeUsed = :inviteCode WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
-					.setParameter("deviceToken", deviceToken).setParameter("inviteCode", inviteCode).executeUpdate();
-			return "ok";
-		} else {
-			return "InviteCode invalid";
+		if (StringUtils.isNotEmpty(inviteCode)) {
+			List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
+					.setParameter("inviteCode", inviteCode).getResultList();
+			if (users.isEmpty()) {
+				return "InviteCodeInvalid";
+			}
+			User user = findByDeviceToken(em, deviceToken);
+			if (StringUtils.isNotEmpty(user.getInviteCodeUsed())) {
+				return "AlreadyUseInviteCode";
+			} else {
+				if (user.getInviteCode().equalsIgnoreCase(inviteCode)) {
+					return "InviteCodeInvalid";
+				}
+				user.setInviteCodeUsed(inviteCode);
+				em.merge(user);
+			}
+//			em.createQuery("UPDATE User u SET u.inviteCodeUsed = :inviteCode WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
+//					.setParameter("deviceToken", deviceToken).setParameter("inviteCode", inviteCode).executeUpdate();
 		}
+		return "ok";
 	}
 
 	@Override
@@ -296,21 +345,14 @@ public class JPAUserRepository implements UserRepository {
 	}
 
 	@Override
-	public CompletionStage<List<Message>> getMessagesByType(String deviceToken, String type) {
-		return supplyAsync(() -> wrap(em -> getMessagesByType(em, deviceToken, type)), ec);
+	public CompletionStage<List<Message>> getNewMessages(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getNewMessages(em, deviceToken)), ec);
 	}
 
-	private List<Message> getMessagesByType(EntityManager em, String deviceToken, String type) {
-		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)");
-		if (StringUtils.isNotEmpty(type)) {
-			queryStr.append(" AND mes.receive = 0 AND mes.type = :type");
-		}
+	private List<Message> getNewMessages(EntityManager em, String deviceToken) {
+		StringBuilder queryStr = new StringBuilder("SELECT mes FROM Message mes WHERE mes.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken) AND mes.receive = 0");
 		Query query = em.createQuery(queryStr.toString());
 		query.setParameter("deviceToken", deviceToken);
-
-		if (StringUtils.isNotEmpty(type)) {
-			query.setParameter("type", type);
-		}
 
 		List<Message> messages= query.getResultList();
 		return messages;

@@ -11,13 +11,14 @@ GET   	/docs/*file                   controllers.Assets.at(path="/public/swagger
 #User
 GET /user/interests/:favouriteList/:deviceToken                		 	 com.fintechviet.user.controller.UserController.updateFavouriteCategoriesByDevice(favouriteList: String, deviceToken: String)
 GET /user/updateUserInfo								                 com.fintechviet.user.controller.UserController.updateUserInfo(deviceToken: String, email: String ?= "", gender: String ?= "", dob: Integer ?= 0, location: String ?= "", inviteCode: String ?= "")
+GET /user/registerUser								                     com.fintechviet.user.controller.UserController.registerUser(deviceToken: String)
 GET /user/updateUserReward/:deviceToken				                 	 com.fintechviet.user.controller.UserController.updateReward(deviceToken: String, rewardCode: String, addedPoint: Long)
 GET /user/updateInviteCode/:deviceToken                      			 com.fintechviet.user.controller.UserController.updateInviteCode(deviceToken: String, inviteCode: String)
 GET /user/:deviceToken                                                   com.fintechviet.user.controller.UserController.getUserInfo(deviceToken: String)
 GET /user/reward/:deviceToken                                            com.fintechviet.user.controller.UserController.getRewardInfo(deviceToken: String)
 GET /user/luckynumber/:deviceToken                                       com.fintechviet.user.controller.UserController.getUserLuckyNumberByToken(deviceToken: String)
 GET /user/messages/:deviceToken                                          com.fintechviet.user.controller.UserController.getMessages(deviceToken: String)
-GET /user/messagesByType/:deviceToken                                    com.fintechviet.user.controller.UserController.getMessagesByType(deviceToken: String, type: String ?= "")
+GET /user/newMessages/:deviceToken                                       com.fintechviet.user.controller.UserController.getNewMessages(deviceToken: String)
 GET /user/updateMessage/:messageId/:status                               com.fintechviet.user.controller.UserController.updateMessage(messageId: Long, status: String)
 
 

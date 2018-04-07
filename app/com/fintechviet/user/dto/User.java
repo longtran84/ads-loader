@@ -10,18 +10,20 @@ public class User {
     private String location;
     private long earning;
     private String inviteCode;
+    private String inviteCodeUsed;
     
     public User(){
     	
     }
 
-    public User(String email, String gender, int dob, String location, long earning, String inviteCode) {
+    public User(String email, String gender, int dob, String location, long earning, String inviteCode, String inviteCodeUsed) {
         this.email = email;
         this.gender = gender;
         this.dob = dob;
         this.location = location;
         this.earning = earning;
         this.inviteCode = inviteCode;
+        this.inviteCodeUsed = inviteCodeUsed;
     }
 
     public String getEmail() {
@@ -70,5 +72,13 @@ public class User {
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public String getInviteCodeUsed() {
+        return inviteCodeUsed;
+    }
+
+    public void setInviteCodeUsed(String inviteCodeUsed) {
+        this.inviteCodeUsed = inviteCodeUsed;
     }
 }

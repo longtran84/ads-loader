@@ -64,6 +64,18 @@ public class UserController extends Controller {
 	/**
 	 *
 	 * @param deviceToken
+	 * @return
+	 */
+	@ApiOperation(value="Register user")
+	public CompletionStage<Result> registerUser(String deviceToken) {
+		return userService.registerUser(deviceToken).thenApplyAsync(response -> {
+			return response.equals("ok") ? ok(Json.toJson(response)) : badRequest(Json.toJson(new ErrorResponse(response)));
+		}, ec.current());
+	}
+
+	/**
+	 *
+	 * @param deviceToken
 	 * @param rewardCode
 	 * @param addedPoint
 	 * @return
@@ -139,12 +151,11 @@ public class UserController extends Controller {
 
 	/**
 	 * @param deviceToken
-	 * @param type
 	 * @return
 	 */
 	@ApiOperation(value="Get User messages")
-	public CompletionStage<Result> getMessagesByType(String deviceToken, String type) {
-		return userService.getMessagesByType(deviceToken, type).thenApplyAsync(response -> {
+	public CompletionStage<Result> getNewMessages(String deviceToken) {
+		return userService.getNewMessages(deviceToken).thenApplyAsync(response -> {
 			return ok(Json.toJson(response));
 		}, ec.current());
 	}

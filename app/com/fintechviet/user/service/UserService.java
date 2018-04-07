@@ -30,13 +30,18 @@ public class UserService {
 		return userRepository.updateUserInfo(deviceToken, email, gender, dob, location, inviteCode);
 	}
 
+	public CompletionStage<String> registerUser(String deviceToken) {
+		return userRepository.registerUser(deviceToken);
+	}
+
+
 	public CompletionStage<String> updateReward(String deviceToken, String rewardCode, long point){
 		return userRepository.updateReward(deviceToken, rewardCode, point);
 	}
 
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
 		return userRepository.getUserInfo(deviceToken).thenApplyAsync(user -> {
-			return (user != null)? new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode()) : null;
+			return (user != null)? new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode(), user.getInviteCodeUsed()) : null;
 		}, ec.current());
 	}
 
@@ -100,8 +105,8 @@ public class UserService {
 		}, ec.current());
 	}
 
-	public CompletionStage<List<Message>> getMessagesByType(String deviceToken, String type){
-		return userRepository.getMessagesByType(deviceToken, type).thenApplyAsync(messages -> {
+	public CompletionStage<List<Message>> getNewMessages(String deviceToken){
+		return userRepository.getNewMessages(deviceToken).thenApplyAsync(messages -> {
 			return buildMessages(messages);
 		}, ec.current());
 	}
