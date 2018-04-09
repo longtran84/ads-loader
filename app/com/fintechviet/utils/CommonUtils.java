@@ -35,7 +35,7 @@ public class CommonUtils {
     }
 
     public static String convertDoubleToString(double value) {
-        DecimalFormat df = new DecimalFormat(".#");
+        DecimalFormat df = new DecimalFormat("0.#");
         df.setRoundingMode(RoundingMode.UP);
         return df.format(value);
     }

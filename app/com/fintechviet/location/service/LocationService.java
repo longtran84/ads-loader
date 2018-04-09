@@ -269,7 +269,8 @@ public class LocationService {
 			place.setName(adLocation.getName());
 			place.setAddress(adLocation.getAddress());
 			place.setLongitude(adLocation.getLng());
-			place.setLongitude(adLocation.getLat());
+			place.setLatitude(adLocation.getLat());
+			place.setDistance(distance(Double.valueOf(adLocation.getLat()), Double.valueOf(adLocation.getLng()), Double.valueOf(latitude), Double.valueOf(longitude)));
 			places.add(place);
 		}
 		return places;
