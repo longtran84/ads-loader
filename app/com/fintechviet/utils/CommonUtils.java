@@ -1,6 +1,9 @@
 package com.fintechviet.utils;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by tungn on 9/25/2017.
@@ -21,5 +24,11 @@ public class CommonUtils {
             }
         }
         return commaSepValueBuilder.toString();
+    }
+
+    public static String convertLongToString(long value) {
+        BigDecimal bd = new BigDecimal(value);
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("pt", "BR"));
+        return formatter.format(bd.longValue());
     }
 }

@@ -6,7 +6,7 @@ package com.fintechviet.user.dto;
 public class Reward {
     private String rewardCode;
     private String rewardName;
-    private long amount;
+    private String amount;
 
     public String getRewardCode() {
         return rewardCode;
@@ -24,11 +24,11 @@ public class Reward {
         this.rewardName = rewardName;
     }
 
-    public long getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 }

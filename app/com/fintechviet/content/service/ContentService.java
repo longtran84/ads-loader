@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+
+import com.fintechviet.utils.DateUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -34,8 +36,8 @@ public class ContentService {
 	private final AdvertismentRepository advertismentRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
-	//private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
-	private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
+	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
+	//private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
 	private static String DOMAIN = "http://222.252.16.132:9000";
 	private static String ID = "id";
 	private static String CATEGORY_CODE = "category";
@@ -82,7 +84,7 @@ public class ContentService {
 			neDTO.setImageLink(news.getImageLink());
 			neDTO.setLink(news.getLink());
 			neDTO.setNewsCategoryCode(news.getNewsCategory().getCode());
-			neDTO.setCreatedDate(news.getCreatedDate());
+			//neDTO.setCreatedDate(news.getCreatedDate());
 			newsDtoList.add(neDTO);
 		}
 		return newsDtoList;
@@ -161,9 +163,9 @@ public class ContentService {
 					//value = value.replaceAll("localhost", "222.252.16.132");
 					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					news.setCreatedDate((Date)element.getValue());
+					news.setCreatedDate(DateUtils.convertDateToString((Date)element.getValue()));
 				}  else if(PUBLISH_DATE.equals(key)) {
-					news.setPublishDate((Date)element.getValue());
+					news.setPublishDate(DateUtils.convertDateToString((Date)element.getValue()));
 				}
 			}
 			newsList.add(news);
@@ -193,9 +195,9 @@ public class ContentService {
 					//value = value.replaceAll("localhost", "222.252.16.132");
 					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					news.setCreatedDate((Date)element.getValue());
+					news.setCreatedDate(DateUtils.convertDateToString((Date)element.getValue()));
 				} else if(PUBLISH_DATE.equals(key)) {
-					news.setPublishDate((Date)element.getValue());
+					news.setPublishDate(DateUtils.convertDateToString((Date)element.getValue()));
 				}
 			}
 			newsList.add(news);
