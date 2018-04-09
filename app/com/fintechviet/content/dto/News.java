@@ -20,8 +20,8 @@ public class News {
     private String link;
     private String newsCategoryCode;
     private DecisionResponse decisionResponse;
-    private Date createdDate;
-    private Date publishDate;
+    private String createdDate;
+    private String publishDate;
 
     public String getTitle() {
         return title;
@@ -63,19 +63,19 @@ public class News {
         this.newsCategoryCode = newsCategoryCode;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getPublishDate() {
+    public String getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
+    public void setPublishDate(String publishDate) {
         this.publishDate = publishDate;
     }
 

@@ -17,9 +17,45 @@ public class DateUtils {
     private static String FORMAT_DATE1 = "dd/MM/yyyy";
     private static String FORMAT_DATE_STR = "dd/MM/yyyy";
     private static String FORMAT_DATE2 = "yyyy-MM-dd HH:mm:ss";
+    private static String FORMAT_DATE_NEWS = "dd/MM/yyyy - HH:mm";
     public static String EQUAL = "EQUAL";
     public static String BEFORE = "BEFORE";
     public static String AFTER = "AFTER";
+
+
+    private static String convertEngDayToVn(String dayOfWeek) {
+        String dayOfVn;
+        switch (dayOfWeek) {
+            case "Monday":
+                dayOfVn = "Thứ hai";
+                break;
+            case "Tuesday":
+                dayOfVn = "Thứ ba";
+                break;
+            case "Wednesday":
+                dayOfVn = "Thứ tư";
+                break;
+            case "Thursday":
+                dayOfVn = "Thứ năm";
+                break;
+            case "Friday":
+                dayOfVn = "Thứ sáu";
+                break;
+            case "Saturday":
+                dayOfVn = "Thứ bảy";
+                break;
+            default:
+                dayOfVn = "Chủ nhật";
+        }
+        return dayOfVn;
+    }
+
+    public static String convertDateToString(Date dateVal) {
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+        String day = convertEngDayToVn(dayFormat.format(dateVal));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_NEWS);
+        return day + ", " + dateFormat.format(dateVal);
+    }
 
     public static Date convertStringToDate(String dateStr) {
         try {

@@ -13,6 +13,7 @@ import java.util.concurrent.CompletionStage;
 public interface UserRepository{
     CompletionStage<String> updateUserInfo(String deviceToken, String username, String gender, int dob, String location, String inviteCode);
     CompletionStage<String> registerUser(String deviceToken);
+    //String updateReward(String deviceToken, String rewardCode, long point);
     CompletionStage<String> updateReward(String deviceToken, String rewardCode, long point);
     CompletionStage<User> getUserInfo(String deviceToken);
     Long getUserIdByDeviceToken(String deviceToken);

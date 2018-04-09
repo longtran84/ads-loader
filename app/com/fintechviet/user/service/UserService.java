@@ -6,6 +6,7 @@ import com.fintechviet.user.dto.Reward;
 import com.fintechviet.user.model.User;
 import com.fintechviet.user.model.UserLuckyNumber;
 import com.fintechviet.user.repository.UserRepository;
+import com.fintechviet.utils.CommonUtils;
 import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;
@@ -56,9 +57,7 @@ public class UserService {
 		user.setGender(usr.getGender());
 		user.setDob(usr.getDob());
 		user.setLocation(usr.getLocation());
-		BigDecimal bd = new BigDecimal(usr.getEarning());
-		NumberFormat formatter = NumberFormat.getInstance(new Locale("pt", "BR"));
-		user.setEarning(formatter.format(bd.longValue()));
+		user.setEarning(CommonUtils.convertLongToString(usr.getEarning()));
 		user.setInviteCode(usr.getInviteCode());
 		user.setInviteCodeUsed(usr.getInviteCodeUsed());
 		return user;
@@ -73,7 +72,7 @@ public class UserService {
 			Reward reward = new Reward();
 			reward.setRewardCode(rewardCode);
 			reward.setRewardName(rewardName);
-			reward.setAmount(amount);
+			reward.setAmount(CommonUtils.convertLongToString(amount));
 			rewards.add(reward);
 		}
 		return rewards;
