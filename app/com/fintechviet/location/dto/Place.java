@@ -12,6 +12,7 @@ public class Place {
     private String address;
     private String longitude;
     private String latitude;
+    private String distance;
 
     public String getIcon() {
         return icon;
@@ -75,5 +76,13 @@ public class Place {
 
     public void setLatitude(String latitude) {
         this.latitude = latitude;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 }

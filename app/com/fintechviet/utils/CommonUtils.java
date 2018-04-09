@@ -1,6 +1,8 @@
 package com.fintechviet.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -30,5 +32,11 @@ public class CommonUtils {
         BigDecimal bd = new BigDecimal(value);
         NumberFormat formatter = NumberFormat.getInstance(new Locale("pt", "BR"));
         return formatter.format(bd.longValue());
+    }
+
+    public static String convertDoubleToString(double value) {
+        DecimalFormat df = new DecimalFormat(".#");
+        df.setRoundingMode(RoundingMode.UP);
+        return df.format(value);
     }
 }
