@@ -3,14 +3,19 @@ package com.fintechviet.user.service;
 import com.fintechviet.content.model.MobileUserInterestItems;
 import com.fintechviet.user.dto.Message;
 import com.fintechviet.user.dto.Reward;
+import com.fintechviet.user.model.User;
 import com.fintechviet.user.model.UserLuckyNumber;
 import com.fintechviet.user.repository.UserRepository;
 import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -41,8 +46,22 @@ public class UserService {
 
 	public CompletionStage<com.fintechviet.user.dto.User> getUserInfo(String deviceToken){
 		return userRepository.getUserInfo(deviceToken).thenApplyAsync(user -> {
-			return (user != null)? new com.fintechviet.user.dto.User(user.getUsername(), user.getGender(), user.getDob(), user.getLocation(), user.getEarning(), user.getInviteCode(), user.getInviteCodeUsed()) : null;
+			return (user != null)? buildUserInfo(user) : null;
 		}, ec.current());
+	}
+
+	private com.fintechviet.user.dto.User buildUserInfo(User usr) {
+		com.fintechviet.user.dto.User user = new com.fintechviet.user.dto.User();
+		user.setEmail(usr.getUsername());
+		user.setGender(usr.getGender());
+		user.setDob(usr.getDob());
+		user.setLocation(usr.getLocation());
+		BigDecimal bd = new BigDecimal(usr.getEarning());
+		NumberFormat formatter = NumberFormat.getInstance(new Locale("pt", "BR"));
+		user.setEarning(formatter.format(bd.longValue()));
+		user.setInviteCode(usr.getInviteCode());
+		user.setInviteCodeUsed(usr.getInviteCodeUsed());
+		return user;
 	}
 
 	private List<Reward> buildRewardInfo(List<Object[]> rewardObjs) {

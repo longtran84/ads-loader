@@ -8,7 +8,7 @@ public class User {
     private String gender;
     private int dob;
     private String location;
-    private long earning;
+    private String earning;
     private String inviteCode;
     private String inviteCodeUsed;
     
@@ -16,7 +16,7 @@ public class User {
     	
     }
 
-    public User(String email, String gender, int dob, String location, long earning, String inviteCode, String inviteCodeUsed) {
+    public User(String email, String gender, int dob, String location, String earning, String inviteCode, String inviteCodeUsed) {
         this.email = email;
         this.gender = gender;
         this.dob = dob;
@@ -58,11 +58,11 @@ public class User {
         this.location = location;
     }
 
-    public long getEarning() {
+    public String getEarning() {
         return earning;
     }
 
-    public void setEarning(long earning) {
+    public void setEarning(String earning) {
         this.earning = earning;
     }
 

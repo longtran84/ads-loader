@@ -13,7 +13,7 @@ import javax.persistence.TemporalType;
  * Created by tungn on 9/14/2017.
  */
 public class News {
-    private long id;
+    private String id;
     private String title;
     private String shortDescription;
     private String imageLink;
@@ -21,6 +21,7 @@ public class News {
     private String newsCategoryCode;
     private DecisionResponse decisionResponse;
     private Date createdDate;
+    private Date publishDate;
 
     public String getTitle() {
         return title;
@@ -70,11 +71,19 @@ public class News {
         this.createdDate = createdDate;
     }
 
-    public long getId() {
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Date publishDate) {
+        this.publishDate = publishDate;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
