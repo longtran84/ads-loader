@@ -103,6 +103,10 @@ public class PushAdsHelper {
             data.put("impressionUrl", "");
             data.put("clickUrl", "");
             data.put("trackingUrl", "");
+            data.put("name", adLocation.getName());
+            data.put("address", adLocation.getAddress() != null ? adLocation.getAddress() : "");
+            data.put("longitude", adLocation.getLng());
+            data.put("latitude", adLocation.getLat());
 
             // body
             //json.put("notification", info);
