@@ -5,6 +5,7 @@ import com.fintechviet.location.model.AdLocation;
 import com.fintechviet.location.repository.LocationRepository;
 import com.fintechviet.notification.PushAdsHelper;
 import com.fintechviet.user.repository.UserRepository;
+import com.fintechviet.utils.CommonUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,6 +110,18 @@ public class LocationService {
 		return resultList;
 	}
 
+	private String distance(double lat1, double lng1, double lat2, double lng2) {
+		int r = 6731; // average radius of the earth in km
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLon = Math.toRadians(lng2 - lng1);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+				Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+						* Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double d = r * c;
+		return CommonUtils.convertDoubleToString(d) + " km";
+	}
+
 	public List<Place> search(String keyword, String lng, String lat, int radius) {
 		List<Place> resultList = new ArrayList<>();
 
@@ -163,6 +176,7 @@ public class LocationService {
 					JSONObject locationObj = jsObj.getJSONObject("geometry").getJSONObject("location");
 					place.setLongitude(locationObj.get("lng").toString());
 					place.setLatitude(locationObj.get("lat").toString());
+					place.setDistance(distance(Double.valueOf(locationObj.get("lat").toString()), Double.valueOf(locationObj.get("lng").toString()), Double.valueOf(lat), Double.valueOf(lng)));
 				}
 				if (jsObj.has("formatted_address")) {
 					place.setFormattedAddress(jsObj.getString("formatted_address"));
