@@ -17,6 +17,7 @@ import com.fintechviet.ad.model.*;
 import com.fintechviet.content.model.NewsCategory;
 import com.fintechviet.user.model.User;
 import org.apache.commons.lang3.StringUtils;
+import play.Configuration;
 import play.db.jpa.JPAApi;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -26,6 +27,8 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
     private final JPAApi jpaApi;
     private final AdExecutionContext ec;
     private static int ADVS = 5;
+    @Inject
+    private Configuration configuration;
 	
     @Inject
     public JPAAdvertismentRepository(JPAApi jpaApi, AdExecutionContext ec) {
@@ -185,6 +188,7 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
         click.setUser(user);
         click.setAd(ad);
         em.persist(click);
+        int advNumber = Integer.parseInt(configuration.getString("adv.display.number"));
         return "ok";
     }
 

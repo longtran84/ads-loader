@@ -34,8 +34,8 @@ public class ContentService {
 	private final AdvertismentRepository advertismentRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
-	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
-	//private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
+	//private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
+	private static String CRAWLER_ENPOINT = "http://localhost:8983/solr/articles";
 	private static String DOMAIN = "http://222.252.16.132:9000";
 	private static String ID = "id";
 	private static String CATEGORY_CODE = "category";
@@ -76,7 +76,7 @@ public class ContentService {
 		List<News> newsDtoList = new ArrayList<>();
 		for(com.fintechviet.content.model.News news : newsModelList) {
 			News neDTO =  new News();
-			neDTO.setId(news.getId());
+			//neDTO.setId(news.getId());
 			neDTO.setTitle(news.getTitle());
 			neDTO.setShortDescription(news.getShortDescription());
 			neDTO.setImageLink(news.getImageLink());
@@ -148,7 +148,7 @@ public class ContentService {
 				String key = element.getKey().toString();
 				String value = element.getValue().toString();
 				if (ID.equals(key)) {
-					//news.setId(Long.valueOf(value));
+					news.setId(value.replace("[", "").replace("]", ""));
 				} else if(CATEGORY_CODE.equals(key)) {
 					news.setNewsCategoryCode(value.replace("[", "").replace("]", ""));
 				} else if(TITLE.equals(key)) {
@@ -161,7 +161,9 @@ public class ContentService {
 					//value = value.replaceAll("localhost", "222.252.16.132");
 					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					//news.setCreatedDate((Date)element.getValue());
+					news.setCreatedDate((Date)element.getValue());
+				}  else if(PUBLISH_DATE.equals(key)) {
+					news.setPublishDate((Date)element.getValue());
 				}
 			}
 			newsList.add(news);
@@ -178,7 +180,7 @@ public class ContentService {
 				String key = element.getKey().toString();
 				String value = element.getValue().toString();
 				if (ID.equals(key)) {
-					//news.setId(Long.valueOf(value));
+					news.setId(value.replace("[", "").replace("]", ""));
 				} else if(CATEGORY_CODE.equals(key)) {
 					news.setNewsCategoryCode(value.replace("[", "").replace("]", ""));
 				} else if(TITLE.equals(key)) {
@@ -191,7 +193,9 @@ public class ContentService {
 					//value = value.replaceAll("localhost", "222.252.16.132");
 					news.setImageLink(value.replace("[", "").replace("]", ""));
 				} else if(CRAWLER_DATE.equals(key)) {
-					//news.setCreatedDate((Date)element.getValue());
+					news.setCreatedDate((Date)element.getValue());
+				} else if(PUBLISH_DATE.equals(key)) {
+					news.setPublishDate((Date)element.getValue());
 				}
 			}
 			newsList.add(news);
@@ -272,7 +276,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -297,7 +301,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -326,7 +330,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -348,7 +352,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
 			query.setRows(20);
-			//query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -375,7 +379,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
 			query.setRows(50);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -399,7 +403,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart((pageIndex - 1) * rows);
 			query.setRows(rows);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -422,7 +426,7 @@ public class ContentService {
 			query.setFields(ID, CATEGORY_CODE, SOURCE_NAME, TITLE, CONTENT, LINK, IMAGE_LINK, PUBLISH_DATE, CRAWLER_DATE);
 			query.setStart(0);
 			query.setRows(1);
-			query.setSort(CRAWLER_DATE, SolrQuery.ORDER.desc);
+			query.setSort(PUBLISH_DATE, SolrQuery.ORDER.desc);
 			query.set("defType", "edismax");
 
 			QueryResponse response = client.query(query);
@@ -452,7 +456,7 @@ public class ContentService {
 		List<News> newsByCategory = getNewsFromCrawler(deviceToken, categoryList, page);
 		for (News news : newsByCategory) {
 			if (newsId != null && !newsId.equals("")) {
-				if (news.getId() != Long.parseLong(newsId))
+				if (news.getId() != newsId)
 					newsList.add(news);
 			} else {
 				newsList.add(news);
