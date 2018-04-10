@@ -1,5 +1,8 @@
 package com.fintechviet.content.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fintechviet.user.model.User;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -11,6 +14,8 @@ import java.sql.Timestamp;
 public class ContentClicks {
     private long id;
     private Timestamp date;
+    private User user;
+    private String newsId;
 
     @Id
     @Column(name = "id")
@@ -30,6 +35,27 @@ public class ContentClicks {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "uid")
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Basic
+    @Column(name = "newsId")
+    public String getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(String newsId) {
+        this.newsId = newsId;
     }
 
     @Override

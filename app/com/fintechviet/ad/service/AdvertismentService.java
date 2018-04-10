@@ -6,17 +6,22 @@ import com.fintechviet.ad.model.Ad;
 import com.fintechviet.ad.model.AdImpressions;
 import com.fintechviet.ad.model.AppAd;
 import com.fintechviet.ad.repository.AdvertismentRepository;
+import com.fintechviet.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+
 
 public class AdvertismentService {
 	private final AdvertismentRepository advertismentRepository;
+	private final UserRepository userRepository;
 
 	@Inject
-	public AdvertismentService(AdvertismentRepository advertismentRepository){
+	public AdvertismentService(AdvertismentRepository advertismentRepository, UserRepository userRepository){
 		this.advertismentRepository = advertismentRepository;
+		this.userRepository = userRepository;
 	}
 
 	public CompletionStage<Ad> findAdByTemplate(String template, int adTypeId, String deviceToken) {
@@ -32,7 +37,13 @@ public class AdvertismentService {
 	}
 
 	public CompletionStage<String> saveClick(long adId, String deviceToken) {
-		return advertismentRepository.saveClick(adId, deviceToken);
+		boolean isClicked = advertismentRepository.isAdClicked(deviceToken, adId);
+		if (!isClicked) {
+			userRepository.updateReward(deviceToken, "ADV", 10);
+			return advertismentRepository.saveClick(adId, deviceToken);
+		} else {
+			return supplyAsync(() -> "ok");
+		}
 	}
 
 	public CompletionStage<String> saveView(long adId, String deviceToken) {

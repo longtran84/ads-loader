@@ -176,6 +176,15 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
     }
 
     @Override
+    public boolean isAdClicked(String deviceToken, long adId) {
+        return wrap(em -> {
+            List<Ad> adClicks = em.createQuery("SELECT a FROM AdClicks a WHERE a.user.id = (SELECT t.userMobile.id FROM UserDeviceToken t WHERE t.deviceToken = :deviceToken) AND a.ad.id = :adId")
+                    .setParameter("deviceToken", deviceToken).setParameter("adId", adId).getResultList();
+            return adClicks.size() > 0 ? true : false;
+        });
+    }
+
+    @Override
     public CompletionStage<String> saveClick(long adId, String deviceToken) {
         return supplyAsync(() -> wrap(em -> saveClick(em, adId, deviceToken)), ec);
     }

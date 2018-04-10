@@ -20,6 +20,7 @@ public class News {
     private String link;
     private String newsCategoryCode;
     private DecisionResponse decisionResponse;
+    private int rewardPoint;
     private String createdDate;
     private String publishDate;
 
@@ -93,5 +94,13 @@ public class News {
 
     public void setDecisionResponse(DecisionResponse decisionResponse) {
         this.decisionResponse = decisionResponse;
+    }
+
+    public int getRewardPoint() {
+        return rewardPoint;
+    }
+
+    public void setRewardPoint(int rewardPoint) {
+        this.rewardPoint = rewardPoint;
     }
 }
