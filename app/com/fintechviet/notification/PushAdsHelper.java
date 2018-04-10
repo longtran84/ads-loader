@@ -98,6 +98,7 @@ public class PushAdsHelper {
 
             JSONObject data = new JSONObject();
 
+            data.put("type", "AD_LOCATION_NOTIFICATION");
             data.put("message", adLocation.getAdContent());
             data.put("image", adLocation.getCreative().getImageLink());
             data.put("impressionUrl", "");
