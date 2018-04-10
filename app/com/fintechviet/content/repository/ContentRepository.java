@@ -13,10 +13,11 @@ import java.util.concurrent.CompletionStage;
 public interface ContentRepository {
     List<News> getNewsByAllCategories();
     CompletionStage<String> saveImpression();
-    CompletionStage<String> saveClick();
+    CompletionStage<String> saveClick(String deviceToken, String newsId);
 	List<Long> getNumberOfUserInterest(String deviceToken);
 	List<NewsCategory> getAllCategories();
 	List<News> getNewsByUserInterest(String deviceToken, Long cateId, Date fromDate, Date toDate);
     List<NewsCategory> getUserInterests(String deviceToken);
     CompletionStage<List<Game>> getGames();
+    boolean isNewsClicked(String deviceToken, String newsId);
 }

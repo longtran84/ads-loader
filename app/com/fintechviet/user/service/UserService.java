@@ -98,6 +98,12 @@ public class UserService {
 		}, ec.current());
 	}
 
+	public CompletionStage<String> getRedeemPoint(String deviceToken){
+		return userRepository.getRedeemPoint(deviceToken).thenApplyAsync(redeem -> {
+			return CommonUtils.convertLongToString(redeem);
+		}, ec.current());
+	}
+
 	public CompletionStage<List<MobileUserInterestItems>> updateUserInterest(String deviceToken, String interests){
 		Long uid = userRepository.getUserIdByDeviceToken(deviceToken);
 		//build Interest object

@@ -9,6 +9,7 @@ import com.fintechviet.content.dto.News;
 import com.fintechviet.content.dto.NewsCategory;
 import com.fintechviet.content.model.Game;
 import com.fintechviet.content.repository.ContentRepository;
+import com.fintechviet.user.repository.UserRepository;
 import com.fintechviet.utils.CommonUtils;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class ContentService {
 	private final ContentRepository contentRepository;
 	private final AdvertismentRepository advertismentRepository;
+	private final UserRepository userRepository;
 	static final int limitResult = 500;
 	//private static String CRAWLER_ENPOINT = "http://192.168.100.107:3689/solr/Crawler";
 	private static String CRAWLER_ENPOINT = "http://222.252.16.132:3689/solr/articles";
@@ -61,17 +63,26 @@ public class ContentService {
 	private Configuration configuration;
 
 	@Inject
-	public ContentService(ContentRepository contentRepository, AdvertismentRepository advertismentRepository){
+	public ContentService(ContentRepository contentRepository, AdvertismentRepository advertismentRepository, UserRepository userRepository){
 		this.contentRepository = contentRepository;
 		this.advertismentRepository = advertismentRepository;
+		this.userRepository = userRepository;
 	}
 
 	public CompletionStage<String> saveImpression() {
 		return contentRepository.saveImpression();
 	}
 
-	public CompletionStage<String> saveClick() {
-		return contentRepository.saveClick();
+	public CompletionStage<String> saveClick(String deviceToken, String newsId, int rewardPoint) {
+		boolean isClicked = contentRepository.isNewsClicked(deviceToken, newsId);
+		if (!isClicked) {
+			if (rewardPoint > 0) {
+				userRepository.updateReward(deviceToken, "READ", rewardPoint);
+			}
+			return contentRepository.saveClick(deviceToken, newsId);
+		} else {
+			return supplyAsync(() -> "ok");
+		}
 	}
 
 	private List<News> convertToDto(List<com.fintechviet.content.model.News> newsModelList){
@@ -169,6 +180,16 @@ public class ContentService {
 				}
 			}
 			newsList.add(news);
+		}
+		int rewardNumber = 10;
+		Random rd = new Random();
+		for (int i = 0; i < rewardNumber; i++) {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
+			int index = rd.nextInt(rows);
+			if (index <= newsList.size() - 1) {
+				News news = newsList.get(index);
+				news.setRewardPoint(10);
+			}
 		}
 		return newsList;
 	}
@@ -283,7 +304,7 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-			newsList = buildNewsListAndAdv(results, deviceToken);
+			newsList = buildNewsList(results);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -308,7 +329,7 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-			newsList = buildNewsListAndAdv(results, deviceToken);
+			newsList = buildNewsList(results);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -477,7 +498,6 @@ public class ContentService {
 	 */
 	public CompletionStage<List<News>> getNewsByCategory(String deviceToken, Integer page, String categoryCode) throws InterruptedException, ExecutionException {
 		Logger.info("######################### Start get news by category #######################");
-		List<com.fintechviet.content.model.NewsCategory> categoryList = contentRepository.getUserInterests(deviceToken);
 		List<News> newsByCategory = getNewsFromCrawlerByCategory(deviceToken, categoryCode, page);
 		Logger.info("######################### End get news by category #######################");
 		return supplyAsync(() -> newsByCategory);

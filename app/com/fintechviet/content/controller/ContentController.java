@@ -113,9 +113,15 @@ public class ContentController extends Controller {
 		}, ec.current());
 	}
 
+	/**
+	 * @param deviceToken
+	 * @param newsId
+	 * @param rewardPoint
+	 * @return
+	 */
 	@ApiOperation(value = "Save content click")
-	public CompletionStage<Result> saveClick() {
-		return contentService.saveClick().thenApplyAsync(response -> {
+	public CompletionStage<Result> saveClick(String deviceToken, String newsId, int rewardPoint) {
+		return contentService.saveClick(deviceToken, newsId, rewardPoint).thenApplyAsync(response -> {
 			return ok(Json.toJson(response));
 		}, ec.current());
 	}

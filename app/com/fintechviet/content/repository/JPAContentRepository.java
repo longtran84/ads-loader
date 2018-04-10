@@ -2,6 +2,7 @@ package com.fintechviet.content.repository;
 
 import com.fintechviet.content.ContentExecutionContext;
 import com.fintechviet.content.model.*;
+import com.fintechviet.user.model.User;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -51,16 +52,30 @@ public class JPAContentRepository implements ContentRepository {
     }
 
     @Override
-    public CompletionStage<String> saveClick() {
-        return supplyAsync(() -> wrap(em -> saveClick(em)), ec);
+    public CompletionStage<String> saveClick(String deviceToken, String newsId) {
+        return supplyAsync(() -> wrap(em -> saveClick(em, deviceToken, newsId)), ec);
     }
 
-    public String saveClick(EntityManager em) {
+    public String saveClick(EntityManager em, String deviceToken, String newsId) {
         ContentClicks click = new ContentClicks();
+        User user = (User)em.createQuery("SELECT u FROM User u WHERE u.id = (SELECT t.userMobile.id FROM UserDeviceToken t WHERE t.deviceToken = :deviceToken)")
+                .setParameter("deviceToken", deviceToken).getSingleResult();
+        click.setUser(user);
+        click.setNewsId(newsId);
         em.persist(click);
         return "ok";
     }
-    
+
+    @Override
+    public boolean isNewsClicked(String deviceToken, String newsId) {
+        return wrap(em -> {
+            List<ContentClicks> contentClicks = em.createQuery("SELECT c FROM ContentClicks c WHERE c.user.id = (SELECT t.userMobile.id FROM UserDeviceToken t WHERE t.deviceToken = :deviceToken) AND c.newsId = :newsId")
+                    .setParameter("deviceToken", deviceToken).setParameter("newsId", newsId).getResultList();
+            return contentClicks.size() > 0 ? true : false;
+        });
+    }
+
+
     @Override
 	public List<Long> getNumberOfUserInterest(String deviceToken){
         return wrap(em -> {

@@ -128,6 +128,18 @@ public class UserController extends Controller {
 	}
 
 	/**
+	 *
+	 * @param deviceToken
+	 * @return
+	 */
+	@ApiOperation(value="Get Redeem point")
+	public CompletionStage<Result> getRedeemPoint(String deviceToken) {
+		return userService.getRedeemPoint(deviceToken).thenApplyAsync(response -> {
+			return ok(Json.toJson(response));
+		}, ec.current());
+	}
+
+	/**
 	 * @param deviceToken
 	 * @return
 	 */

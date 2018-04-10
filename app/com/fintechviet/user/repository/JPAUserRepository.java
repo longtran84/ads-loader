@@ -64,6 +64,19 @@ public class JPAUserRepository implements UserRepository {
 		return rewardInfo;
 	}
 
+	@Override
+	public CompletionStage<Long> getRedeemPoint(String deviceToken) {
+		return supplyAsync(() -> wrap(em -> getRedeemPoint(em, deviceToken)), ec);
+	}
+
+	private long getRedeemPoint(EntityManager em, String deviceToken) {
+		Long rewardPointTotal = (Long)em.createQuery("SELECT SUM(ed.amount) FROM EarningDetails ed WHERE ed.user.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken) GROUP BY ed.user.id")
+				.setParameter("deviceToken", deviceToken).getSingleResult();
+		Long pointTotal = (Long)em.createQuery("SELECT u.earning FROM User u WHERE u.id = (SELECT udt.userMobile.id FROM UserDeviceToken udt WHERE udt.deviceToken = :deviceToken)")
+				.setParameter("deviceToken", deviceToken).getSingleResult();
+		return pointTotal - rewardPointTotal;
+	}
+
 	private User findUserByInviteCode(EntityManager em, String inviteCode) {
 		List<User> users = em.createQuery("SELECT u FROM User u WHERE u.inviteCode = :inviteCode", User.class)
 				.setParameter("inviteCode", inviteCode).getResultList();
