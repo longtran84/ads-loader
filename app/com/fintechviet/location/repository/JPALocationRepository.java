@@ -32,7 +32,7 @@ public class JPALocationRepository implements LocationRepository {
     public List<AdLocation> findAdLocationsNearBy(String lng, String lat) {
         return wrap(em -> {
             StringBuilder queryStr = new StringBuilder("SELECT ad.id, ad.name FROM ad_location ad WHERE ad.flightId IN (SELECT id FROM flight WHERE startDate <= NOW() AND (endDate >= NOW() OR endDate IS NULL)) " +
-                    "AND (6731 * acos(cos(radians(:lat)) * cos(radians(ad.lat)) * cos(radians(ad.lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) < 0.5 AND ad.status = 'ACTIVE'");
+                    "AND (6731 * acos(cos(radians(:lat)) * cos(radians(ad.lat)) * cos(radians(ad.lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) < 5 AND ad.status = 'ACTIVE'");
             Query queryIds = em.createNativeQuery(queryStr.toString());
             queryIds.setParameter("lng", lng);
             queryIds.setParameter("lat", lat);
