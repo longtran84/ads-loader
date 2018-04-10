@@ -4,10 +4,7 @@ import com.fintechviet.ad.model.Ad;
 import com.fintechviet.location.model.AdLocation;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
@@ -117,10 +114,9 @@ public class PushAdsHelper {
             //json.put("notification", info);
             json.put("data", data);
 
-            OutputStreamWriter wr = new OutputStreamWriter(
-                    conn.getOutputStream());
-            wr.write(json.toString());
-            wr.flush();
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
+            bw.write(json.toString());
+            bw.flush();
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
