@@ -45,7 +45,7 @@ public class LoyaltyController extends Controller {
 	public CompletionStage<Result> getPhonecards()
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.getPhonecards().thenApplyAsync(phonecards -> {
-			return ok(Json.toJson(phonecards));
+			return ok(Json.toJson(buildPhonecarđDTOs(phonecards)));
 		}, ec.current());
 	}
 
@@ -58,7 +58,8 @@ public class LoyaltyController extends Controller {
 			phonecardDTO.setImage(phonecard.getImage());
 			phonecardDTO.setPrice(phonecard.getPrice());
 			phonecardDTO.setStatus(phonecard.getStatus());
-			phonecardDTO.setPointExchange(CommonUtils.convertLongToString(phonecard.getPointExchange()) + " điểm");
+			phonecardDTO.setPointExchange(phonecard.getPointExchange());
+			phonecardDTO.setPointExchangeText(CommonUtils.convertLongToString(phonecard.getPointExchange()));
 			phonecardDTOS.add(phonecardDTO);
 		}
 		return phonecardDTOS;
@@ -84,7 +85,7 @@ public class LoyaltyController extends Controller {
 	public CompletionStage<Result> getGamecards()
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.getGamecards().thenApplyAsync(gamecards -> {
-			return ok(Json.toJson(gamecards));
+			return ok(Json.toJson(buildGamecarđDTOs(gamecards)));
 		}, ec.current());
 	}
 
@@ -97,7 +98,8 @@ public class LoyaltyController extends Controller {
 			gamecardDTO.setImage(gamecard.getImage());
 			gamecardDTO.setPrice(gamecard.getPrice());
 			gamecardDTO.setStatus(gamecard.getStatus());
-			gamecardDTO.setPointExchange(CommonUtils.convertLongToString(gamecard.getPointExchange()) + " điểm");
+			gamecardDTO.setPointExchange(gamecard.getPointExchange());
+			gamecardDTO.setPointExchangeText(CommonUtils.convertLongToString(gamecard.getPointExchange()));
 			gamecardDTOS.add(gamecardDTO);
 		}
 		return gamecardDTOS;
@@ -110,7 +112,7 @@ public class LoyaltyController extends Controller {
 	public CompletionStage<Result> getVouchers()
 			throws InterruptedException, ExecutionException {
 		return loyaltyService.getVouchers().thenApplyAsync(vouchers -> {
-			return ok(Json.toJson(vouchers));
+			return ok(Json.toJson(buildGVoucherDTOs(vouchers)));
 		}, ec.current());
 	}
 
@@ -127,7 +129,8 @@ public class LoyaltyController extends Controller {
 			voucherDTO.setPrice(voucher.getPrice());
 			voucherDTO.setQuantity(voucher.getQuantity());
 			voucherDTO.setStatus(voucher.getStatus());
-			voucherDTO.setPointExchange(CommonUtils.convertLongToString(voucher.getPointExchange()) + " điểm");
+			voucherDTO.setPointExchange(voucher.getPointExchange());
+			voucherDTO.setPointExchangeText(CommonUtils.convertLongToString(voucher.getPointExchange()));
 			voucherDTOS.add(voucherDTO);
 		}
 		return voucherDTOS;
