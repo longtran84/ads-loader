@@ -85,7 +85,7 @@ public class UserService {
 			mess.setId(message.getId());
 			mess.setSubject(message.getSubject());
 			mess.setBody(message.getBody());
-			mess.setRead(Byte.valueOf("0"));
+			mess.setRead(Byte.valueOf(message.getRead()));
 			mess.setCreatedDate(message.getCreatedDate());
 			messageDTOs.add(mess);
 		}
