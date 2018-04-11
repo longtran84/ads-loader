@@ -51,15 +51,14 @@ public class JPAAdvertismentRepository implements AdvertismentRepository {
         StringBuilder queryStr = new StringBuilder("SELECT ad FROM Ad ad WHERE ad.flight.id IN ");
         queryStr.append("(SELECT fl.id FROM Flight fl WHERE fl.startDate <= CURRENT_DATE AND (fl.endDate >= CURRENT_DATE OR fl.endDate IS NULL))");
         queryStr.append("AND ad.impressions > (SELECT COUNT(adi.id) FROM AdImpressions adi WHERE adi.ad.id = ad.id) AND ad.creative.template = :template AND ad.status = 'ACTIVE'");
-        if (adTypeId != 0) {
+        if (adTypeId != 0 && !template.equalsIgnoreCase("video")) {
             queryStr.append(" AND ad.creative.adType.id = :adTypeId");
         }
-
 
         Query query = em.createQuery(queryStr.toString());
         query.setParameter("template", template);
 
-        if (adTypeId != 0) {
+        if (adTypeId != 0 && !template.equalsIgnoreCase("video")) {
             query.setParameter("adTypeId", adTypeId);
         }
 
