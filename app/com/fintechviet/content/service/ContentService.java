@@ -268,7 +268,7 @@ public class ContentService {
 				content.setVideoUrl(ad.getCreative().getVideoLink());
 			}
 			decision.setImpressionUrl(DOMAIN + "/ad/impression/" + ad.getId());
-			content.setBody(ad.getCreative().getBody());
+			content.setBody(ad.getDescription());
 			content.setTemplate(template);
 			decision.setContent(content);
 			response.setDecision(decision);
