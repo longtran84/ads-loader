@@ -226,23 +226,25 @@ public class ContentService {
 		int advNumber = Integer.parseInt(configuration.getString("adv.display.number"));
 		Random rd = new Random();
 		for (int i = 0; i < advNumber; i++) {
-			int templateIndex = rd.nextInt(advNumber);
+//			int templateIndex = rd.nextInt(advNumber);
 			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			int index = rd.nextInt(rows);
-			String template;
-			if (templateIndex == 0) {
-				template = "image";
-			} else {
-				template = "video";
-			}
-			Ad ad;
-			if (template.equals("image")) {
-				ad = advertismentRepository.getAdByTemplate(template, 1);
-			} else {
-				ad = advertismentRepository.getAdByTemplate(template, 0);
-			}
+//			String template;
+//			if (templateIndex == 0) {
+//				template = "image";
+//			} else {
+//				template = "video";
+//			}
+//			Ad ad;
+//			if (template.equals("image")) {
+//				ad = advertismentRepository.getAdByTemplate(template, 1);
+//			} else {
+//				ad = advertismentRepository.getAdByTemplate(template, 0);
+//			}
 
-			DecisionResponse adv = buildAdResponse(ad, template, deviceToken);
+			Ad ad = advertismentRepository.getAdByTemplate("image", 1);
+
+			DecisionResponse adv = buildAdResponse(ad, "image", deviceToken);
 			if (index <= newsList.size() - 1) {
 				News news = newsList.get(index);
 				news.setDecisionResponse(adv);
@@ -304,7 +306,7 @@ public class ContentService {
 
 			QueryResponse response = client.query(query);
 			SolrDocumentList results = response.getResults();
-			newsList = buildNewsList(results);
+			newsList = buildNewsListAndAdv(results, deviceToken);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
