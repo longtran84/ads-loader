@@ -9,7 +9,8 @@ public class GamecardDTO {
     private String image;
     private Integer price;
     private String status;
-    private String pointExchange;
+    private int pointExchange;
+    private String pointExchangeText;
 
     public int getId() {
         return id;
@@ -51,11 +52,19 @@ public class GamecardDTO {
         this.status = status;
     }
 
-    public String getPointExchange() {
+    public int getPointExchange() {
         return pointExchange;
     }
 
-    public void setPointExchange(String pointExchange) {
+    public void setPointExchange(int pointExchange) {
         this.pointExchange = pointExchange;
+    }
+
+    public String getPointExchangeText() {
+        return pointExchangeText;
+    }
+
+    public void setPointExchangeText(String pointExchangeText) {
+        this.pointExchangeText = pointExchangeText;
     }
 }
