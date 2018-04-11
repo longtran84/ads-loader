@@ -2,7 +2,14 @@ package com.fintechviet.loyalty.controller;
 
 import com.fintechviet.common.ErrorResponse;
 import com.fintechviet.common.SuccessResponse;
+import com.fintechviet.loyalty.dto.GamecardDTO;
+import com.fintechviet.loyalty.dto.PhonecardDTO;
+import com.fintechviet.loyalty.dto.VoucherDTO;
+import com.fintechviet.loyalty.model.Gamecard;
+import com.fintechviet.loyalty.model.Phonecard;
+import com.fintechviet.loyalty.model.Voucher;
 import com.fintechviet.loyalty.service.LoyaltyService;
+import com.fintechviet.utils.CommonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import play.i18n.Lang;
@@ -13,6 +20,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +49,23 @@ public class LoyaltyController extends Controller {
 		}, ec.current());
 	}
 
+	private List<PhonecardDTO> buildPhonecarđDTOs(List<Phonecard> phonecards) {
+		List<PhonecardDTO> phonecardDTOS = new ArrayList<>();
+		for (Phonecard phonecard : phonecards) {
+			PhonecardDTO phonecardDTO = new PhonecardDTO();
+			phonecardDTO.setId(phonecard.getId());
+			phonecardDTO.setName(phonecard.getName());
+			phonecardDTO.setImage(phonecard.getImage());
+			phonecardDTO.setPrice(phonecard.getPrice());
+			phonecardDTO.setStatus(phonecard.getStatus());
+			phonecardDTO.setPointExchange(CommonUtils.convertLongToString(phonecard.getPointExchange()) + " điểm");
+			phonecardDTOS.add(phonecardDTO);
+		}
+		return phonecardDTOS;
+	}
+
+
+
 	/**
 	 * @return
 	 */
@@ -62,6 +88,21 @@ public class LoyaltyController extends Controller {
 		}, ec.current());
 	}
 
+	private List<GamecardDTO> buildGamecarđDTOs(List<Gamecard> gamecards) {
+		List<GamecardDTO> gamecardDTOS = new ArrayList<>();
+		for (Gamecard gamecard : gamecards) {
+			GamecardDTO gamecardDTO = new GamecardDTO();
+			gamecardDTO.setId(gamecard.getId());
+			gamecardDTO.setName(gamecard.getName());
+			gamecardDTO.setImage(gamecard.getImage());
+			gamecardDTO.setPrice(gamecard.getPrice());
+			gamecardDTO.setStatus(gamecard.getStatus());
+			gamecardDTO.setPointExchange(CommonUtils.convertLongToString(gamecard.getPointExchange()) + " điểm");
+			gamecardDTOS.add(gamecardDTO);
+		}
+		return gamecardDTOS;
+	}
+
 	/**
 	 * @return
 	 */
@@ -71,6 +112,25 @@ public class LoyaltyController extends Controller {
 		return loyaltyService.getVouchers().thenApplyAsync(vouchers -> {
 			return ok(Json.toJson(vouchers));
 		}, ec.current());
+	}
+
+	private List<VoucherDTO> buildGVoucherDTOs(List<Voucher> vouchers) {
+		List<VoucherDTO> voucherDTOS = new ArrayList<>();
+		for (Voucher voucher : vouchers) {
+			VoucherDTO voucherDTO = new VoucherDTO();
+			voucherDTO.setId(voucher.getId());
+			voucherDTO.setName(voucher.getName());
+			voucherDTO.setType(voucher.getType());
+			voucherDTO.setPicture(voucher.getPicture());
+			voucherDTO.setDescription(voucher.getDescription());
+			voucherDTO.setMarketPrice(voucher.getMarketPrice());
+			voucherDTO.setPrice(voucher.getPrice());
+			voucherDTO.setQuantity(voucher.getQuantity());
+			voucherDTO.setStatus(voucher.getStatus());
+			voucherDTO.setPointExchange(CommonUtils.convertLongToString(voucher.getPointExchange()) + " điểm");
+			voucherDTOS.add(voucherDTO);
+		}
+		return voucherDTOS;
 	}
 
 	/**
