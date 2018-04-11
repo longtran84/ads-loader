@@ -250,6 +250,15 @@ public class ContentService {
 				news.setDecisionResponse(adv);
 			}
 		}
+		int rewardNumber = 10;
+		for (int i = 0; i < rewardNumber; i++) {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
+			int index = rd.nextInt(rows);
+			if (index <= newsList.size() - 1) {
+				News news = newsList.get(index);
+				news.setRewardPoint(10);
+			}
+		}
 		return newsList;
 	}
 
