@@ -1,9 +1,9 @@
-cart.add.error=Có lỗi xảy ra khi mua sản phẩm.
+cart.add.error=Có lỗi xảy ra khi đổi thưởng.
 cart.add.quantity.invalid=Số lượng sản phẩm không hợp lệ.
 cart.add.point.invalid=Bạn không đủ điểm để đổi thưởng.
 cart.delete.error=Có lỗi xảy ra khi xóa giỏ hàng.
-order.place.success=Đặt hàng thành công.
+order.place.success=Đổi thưởng thành công.
 order.place.address.invalid=Thông tin địa chỉ không hợp lệ.
-order.place.error=Có lỗi xảy ra khi đặt hàng sản phẩm.
-order.cancel.ok=Hủy đơn hàng thành công.
-order.cancel.error=Có lỗi xảy ra khi hủy đơn hàng.
+order.place.error=Có lỗi xảy ra khi đổi thưởng.
+order.cancel.ok=Hủy đổi thưởng thành công.
+order.cancel.error=Có lỗi xảy ra khi hủy đổi thưởng.
