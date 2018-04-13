@@ -255,14 +255,13 @@ public class ContentService {
 		}
 
 		for (int i = 0; i < rows; i++) {
-			if (rows % 3 == 0) {
+			if (i % 3 == 0) {
 				Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
 				DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
 				News news = newsList.get(i);
 				if (news.getDecisionResponse() == null) {
 					news.setType("AD");
 					news.setDecisionResponse(adv);
-					i++;
 				}
 			}
 		}
