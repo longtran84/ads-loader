@@ -1,5 +1,6 @@
 package vn.fintechviet.location.service;
 
+import org.apache.commons.lang3.StringUtils;
 import vn.fintechviet.location.dto.*;
 import vn.fintechviet.location.model.AdLocation;
 import vn.fintechviet.location.repository.LocationRepository;
@@ -169,6 +170,7 @@ public class LocationService {
 			for (int i = 0; i < predsJsonArray.length(); i++) {
 				JSONObject jsObj = predsJsonArray.getJSONObject(i);
 				Place place = new Place();
+				place.setPlaceId(jsObj.getString("place_id"));
 				place.setIcon(jsObj.getString("icon"));
 				place.setReference(jsObj.getString("reference"));
 				place.setName(jsObj.getString("name"));
@@ -185,7 +187,11 @@ public class LocationService {
 				if (jsObj.has("formatted_phone_number")) {
 					place.setFormattedPhoneNumber(jsObj.getString("formatted_phone_number"));
 				}
-				//Place placeDetail = details(jsObj.getString("place_id"));
+				Place placeDetail = details(jsObj.getString("place_id"));
+				place.setReviews(placeDetail.getReviews());
+				place.setWeekdayText(placeDetail.getWeekdayText());
+				place.setOpeningHour(placeDetail.getOpeningHour());
+				place.setPhotos(placeDetail.getPhotos());
 				resultList.add(place);
 			}
 		} catch (JSONException e) {
@@ -204,7 +210,8 @@ public class LocationService {
 			sb.append(OUT_JSON);
 			sb.append("?sensor=false");
 			sb.append("&key=" + API_KEY);
-			sb.append("&placeid=" + "ChIJZwuDU7JUNDERUwJTuUU6PMM");
+			sb.append("&placeid=" + placeid);
+			sb.append("&language=vi");
 
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
@@ -256,33 +263,49 @@ public class LocationService {
 					period.setClose(close);
 					periodList.add(period);
 				}
-				openingHour.setPeriods(periodList);
+				//openingHour.setPeriods(periodList);
 				place.setOpeningHour(openingHour);
 				List<String> weekdays = new ArrayList<>();
 				if (openingHourObj.has("weekday_text")) {
 					JSONArray weekDays = openingHourObj.getJSONArray("weekday_text");
 					for (int i = 0; i < weekDays.length(); i++) {
-						weekdays.add(DateUtils.replaceEnglishDay(weekDays.getString(i)));
+						weekdays.add(weekDays.getString(i));
 					}
 				}
 				place.setWeekdayText(weekdays);
 			}
 
-			List<Photo> photoList = new ArrayList<>();
+			if (jsonObj.has("reviews")) {
+				JSONArray reviews = jsonObj.getJSONArray("reviews");
+				List<Review> reviewList = new ArrayList<>();
+				for (int i = 0; i < reviews.length(); i++) {
+					JSONObject reviewObj = reviews.getJSONObject(i);
+					Review review = new Review();
+					review.setAuthorName(reviewObj.getString("author_name"));
+					review.setAuthorUrl(reviewObj.getString("author_url"));
+					review.setProfilePhotoUrl(reviewObj.getString("profile_photo_url"));
+					review.setRating(reviewObj.getInt("rating"));
+					review.setRelativeTimeDescription(reviewObj.getString("relative_time_description"));
+					review.setText(reviewObj.getString("text"));
+					review.setTime(DateUtils.convertLongToDateString(reviewObj.getLong("time")));
+					reviewList.add(review);
+				}
+				place.setReviews(reviewList);
+			}
+
 			if (jsonObj.has("photos")) {
 				JSONArray photos = jsonObj.getJSONArray("photos");
+				List<Photo> photoList = new ArrayList<>();
 				for (int i = 0; i < photos.length(); i++) {
 					JSONObject photoObj = photos.getJSONObject(i);
 					Photo photo = new Photo();
-					photo.setHeight(photoObj.getInt("height"));
 					photo.setWidth(photoObj.getInt("width"));
-					String imageLink = getImageLink(photoObj.getString("photo_reference"));
-					System.out.print("sdsdsd");
+					photo.setHeight(photoObj.getInt("height"));
+					photo.setPhotoReference(photoObj.getString("photo_reference"));
 					photoList.add(photo);
 				}
+				place.setPhotos(photoList);
 			}
-
-			System.out.print("sdsdsd");
 		} catch (JSONException e) {
 			Logger.error("Error processing JSON results", e);
 		}
@@ -290,48 +313,40 @@ public class LocationService {
 		return place;
 	}
 
-	private static String getImageLink(String photoRef) {
-		HttpURLConnection conn = null;
-		StringBuilder jsonResults = new StringBuilder();
-		try {
-			StringBuilder sb = new StringBuilder(PLACES_API_BASE);
-			sb.append("/photo");
-			//sb.append(OUT_JSON);
-			//sb.append("?sensor=false");
-			sb.append("&maxwidth=400");
-			sb.append("&photoreference=" + photoRef);
-			sb.append("&key=" + API_KEY);
-
-			URL url = new URL(sb.toString());
-			conn = (HttpURLConnection) url.openConnection();
-			InputStreamReader in = new InputStreamReader(conn.getInputStream());
-
-			// Load the results into a StringBuilder
-			int read;
-			char[] buff = new char[1024];
-			while ((read = in.read(buff)) != -1) {
-				jsonResults.append(buff, 0, read);
-			}
-		} catch (MalformedURLException e) {
-			Logger.error("Error processing Places API URL", e);
-			return null;
-		} catch (IOException e) {
-			Logger.error("Error connecting to Places API", e);
-			return null;
-		} finally {
-			if (conn != null) {
-				conn.disconnect();
-			}
-		}
-		return "";
-	}
+//	private static String getImageLink(String photoRef) {
+//		HttpURLConnection conn = null;
+//		StringBuilder jsonResults = new StringBuilder();
+//		String link = "";
+//		try {
+//			StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+//			sb.append("/photo");
+//			sb.append("?maxwidth=400");
+//			sb.append("&photoreference=" + photoRef);
+//			sb.append("&key=" + API_KEY);
+//			URL url = new URL(sb.toString());
+//			conn = (HttpURLConnection) url.openConnection();
+//			InputStreamReader in = new InputStreamReader(conn.getInputStream());
+//			link = conn.getURL().toString();
+//		} catch (MalformedURLException e) {
+//			Logger.error("Error processing Places API URL", e);
+//			return null;
+//		} catch (IOException e) {
+//			Logger.error("Error connecting to Places API", e);
+//			return null;
+//		} finally {
+//			if (conn != null) {
+//				conn.disconnect();
+//			}
+//		}
+//		return link;
+//	}
 
 	public CompletionStage<List<Place>> searchNearBy(String type, String longitude, String latitude) {
 		if ("BANK_AGENCY".equals(type)) {
 			return supplyAsync(() -> search("Vietinbank", longitude, latitude, 5000));
 		} else if ("ATM".equals(type)) {
-			//return supplyAsync(() -> search("Tokyo Deli", longitude, latitude, 50000));
-			return supplyAsync(() -> search("ATM Vietinbank", longitude, latitude, 50000));
+			return supplyAsync(() -> search("Mobile World supermarket", longitude, latitude, 5000));
+			//return supplyAsync(() -> search("ATM Vietinbank", longitude, latitude, 50000));
 		} else {
 			return supplyAsync(() -> searchAdLocationsNearby(longitude, latitude));
 		}
@@ -343,11 +358,17 @@ public class LocationService {
 		List<Place> places = new ArrayList<Place>();
 		for (AdLocation adLocation : adLocations) {
 			Place place = new Place();
+			place.setPlaceId(adLocation.getPlaceId());
 			place.setName(adLocation.getName());
 			place.setAddress(adLocation.getAddress());
 			place.setLongitude(adLocation.getLng());
 			place.setLatitude(adLocation.getLat());
 			place.setDistance(distance(Double.valueOf(adLocation.getLat()), Double.valueOf(adLocation.getLng()), Double.valueOf(latitude), Double.valueOf(longitude)));
+			Place placeDetail = details(place.getPlaceId());
+			place.setReviews(placeDetail.getReviews());
+			place.setWeekdayText(placeDetail.getWeekdayText());
+			place.setOpeningHour(placeDetail.getOpeningHour());
+			place.setPhotos(placeDetail.getPhotos());
 			places.add(place);
 		}
 		return places;

@@ -6,6 +6,7 @@ import java.util.List;
  * Created by tungn on 1/3/2018.
  */
 public class Place {
+    private String placeId;
     private String icon;
     private String name;
     private String formattedAddress;
@@ -15,8 +16,18 @@ public class Place {
     private String longitude;
     private String latitude;
     private String distance;
+    private List<Photo> photos;
     private OpeningHour openingHour;
     private List<String> weekdayText;
+    private List<Review> reviews;
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
 
     public String getIcon() {
         return icon;
@@ -104,5 +115,21 @@ public class Place {
 
     public void setWeekdayText(List<String> weekdayText) {
         this.weekdayText = weekdayText;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 }

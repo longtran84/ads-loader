@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 @Table(name = "ad_location")
 public class AdLocation {
     private long id;
+    private String placeId;
     private Flight flight;
     private Creative creative;
     private String name;
@@ -57,6 +58,16 @@ public class AdLocation {
 
     public void setCreative(Creative creative) {
         this.creative = creative;
+    }
+
+    @Basic
+    @Column(name = "placeId")
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
     @Basic
