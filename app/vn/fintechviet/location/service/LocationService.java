@@ -1,6 +1,6 @@
 package vn.fintechviet.location.service;
 
-import vn.fintechviet.location.dto.Place;
+import vn.fintechviet.location.dto.*;
 import vn.fintechviet.location.model.AdLocation;
 import vn.fintechviet.location.repository.LocationRepository;
 import vn.fintechviet.notification.PushNotificationsHelper;
@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import play.Configuration;
 import play.Logger;
 import play.libs.concurrent.HttpExecutionContext;
+import vn.fintechviet.utils.DateUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -184,6 +185,7 @@ public class LocationService {
 				if (jsObj.has("formatted_phone_number")) {
 					place.setFormattedPhoneNumber(jsObj.getString("formatted_phone_number"));
 				}
+				//Place placeDetail = details(jsObj.getString("place_id"));
 				resultList.add(place);
 			}
 		} catch (JSONException e) {
@@ -193,7 +195,7 @@ public class LocationService {
 		return resultList;
 	}
 
-	public static Place details(String reference) {
+	private static Place details(String placeid) {
 		HttpURLConnection conn = null;
 		StringBuilder jsonResults = new StringBuilder();
 		try {
@@ -202,7 +204,7 @@ public class LocationService {
 			sb.append(OUT_JSON);
 			sb.append("?sensor=false");
 			sb.append("&key=" + API_KEY);
-			sb.append("&reference=" + URLEncoder.encode(reference, "utf8"));
+			sb.append("&placeid=" + URLEncoder.encode(placeid, "utf8"));
 
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
@@ -232,11 +234,31 @@ public class LocationService {
 			JSONObject jsonObj = new JSONObject(jsonResults.toString()).getJSONObject("result");
 
 			place = new Place();
-			place.setIcon(jsonObj.getString("icon"));
-			place.setName(jsonObj.getString("name"));
-			place.setFormattedAddress(jsonObj.getString("formatted_address"));
-			if (jsonObj.has("formatted_phone_number")) {
-				place.setFormattedPhoneNumber(jsonObj.getString("formatted_phone_number"));
+			if (jsonObj.has("opening_hours")) {
+				JSONObject openingHourObj = jsonObj.getJSONObject("opening_hours");
+				OpeningHour openingHour = new OpeningHour();
+				openingHour.setOpenNow(openingHourObj.getBoolean("open_now"));
+				JSONArray periods = openingHourObj.getJSONArray("periods");
+				List<Period> periodList = new ArrayList<>();
+				for (int i = 0; i < periods.length(); i++) {
+					JSONObject openCloseObj = periods.getJSONObject(i);
+					JSONObject openObj = openCloseObj.getJSONObject("open");
+					JSONObject closeObj = openCloseObj.getJSONObject("close");
+
+					Period period = new Period();
+					Open open = new Open();
+					open.setDay(DateUtils.convertIntDayToSTring(openObj.getInt("day")));
+					open.setTime(openObj.getString("time"));
+					Close close = new Close();
+					close.setDay(DateUtils.convertIntDayToSTring(closeObj.getInt("day")));
+					close.setTime(closeObj.getString("time"));
+					period.setOpen(open);
+					period.setClose(close);
+					periodList.add(period);
+					System.out.print("sdsdsd");
+				}
+
+
 			}
 		} catch (JSONException e) {
 			Logger.error("Error processing JSON results", e);

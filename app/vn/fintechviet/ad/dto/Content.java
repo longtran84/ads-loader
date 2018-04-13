@@ -9,6 +9,7 @@ public class Content {
     private String body;
     private String imageUrl;
     private String videoUrl;
+    private String imageAdUrl;
 
     public String getTitle() {
         return title;
@@ -48,5 +49,13 @@ public class Content {
 
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    public String getImageAdUrl() {
+        return imageAdUrl;
+    }
+
+    public void setImageAdUrl(String imageAdUrl) {
+        this.imageAdUrl = imageAdUrl;
     }
 }

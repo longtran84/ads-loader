@@ -1,5 +1,7 @@
 package vn.fintechviet.location.dto;
 
+import java.util.List;
+
 /**
  * Created by tungn on 1/3/2018.
  */
@@ -13,6 +15,8 @@ public class Place {
     private String longitude;
     private String latitude;
     private String distance;
+    private OpeningHour openingHour;
+    private List<String> weekdayText;
 
     public String getIcon() {
         return icon;
@@ -84,5 +88,21 @@ public class Place {
 
     public void setDistance(String distance) {
         this.distance = distance;
+    }
+
+    public OpeningHour getOpeningHour() {
+        return openingHour;
+    }
+
+    public void setOpeningHour(OpeningHour openingHour) {
+        this.openingHour = openingHour;
+    }
+
+    public List<String> getWeekdayText() {
+        return weekdayText;
+    }
+
+    public void setWeekdayText(List<String> weekdayText) {
+        this.weekdayText = weekdayText;
     }
 }
