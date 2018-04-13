@@ -262,7 +262,7 @@ public class ContentService {
 				news.setRewardPoint(10);
 			}
 		}
-		
+
 		for (int i = 0; i < rows; i++) {
 			if (i % 3 == 0) {
 				Ad adFull = advertismentRepository.getAdByTemplate("image", 2);

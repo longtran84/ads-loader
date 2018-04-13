@@ -204,7 +204,7 @@ public class LocationService {
 			sb.append(OUT_JSON);
 			sb.append("?sensor=false");
 			sb.append("&key=" + API_KEY);
-			sb.append("&placeid=" + URLEncoder.encode(placeid, "utf8"));
+			sb.append("&placeid=" + "ChIJZwuDU7JUNDERUwJTuUU6PMM");
 
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
@@ -247,19 +247,42 @@ public class LocationService {
 
 					Period period = new Period();
 					Open open = new Open();
-					open.setDay(DateUtils.convertIntDayToSTring(openObj.getInt("day")));
+					open.setDay(DateUtils.convertIntDayToString(openObj.getInt("day")));
 					open.setTime(openObj.getString("time"));
 					Close close = new Close();
-					close.setDay(DateUtils.convertIntDayToSTring(closeObj.getInt("day")));
+					close.setDay(DateUtils.convertIntDayToString(closeObj.getInt("day")));
 					close.setTime(closeObj.getString("time"));
 					period.setOpen(open);
 					period.setClose(close);
 					periodList.add(period);
-					System.out.print("sdsdsd");
 				}
-
-
+				openingHour.setPeriods(periodList);
+				place.setOpeningHour(openingHour);
+				List<String> weekdays = new ArrayList<>();
+				if (openingHourObj.has("weekday_text")) {
+					JSONArray weekDays = openingHourObj.getJSONArray("weekday_text");
+					for (int i = 0; i < weekDays.length(); i++) {
+						weekdays.add(DateUtils.replaceEnglishDay(weekDays.getString(i)));
+					}
+				}
+				place.setWeekdayText(weekdays);
 			}
+
+			List<Photo> photoList = new ArrayList<>();
+			if (jsonObj.has("photos")) {
+				JSONArray photos = jsonObj.getJSONArray("photos");
+				for (int i = 0; i < photos.length(); i++) {
+					JSONObject photoObj = photos.getJSONObject(i);
+					Photo photo = new Photo();
+					photo.setHeight(photoObj.getInt("height"));
+					photo.setWidth(photoObj.getInt("width"));
+					String imageLink = getImageLink(photoObj.getString("photo_reference"));
+					System.out.print("sdsdsd");
+					photoList.add(photo);
+				}
+			}
+
+			System.out.print("sdsdsd");
 		} catch (JSONException e) {
 			Logger.error("Error processing JSON results", e);
 		}
@@ -267,11 +290,48 @@ public class LocationService {
 		return place;
 	}
 
+	private static String getImageLink(String photoRef) {
+		HttpURLConnection conn = null;
+		StringBuilder jsonResults = new StringBuilder();
+		try {
+			StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+			sb.append("/photo");
+			//sb.append(OUT_JSON);
+			//sb.append("?sensor=false");
+			sb.append("&maxwidth=400");
+			sb.append("&photoreference=" + photoRef);
+			sb.append("&key=" + API_KEY);
+
+			URL url = new URL(sb.toString());
+			conn = (HttpURLConnection) url.openConnection();
+			InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+			// Load the results into a StringBuilder
+			int read;
+			char[] buff = new char[1024];
+			while ((read = in.read(buff)) != -1) {
+				jsonResults.append(buff, 0, read);
+			}
+		} catch (MalformedURLException e) {
+			Logger.error("Error processing Places API URL", e);
+			return null;
+		} catch (IOException e) {
+			Logger.error("Error connecting to Places API", e);
+			return null;
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
+		}
+		return "";
+	}
+
 	public CompletionStage<List<Place>> searchNearBy(String type, String longitude, String latitude) {
 		if ("BANK_AGENCY".equals(type)) {
 			return supplyAsync(() -> search("Vietinbank", longitude, latitude, 5000));
 		} else if ("ATM".equals(type)) {
-			return supplyAsync(() -> search("Tokyo Deli", longitude, latitude, 50000));
+			//return supplyAsync(() -> search("Tokyo Deli", longitude, latitude, 50000));
+			return supplyAsync(() -> search("ATM Vietinbank", longitude, latitude, 50000));
 		} else {
 			return supplyAsync(() -> searchAdLocationsNearby(longitude, latitude));
 		}
