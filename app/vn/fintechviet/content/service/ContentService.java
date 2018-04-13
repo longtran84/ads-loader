@@ -254,18 +254,6 @@ public class ContentService {
 			}
 		}
 
-		for (int i = 0; i < rows; i++) {
-			if (i % 3 == 0) {
-				Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
-				DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
-				News news = newsList.get(i);
-				if (news.getDecisionResponse() == null) {
-					news.setType("AD");
-					news.setDecisionResponse(adv);
-				}
-			}
-		}
-
 		int rewardNumber = 10;
 		for (int j = 0; j < rewardNumber; j++) {
 			int index = rd.nextInt(rows);
@@ -274,6 +262,20 @@ public class ContentService {
 				news.setRewardPoint(10);
 			}
 		}
+		
+		for (int i = 0; i < rows; i++) {
+			if (i % 3 == 0) {
+				Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
+				DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
+				News news = newsList.get(i);
+				if (news.getDecisionResponse() == null) {
+					news.setType("AD");
+					news.setRewardPoint(0);
+					news.setDecisionResponse(adv);
+				}
+			}
+		}
+
 		return newsList;
 	}
 
