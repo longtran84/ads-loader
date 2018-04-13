@@ -226,11 +226,11 @@ public class ContentService {
 			}
 			newsList.add(news);
 		}
+		int rows = Integer.parseInt(configuration.getString("news.rows"));
 		int advNumber = Integer.parseInt(configuration.getString("adv.display.number"));
 		Random rd = new Random();
 		for (int i = 0; i < advNumber; i++) {
 //			int templateIndex = rd.nextInt(advNumber);
-			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			int index = rd.nextInt(rows);
 //			String template;
 //			if (templateIndex == 0) {
@@ -253,16 +253,12 @@ public class ContentService {
 				news.setDecisionResponse(adv);
 			}
 		}
-		int i = 0;
-		while (i < advNumber) {
-			int rows = Integer.parseInt(configuration.getString("news.rows"));
-			int index = rd.nextInt(rows);
 
-			Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
-
-			DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
-			if (index <= newsList.size() - 1) {
-				News news = newsList.get(index);
+		for (int i = 0; i < rows; i++) {
+			if (rows % 3 == 0) {
+				Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
+				DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
+				News news = newsList.get(i);
 				if (news.getDecisionResponse() == null) {
 					news.setType("AD");
 					news.setDecisionResponse(adv);
@@ -270,9 +266,9 @@ public class ContentService {
 				}
 			}
 		}
+
 		int rewardNumber = 10;
 		for (int j = 0; j < rewardNumber; j++) {
-			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			int index = rd.nextInt(rows);
 			if (index <= newsList.size() - 1) {
 				News news = newsList.get(index);
