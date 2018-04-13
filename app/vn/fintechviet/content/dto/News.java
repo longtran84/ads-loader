@@ -14,6 +14,7 @@ public class News {
     private String newsCategoryCode;
     private DecisionResponse decisionResponse;
     private int rewardPoint;
+    private String type;
     private String createdDate;
     private String publishDate;
 
@@ -95,5 +96,13 @@ public class News {
 
     public void setRewardPoint(int rewardPoint) {
         this.rewardPoint = rewardPoint;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

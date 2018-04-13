@@ -222,6 +222,7 @@ public class ContentService {
 				} else if(PUBLISH_DATE.equals(key)) {
 					news.setPublishDate(DateUtils.convertDateToString((Date)element.getValue()));
 				}
+				news.setType("NEWS");
 			}
 			newsList.add(news);
 		}
@@ -244,16 +245,33 @@ public class ContentService {
 //				ad = advertismentRepository.getAdByTemplate(template, 0);
 //			}
 
-			Ad ad = advertismentRepository.getAdByTemplate("image", 1);
+			Ad adBanner = advertismentRepository.getAdByTemplate("image", 1);
 
-			DecisionResponse adv = buildAdResponse(ad, "image", deviceToken);
+			DecisionResponse adv = buildAdResponse(adBanner, "image", deviceToken);
 			if (index <= newsList.size() - 1) {
 				News news = newsList.get(index);
 				news.setDecisionResponse(adv);
 			}
 		}
+		int i = 0;
+		while (i < advNumber) {
+			int rows = Integer.parseInt(configuration.getString("news.rows"));
+			int index = rd.nextInt(rows);
+
+			Ad adFull = advertismentRepository.getAdByTemplate("image", 2);
+
+			DecisionResponse adv = buildAdResponse(adFull, "image", deviceToken);
+			if (index <= newsList.size() - 1) {
+				News news = newsList.get(index);
+				if (news.getDecisionResponse() == null) {
+					news.setType("AD");
+					news.setDecisionResponse(adv);
+					i++;
+				}
+			}
+		}
 		int rewardNumber = 10;
-		for (int i = 0; i < rewardNumber; i++) {
+		for (int j = 0; j < rewardNumber; j++) {
 			int rows = Integer.parseInt(configuration.getString("news.rows"));
 			int index = rd.nextInt(rows);
 			if (index <= newsList.size() - 1) {
@@ -273,7 +291,10 @@ public class ContentService {
 			decision.setClickUrl(ad.getCreative().getClickUrl());
 			if (template.equals("image")) {
 				decision.setTrackingUrl(DOMAIN + "/ad/click?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
-				content.setImageUrl(ad.getCreative().getImageLink());;
+				content.setImageUrl(ad.getCreative().getImageLink());
+				if (ad.getCreative().getAdType().getId() == 2) {
+					content.setImageAdUrl(ad.getCreative().getImageLink());
+				}
 			} else {
 				decision.setViewUrl(DOMAIN + "/ad/view?adId=" + ad.getId() + "&deviceToken=" + deviceToken);
 				content.setVideoUrl(ad.getCreative().getVideoLink());

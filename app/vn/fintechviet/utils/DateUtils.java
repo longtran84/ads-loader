@@ -50,6 +50,33 @@ public class DateUtils {
         return dayOfVn;
     }
 
+    public static String convertIntDayToSTring(int day) {
+        String dayOfVn;
+        switch (day) {
+            case 0:
+                dayOfVn = "Chủ nhật";
+                break;
+            case 1:
+                dayOfVn = "Thứ hai";
+                break;
+            case 3:
+                dayOfVn = "Thứ ba";
+                break;
+            case 4:
+                dayOfVn = "Thứ tư";
+                break;
+            case 5:
+                dayOfVn = "Thứ năm";
+                break;
+            case 6:
+                dayOfVn = "Thứ sáu";
+                break;
+            default:
+                dayOfVn = "Thứ 7";
+        }
+        return dayOfVn;
+    }
+
     public static String convertDateToString(Date dateVal) {
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
         String day = convertEngDayToVn(dayFormat.format(dateVal));
