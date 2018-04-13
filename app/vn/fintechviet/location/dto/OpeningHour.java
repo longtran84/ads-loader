@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class OpeningHour {
     private boolean openNow;
-    private List<Period> periods;
+    //private List<Period> periods;
 
     public boolean isOpenNow() {
         return openNow;
@@ -17,11 +17,11 @@ public class OpeningHour {
         this.openNow = openNow;
     }
 
-    public List<Period> getPeriods() {
-        return periods;
-    }
-
-    public void setPeriods(List<Period> periods) {
-        this.periods = periods;
-    }
+//    public List<Period> getPeriods() {
+//        return periods;
+//    }
+//
+//    public void setPeriods(List<Period> periods) {
+//        this.periods = periods;
+//    }
 }

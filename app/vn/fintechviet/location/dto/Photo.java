@@ -6,7 +6,7 @@ package vn.fintechviet.location.dto;
 public class Photo {
     private int width;
     private int height;
-    private String link;
+    private String photoReference;
 
     public int getWidth() {
         return width;
@@ -24,11 +24,11 @@ public class Photo {
         this.height = height;
     }
 
-    public String getLink() {
-        return link;
+    public String getPhotoReference() {
+        return photoReference;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
     }
 }

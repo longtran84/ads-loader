@@ -77,32 +77,17 @@ public class DateUtils {
         return dayOfVn;
     }
 
-    public static String replaceEnglishDay(String weekday) {
-        String dayOfVn;
-        if (weekday.contains("Monday")) {
-            dayOfVn = weekday.replace("Monday", "Thứ hai");
-        } else if (weekday.contains("Tuesday")) {
-            dayOfVn = weekday.replace("Tuesday", "Thứ ba");
-        } else if (weekday.contains("Wednesday")) {
-            dayOfVn = weekday.replace("Wednesday", "Thứ tư");
-        } else if (weekday.contains("Thursday")) {
-            dayOfVn = weekday.replace("Thursday", "Thứ năm");
-        } else if (weekday.contains("Friday")) {
-            dayOfVn = weekday.replace("Friday", "Thứ sáu");
-        } else if (weekday.contains("Saturday")) {
-            dayOfVn = weekday.replace("Saturday", "Thứ bảy");
-        } else {
-            dayOfVn = weekday.replace("Sunday", "Chủ nhật");
-        }
-        dayOfVn = dayOfVn.replace("Closed", "Đóng cửa");
-        return dayOfVn;
-    }
-
     public static String convertDateToString(Date dateVal) {
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
         String day = convertEngDayToVn(dayFormat.format(dateVal));
         SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_NEWS);
         return day + ", " + dateFormat.format(dateVal);
+    }
+
+    public static String convertLongToDateString(long dateVal) {
+        Date date = new Date(dateVal * 1000);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_NEWS);
+        return dateFormat.format(date);
     }
 
     public static Date convertStringToDate(String dateStr) {
