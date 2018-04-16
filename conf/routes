@@ -64,3 +64,4 @@ GET /loyalty/orders/:deviceToken                             vn.fintechviet.loya
 #Location
 GET /location/searchNearBy                    vn.fintechviet.location.controller.LocationController.searchNearBy(type: String, longitude: String, latitude : String)
 GET /location/checkAdLocationsNearBy          vn.fintechviet.location.controller.LocationController.checkAdLocationsNearBy(deviceToken: String, registrationToken: String, longitude: String, latitude : String)
+GET /location/details                         vn.fintechviet.location.controller.LocationController.details(placeId: String)
