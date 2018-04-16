@@ -187,11 +187,11 @@ public class LocationService {
 				if (jsObj.has("formatted_phone_number")) {
 					place.setFormattedPhoneNumber(jsObj.getString("formatted_phone_number"));
 				}
-				Place placeDetail = details(jsObj.getString("place_id"));
-				place.setReviews(placeDetail.getReviews());
-				place.setWeekdayText(placeDetail.getWeekdayText());
-				place.setOpeningHour(placeDetail.getOpeningHour());
-				place.setPhotos(placeDetail.getPhotos());
+//				Place placeDetail = details(jsObj.getString("place_id"));
+//				place.setReviews(placeDetail.getReviews());
+//				place.setWeekdayText(placeDetail.getWeekdayText());
+//				place.setOpeningHour(placeDetail.getOpeningHour());
+//				place.setPhotos(placeDetail.getPhotos());
 				resultList.add(place);
 			}
 		} catch (JSONException e) {
@@ -201,7 +201,7 @@ public class LocationService {
 		return resultList;
 	}
 
-	private static Place details(String placeid) {
+	private Place getDetails(String placeid) {
 		HttpURLConnection conn = null;
 		StringBuilder jsonResults = new StringBuilder();
 		try {
@@ -235,12 +235,26 @@ public class LocationService {
 			}
 		}
 
-		Place place = null;
+		Place place = new Place();
 		try {
 			// Create a JSON object hierarchy from the results
 			JSONObject jsonObj = new JSONObject(jsonResults.toString()).getJSONObject("result");
-
-			place = new Place();
+			place.setPlaceId(jsonObj.getString("place_id"));
+			place.setIcon(jsonObj.getString("icon"));
+			place.setReference(jsonObj.getString("reference"));
+			place.setName(jsonObj.getString("name"));
+			place.setAddress(jsonObj.getString("vicinity"));
+			if (jsonObj.has("geometry")) {
+				JSONObject locationObj = jsonObj.getJSONObject("geometry").getJSONObject("location");
+				place.setLongitude(locationObj.get("lng").toString());
+				place.setLatitude(locationObj.get("lat").toString());
+			}
+			if (jsonObj.has("formatted_address")) {
+				place.setFormattedAddress(jsonObj.getString("formatted_address"));
+			}
+			if (jsonObj.has("formatted_phone_number")) {
+				place.setFormattedPhoneNumber(jsonObj.getString("formatted_phone_number"));
+			}
 			if (jsonObj.has("opening_hours")) {
 				JSONObject openingHourObj = jsonObj.getJSONObject("opening_hours");
 				OpeningHour openingHour = new OpeningHour();
@@ -298,11 +312,14 @@ public class LocationService {
 				List<Photo> photoList = new ArrayList<>();
 				for (int i = 0; i < photos.length(); i++) {
 					JSONObject photoObj = photos.getJSONObject(i);
-					Photo photo = new Photo();
-					photo.setWidth(photoObj.getInt("width"));
-					photo.setHeight(photoObj.getInt("height"));
-					photo.setPhotoReference(photoObj.getString("photo_reference"));
-					photoList.add(photo);
+					String imageLink = getImageLink(photoObj.getString("photo_reference"));
+					if (StringUtils.isNotEmpty(imageLink)) {
+						Photo photo = new Photo();
+						photo.setWidth(photoObj.getInt("width"));
+						photo.setHeight(photoObj.getInt("height"));
+						photo.setLink(imageLink);
+						photoList.add(photo);
+					}
 				}
 				place.setPhotos(photoList);
 			}
@@ -313,33 +330,33 @@ public class LocationService {
 		return place;
 	}
 
-//	private static String getImageLink(String photoRef) {
-//		HttpURLConnection conn = null;
-//		StringBuilder jsonResults = new StringBuilder();
-//		String link = "";
-//		try {
-//			StringBuilder sb = new StringBuilder(PLACES_API_BASE);
-//			sb.append("/photo");
-//			sb.append("?maxwidth=400");
-//			sb.append("&photoreference=" + photoRef);
-//			sb.append("&key=" + API_KEY);
-//			URL url = new URL(sb.toString());
-//			conn = (HttpURLConnection) url.openConnection();
-//			InputStreamReader in = new InputStreamReader(conn.getInputStream());
-//			link = conn.getURL().toString();
-//		} catch (MalformedURLException e) {
-//			Logger.error("Error processing Places API URL", e);
-//			return null;
-//		} catch (IOException e) {
-//			Logger.error("Error connecting to Places API", e);
-//			return null;
-//		} finally {
-//			if (conn != null) {
-//				conn.disconnect();
-//			}
-//		}
-//		return link;
-//	}
+	private static String getImageLink(String photoRef) {
+		HttpURLConnection conn = null;
+		StringBuilder jsonResults = new StringBuilder();
+		String link = "";
+		try {
+			StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+			sb.append("/photo");
+			sb.append("?maxwidth=400");
+			sb.append("&photoreference=" + photoRef);
+			sb.append("&key=" + API_KEY);
+			URL url = new URL(sb.toString());
+			conn = (HttpURLConnection) url.openConnection();
+			InputStreamReader in = new InputStreamReader(conn.getInputStream());
+			link = conn.getURL().toString();
+		} catch (MalformedURLException e) {
+			Logger.error("Error processing Places API URL", e);
+			return null;
+		} catch (IOException e) {
+			Logger.error("Error connecting to Places API", e);
+			return null;
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
+		}
+		return link;
+	}
 
 	public CompletionStage<List<Place>> searchNearBy(String type, String longitude, String latitude) {
 		if ("BANK_AGENCY".equals(type)) {
@@ -364,11 +381,11 @@ public class LocationService {
 			place.setLongitude(adLocation.getLng());
 			place.setLatitude(adLocation.getLat());
 			place.setDistance(distance(Double.valueOf(adLocation.getLat()), Double.valueOf(adLocation.getLng()), Double.valueOf(latitude), Double.valueOf(longitude)));
-			Place placeDetail = details(place.getPlaceId());
-			place.setReviews(placeDetail.getReviews());
-			place.setWeekdayText(placeDetail.getWeekdayText());
-			place.setOpeningHour(placeDetail.getOpeningHour());
-			place.setPhotos(placeDetail.getPhotos());
+//			Place placeDetail = details(place.getPlaceId());
+//			place.setReviews(placeDetail.getReviews());
+//			place.setWeekdayText(placeDetail.getWeekdayText());
+//			place.setOpeningHour(placeDetail.getOpeningHour());
+//			place.setPhotos(placeDetail.getPhotos());
 			places.add(place);
 		}
 		return places;
@@ -382,5 +399,9 @@ public class LocationService {
 			PushNotificationsHelper.pushAdNotificationToUsers(regToken, adLocation);
 		}
 		return supplyAsync(() -> "ok");
+	}
+
+	public CompletionStage<Place> details(String placeId) {
+		return supplyAsync(() -> getDetails(placeId));
 	}
 }

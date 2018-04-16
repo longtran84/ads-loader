@@ -57,4 +57,16 @@ public class LocationController extends Controller {
 
 	}
 
+	/**
+	 * @param placeId
+	 * @return
+	 */
+	@ApiOperation(value = "Get detail of location")
+	public CompletionStage<Result> details(String placeId)
+			throws InterruptedException, ExecutionException {
+		return locationService.details(placeId).thenApplyAsync(place -> {
+			return ok(Json.toJson(place));
+		}, ec.current());
+	}
+
 }
